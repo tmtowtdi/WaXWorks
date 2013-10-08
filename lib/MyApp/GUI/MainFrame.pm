@@ -1,4 +1,3 @@
-
 use v5.14;
 
 package MyApp::GUI::MainFrame {
@@ -36,4 +35,3 @@ package MyApp::GUI::MainFrame {
 }
 
 1;
-

@@ -1,5 +1,4 @@
 use v5.14;
-use utf8;
 
 package MyApp::Model::DBILogger {
     use warnings;
@@ -100,6 +99,16 @@ sub Log::Dispatch::time_zone {#{{{
 
 
 __END__
+
+
+All of the docu below is left over from the original and needs a good fixifying.
+
+Some of it's probably useful (which is why it remains), but it's wildly 
+innaccurate as it stands right now.
+
+
+
+
 
 =head1 NAME
 

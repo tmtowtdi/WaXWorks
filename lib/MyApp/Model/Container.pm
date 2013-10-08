@@ -1,4 +1,3 @@
-
 use v5.14;
 
 package MyApp::Model::Container {
@@ -193,14 +192,3 @@ package MyApp::Model::Container {
 }
 
 1;
-
-__END__
-
-=pod
-
-Do not use this for Wx components, such as fonts.  
-
-An application might have CLI-only components, such as scheduled tasks.  Those 
-components won't need a GUI.
-
-=cut

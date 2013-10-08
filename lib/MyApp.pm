@@ -1,6 +1,4 @@
-
 use v5.14;
-
 
 BEGIN {
     ### Uncomment to display a splash screen.
@@ -35,7 +33,7 @@ BEGIN {
     use Wx::Perl::SplashFast( "var/splash.png", 50 );
 }
 
-package MyApp {#{{{
+package MyApp {
     use warnings;
 
     use FindBin;
@@ -237,26 +235,14 @@ Instead, you need something like this...
 
     no Moose;
     __PACKAGE__->meta->make_immutable;
-}#}}}
-
-package MyFrame {
-  use base 'Wx::Frame';
-  use Wx qw( wxDEFAULT_FRAME_STYLE );
-
-  sub new {
-    my $app = shift ;
-    my( $frame ) = $app->SUPER::new( @_[0] , -1, 'wxPerl Test' ,
-                                     [0,0] , [400,300] ) ;
-    return( $frame ) ;
-  }
 }
 
 1;
 
 __END__
 
-These make no sense unless a throbber exists, but that's going to be pretty 
-common, so leaving the code here for now.
+These make no sense unless a throbber exists, and I haven't added one yet, but
+most likely will, so leaving the code here for now.
 
     sub endthrob {#{{{
         my $self = shift;
