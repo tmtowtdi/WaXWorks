@@ -20,8 +20,19 @@ BEGIN {
     ###     displayed for the full length of the timeout.  If you set that 
     ###     timeout too long, the image will remain in your face and could end 
     ###     up being irritating.
+    ###
+    ### Tested with png, jpg, and gif images.
+    ###
+    ### I like keeping the original image names and just making a copy of 
+    ### whichever one I currently want to be used as the splash image, and 
+    ### just rename that copy to "splash.png".
+    ###
+    ### XKCD image license indicates it should be OK to use that:
+    ### http://xkcd.com/license.html
+    ###
+    ### All this babbling should be somewhere more reasonable than this huge 
+    ### comment block.
     use Wx::Perl::SplashFast( "var/splash.png", 50 );
-    #use Wx::Perl::SplashFast( "var/splash.png", 5000 );
 }
 
 package MyApp {#{{{

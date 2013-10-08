@@ -3,8 +3,6 @@
 use v5.14;
 use warnings;
 
-#use Wx::Perl::SplashFast( "var/splash.png", 2000 );
-
 use FindBin;
 use lib $FindBin::Bin . '/../lib';
 
