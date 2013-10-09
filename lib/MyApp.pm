@@ -1,44 +1,12 @@
 use v5.14;
 
-BEGIN {
-    ### Uncomment to display a splash screen.
-    ###
-    ### If we're using this, we want it to show up quickly, so it needs to be 
-    ### used before we start doing a lot of other stuff.  Trying to create and 
-    ### evaluate a "show_splash" attribute of MyApp (or some such) defeats the 
-    ### purpose of a quickly-displaying splash screen, so just do this here.
-    ### 
-    ### At least on Windows, the timeout (milliseconds) works like this:
-    ###     - If the timeout period ends before the rest of the app is ready, 
-    ###     the splash screen will continue to display.  As soon as the rest 
-    ###     of the app starts, the splash screen goes away (nicely synced).
-    ###
-    ###     - If the timeout period is longer than the amount of time it takes 
-    ###     for the rest of the app to display, the splash image will remain 
-    ###     displayed for the full length of the timeout.  If you set that 
-    ###     timeout too long, the image will remain in your face and could end 
-    ###     up being irritating.
-    ###
-    ### Tested with png, jpg, and gif images.
-    ###
-    ### I like keeping the original image names and just making a copy of 
-    ### whichever one I currently want to be used as the splash image, and 
-    ### just rename that copy to "splash.png".
-    ###
-    ### XKCD image license indicates it should be OK to use that:
-    ### http://xkcd.com/license.html
-    ###
-    ### All this babbling should be somewhere more reasonable than this huge 
-    ### comment block.
-    use Wx::Perl::SplashFast( "var/splash.png", 50 );
-}
-
 package MyApp {
     use warnings;
 
     use FindBin;
     use Moose;
     use Wx qw(:everything);
+    use Wx::Event qw(EVT_TIMER);
 
     use MooseX::NonMoose;
     extends 'Wx::App';
@@ -75,6 +43,18 @@ package MyApp {
         }
     );
 
+    has 'timer' => (
+        is          => 'rw',
+        isa         => 'Wx::Timer',
+        lazy_build  => 1,
+    );
+
+    has 'main_frame' => (
+        is          => 'rw',
+        isa         => 'MyApp::GUI::MainFrame',
+        lazy_build  => 1,
+    );
+
     has 'db_log_file' => (
         is          => 'rw',
         isa         => 'Str',
@@ -103,10 +83,10 @@ package MyApp {
         my $logger = $self->resolve( service => '/Log/logger' );
         $logger->debug( 'Starting ' . $self->app_name );
 
-        my $win = MyApp::GUI::MainFrame->new( app => $self );
-        $win->Show(1);
-        $self->SetTopWindow($win);
+        $self->main_frame->Show(1);
+        $self->SetTopWindow( $self->main_frame );
 
+        $self->_set_events();
         return $self;
     }
     sub _build_bb {#{{{
@@ -117,6 +97,31 @@ package MyApp {
             db_log_file     => $self->db_log_file,
         );
     }#}}}
+    sub _build_db_log_file {#{{{
+        my $self = shift;
+        my $file = $self->root_dir . '/var/log.sqlite';
+        return $file;
+    }#}}}
+    sub _build_main_frame {#{{{
+        my $self = shift;
+        my $frame = MyApp::GUI::MainFrame->new( app => $self );
+        return $frame;
+    }#}}}
+    sub _build_timer {#{{{
+        my $self = shift;
+
+        ### Start the timer with:
+        ###     $self->timer->Start( $milliseconds, wxTIMER_ONE_SHOT );
+        ### or
+        ###     $self->timer->Start( $milliseconds, wxTIMER_CONTINUOUS );
+        ###
+        ### Those will send a Timer event to us (MyApp.pm) that will be 
+        ### handled by OnTimer.
+
+        my $t = Wx::Timer->new();
+        $t->SetOwner( $self );
+        return $t;
+    }#}}}
     sub _build_wxbb {#{{{
         my $self = shift;
         return MyApp::Model::WxContainer->new(
@@ -124,10 +129,10 @@ package MyApp {
             root_dir        => $self->root_dir,
         );
     }#}}}
-    sub _build_db_log_file {#{{{
+    sub _set_events {#{{{
         my $self = shift;
-        my $file = $self->root_dir . '/var/log.sqlite';
-        return $file;
+        EVT_TIMER( $self, $self->timer->GetId,  sub{$self->OnTimer(@_)} );
+        return 1;
     }#}}}
 
     sub poperr {#{{{
@@ -231,6 +236,10 @@ Instead, you need something like this...
         ### explicitly mentioned anywhere in this module.
         Wx::InitAllImageHandlers();
         return 1;
+    }#}}}
+    sub OnTimer {#{{{
+        my $self = shift;
+        say "OnTimer called";
     }#}}}
 
     no Moose;

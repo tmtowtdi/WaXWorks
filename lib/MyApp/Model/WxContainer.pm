@@ -14,115 +14,29 @@ package MyApp::Model::WxContainer {
 
     extends 'Bread::Board::Container';
 
-    has 'root_dir' => ( is => 'rw', isa => 'Str', required => 1 );
-
-    ### Assets
-    has 'zip_file' => ( is => 'rw', isa => 'Str', lazy_build => 1 );
+    has 'root_dir' => ( is => 'rw', isa => 'Str', required => 1     );
+    has 'zip_file' => ( is => 'rw', isa => 'Str', lazy_build => 1   );
 
     sub BUILD {
         my $self = shift;
 
         container $self => as {
-            container 'Assets' => as {#{{{
+            container 'assets' => as {#{{{
                 my $zip             = Archive::Zip->new($self->zip_file);
                 service 'zip'       => $zip;
                 service 'zip_file'  => $self->zip_file;
 
-=pod
-
-Provides services for all media assets used by the app.  Right now, "all media 
-assets" consist of many .png files and a single .ico file.  
-
-The Assets container will hold sub-containers for each type of asset; images, 
-sounds, etc.  All of these assets are stored in a zip file.
-
-Keep in mind that, though zip/unzip programs tend to make it look like their 
-members are stored in nested directories inside the zip file, those members 
-don't actually behave like files and directories in your filesystem.
-
-So the containers and services provided under this Assets container have to be set 
-up carefully so they end up resembling the familiar path structure to the user.  
-See the images subcontainer for examples.
-
-=cut
-
                 container 'images' => as {#{{{
-
-=pod
-
-Creates and returns a Wx::Image of the requested image, which you can then rescale 
-if needed and convert to a bitmap for display:
-
- my $img = $self->app->bb->resolve(service => '/Assets/glyphs/chalcopyrite.png');
- $img->Rescale(39, 50);
- my $bmp = Wx::Bitmap->new($img);
-
- my $v = Wx::StaticBitmap->new(
-  $self, -1,
-  $bmp,
-  wxDefaultPosition,
-  Wx::Size->new($img->GetWidth, $img->GetHeight),
-  wxFULL_REPAINT_ON_RESIZE
- );
-
-Also provides a 'zip_file' service that reports on exactly which file is being 
-read from:
-
- $file = self->app->bb->resolve(service => '/Assets/zip_file');
- say $file; # '/path/to/assets.zip'
-
-
-
-You can freely add more subdirectories under images/ in the main assets.zip 
-file, and sub-containers and services will be created for those new 
-subdirectories automatically without any code changes.
-
-HOWEVER, you may only add a single level of subdirectories under images:
-
- ### Fine.
- images/my_new_subdirectory/
- images/my_new_subdirectory/my_new_image_1.png
- images/my_new_subdirectory/my_new_image_2.png
-
- ...then, in calling code...
-
- my $bmp = $self->app->wxbb->resolve(service => '/Assets/images/my_new_subdirectory/my_new_image_1.png');
-
-
- ### NOT Fine - the 'futher_nested_subdirectory' will not work.  If you 
- ### absolutely must have this, you'll need to update the code under the images 
- ### container.
- images/my_new_subdirectory/further_nested_subdirectory/
- images/my_new_subdirectory/further_nested_subdirectory/my_new_image_1.png
- images/my_new_subdirectory/further_nested_subdirectory/my_new_image_2.png
- ...
-
-
-
-The Assets zip file currently contains different members for the same image if 
-that image has different sizes:
-
-    images/glyphs/chalcopyrite.png
-    images/glyphs/chalcopyrite_39x50.png
-    images/glyphs/chalcopyrite_79x100.png
-
-I now plan to keep just 'chalcopyrite.png' and rescale it as needed, so I'll 
-ultimately be able to get rid of all of the resized images in the .zip file, 
-which should save some space and time.
-
-=cut
-
-                    my %dirs = ();
-
-                    foreach my $member( $zip->membersMatching("images/.*(png|ico)\$") ) {
+                    my %img_subdirs = ();
+                    foreach my $member( $zip->membersMatching("images/.*(png|ico|gif|jpe?g)\$") ) {
                         $member->fileName =~ m{images/([^/]+)/};
                         my $dirname = $1;
-                        push @{$dirs{$dirname}}, $member;
+                        push @{$img_subdirs{$dirname}}, $member;
                     }
 
-                    foreach my $dir( keys %dirs ) { # 'glyphs', 'planetside', etc
+                    foreach my $dir( keys %img_subdirs ) {
                         container "$dir" => as {
-                            foreach my $image_member(@{ $dirs{$dir} }) {
+                            foreach my $image_member(@{ $img_subdirs{$dir} }) {
                                 $image_member->fileName =~ m{images/$dir/(.+)$};
                                 my $image_filename = $1; # just the image name, eg 'beryl.png'
 
@@ -165,4 +79,90 @@ which should save some space and time.
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::Model::WxContainer - Bread board containing GUI-related assets and settings.
+
+=head1 SYNOPSIS
+
+ $container = MyApp::Model::WxContainer->new(
+  name     => 'a unique arbitrary container name',
+  root_dir => "/path/to/app/install/dir"
+ );
+
+ my $img = $container->resolve(service => '/assets/images/app/home.png');
+ $img->rescale( $some_width, $some_height );
+ my $home_bmp = Wx::Bitmap->new($img);
+
+ my $home_static_bmp = Wx::StaticBitmap->new(
+  $self, -1,
+  $bmp,
+  wxDefaultPosition,
+  Wx::Size->new($img->GetWidth, $img->GetHeight),
+  wxFULL_REPAINT_ON_RESIZE
+ );
+
+ # Now, $home_static_bmp can be placed on the screen.
+
+=head1 DESCRIPTION
+
+=head1 SERVICES
+
+Services are accessed from the container with:
+
+ my $svc = $container->resolve( service => $service_name_as_indicated_below );
+
+=over 4
+
+=item * assets/zip_file
+
+The full path, as a string, to the assets.zip file.
+
+=item * assets/zip
+
+An L<Archive::Zip> object representing the assets.zip file.
+
+=item * assets/images/E<lt>DIRECTORYE<gt>/E<lt>IMAGE_FILEE<gt>
+
+The selected image as a Wx::Image object.
+
+=back
+
+=head2 THE ASSETS FILE
+
+Assets are meant to be contained in a single .zip file, which lives in 
+var/assets.zip.  The idea is that all media assets can be contained within 
+this one file, though it currently only contains images.
+
+If other asset types are needed, a new container, sibling to the 'images' 
+container, will need to be added.
+
+=head3 IMAGES
+
+All image assets must live in a subdirectory of images/.  GIF, ICO, JPEG, and 
+PNG files are supported.  You can freely add more subdirectories under 
+images/, and sub-containers and services will be created for those new 
+subdirectories automatically without any code changes.
+
+So if your app requires a collection of emotes, open assets.zip, create 
+images/emotes/, and add your emote images there.  Those images would then 
+become available to your app with
+
+ my $smile = $container->resolve(service => '/assets/images/emotes/smile.png');
+
+HOWEVER, you may only add a single level of subdirectories under images:
+
+ ### Fine.
+ images/emotes/
+ images/emotes/smile.png
+ images/emotes/cry.png
+
+ ### NOT Fine - the additional 'happy' subdirectory will not work.
+ images/emotes/happy/
+ images/emotes/happy/smile.png
+ images/emotes/happy/laugh.png
+
 

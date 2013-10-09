@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>MyApp::Model::WxContainer - Bread board containing GUI-related assets and settings.</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#services">SERVICES</a></li>
+	<ul>
+
+		<li><a href="#the_assets_file">THE ASSETS FILE</a></li>
+		<ul>
+
+			<li><a href="#images">IMAGES</a></li>
+		</ul>
+
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>MyApp::Model::WxContainer - Bread board containing GUI-related assets and settings.</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+ <span class="variable">$container</span> <span class="operator">=</span> <span class="variable">MyApp::Model::WxContainer</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">(</span>
+  <span class="string">name</span>     <span class="operator">=&gt;</span> <span class="string">'a unique arbitrary container name'</span><span class="operator">,</span>
+  <span class="string">root_dir</span> <span class="operator">=&gt;</span> <span class="string">"/path/to/app/install/dir"</span>
+ <span class="operator">);</span>
+</pre>
+<pre>
+ <span class="keyword">my</span> <span class="variable">$img</span> <span class="operator">=</span> <span class="variable">$container</span><span class="operator">-&gt;</span><span class="variable">resolve</span><span class="operator">(</span><span class="string">service</span> <span class="operator">=&gt;</span> <span class="string">'/assets/images/app/home.png'</span><span class="operator">);</span>
+ <span class="variable">$img</span><span class="operator">-&gt;</span><span class="variable">rescale</span><span class="operator">(</span> <span class="variable">$some_width</span><span class="operator">,</span> <span class="variable">$some_height</span> <span class="operator">);</span>
+ <span class="keyword">my</span> <span class="variable">$home_bmp</span> <span class="operator">=</span> <span class="variable">Wx::Bitmap</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">(</span><span class="variable">$img</span><span class="operator">);</span>
+</pre>
+<pre>
+ <span class="keyword">my</span> <span class="variable">$home_static_bmp</span> <span class="operator">=</span> <span class="variable">Wx::StaticBitmap</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">(</span>
+  <span class="variable">$self</span><span class="operator">,</span> <span class="operator">-</span><span class="number">1</span><span class="operator">,</span>
+  <span class="variable">$bmp</span><span class="operator">,</span>
+  <span class="variable">wxDefaultPosition</span><span class="operator">,</span>
+  <span class="variable">Wx::Size</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">(</span><span class="variable">$img</span><span class="operator">-&gt;</span><span class="variable">GetWidth</span><span class="operator">,</span> <span class="variable">$img</span><span class="operator">-&gt;</span><span class="variable">GetHeight</span><span class="operator">),</span>
+  <span class="variable">wxFULL_REPAINT_ON_RESIZE</span>
+ <span class="operator">);</span>
+</pre>
+<pre>
+ <span class="comment"># Now, $home_static_bmp can be placed on the screen.</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>
+</p>
+<hr />
+<h1><a name="services">SERVICES</a></h1>
+<p>Services are accessed from the container with:</p>
+<pre>
+ <span class="keyword">my</span> <span class="variable">$svc</span> <span class="operator">=</span> <span class="variable">$container</span><span class="operator">-&gt;</span><span class="variable">resolve</span><span class="operator">(</span> <span class="string">service</span> <span class="operator">=&gt;</span> <span class="variable">$service_name_as_indicated_below</span> <span class="operator">);</span>
+</pre>
+<ul>
+<li><strong><a name="assets_zip_file" class="item">assets/zip_file</a></strong>
+
+<p>The full path, as a string, to the assets.zip file</p>
+</li>
+<li><strong><a name="assets_zip" class="item">assets/zip</a></strong>
+
+<p>An <a href="/Archive/Zip.html">the Archive::Zip manpage</a> object representing the assets.zip file</p>
+</li>
+<li><strong><a name="assets_images_directory_image_file" class="item">assets/images/&lt;DIRECTORY&gt;/&lt;IMAGE_FILE&gt;</a></strong>
+
+<p>The selected image as a Wx::Image object.</p>
+</li>
+</ul>
+<p>
+</p>
+<h2><a name="the_assets_file">THE ASSETS FILE</a></h2>
+<p>Assets are meant to be contained in a single .zip file, which lives in 
+var/assets.zip.  The idea is that all media assets can be contained within 
+this one file, though it currently only contains images.</p>
+<p>If other asset types are needed, a new container, sibling to the 'images' 
+container, will need to be added.</p>
+<p>
+</p>
+<h3><a name="images">IMAGES</a></h3>
+<p>All image assets must live in a subdirectory of images/.  GIF, ICO, JPEG, and 
+PNG files are supported.  You can freely add more subdirectories under 
+images/, and sub-containers and services will be created for those new 
+subdirectories automatically without any code changes.</p>
+<p>So if your app requires a collection of emotes, open assets.zip, create 
+images/emotes/, and add your emote images there.  Those images would then 
+become available to your app with</p>
+<pre>
+ <span class="keyword">my</span> <span class="variable">$smile</span> <span class="operator">=</span> <span class="variable">$container</span><span class="operator">-&gt;</span><span class="variable">resolve</span><span class="operator">(</span><span class="string">service</span> <span class="operator">=&gt;</span> <span class="string">'/assets/images/emotes/smile.png'</span><span class="operator">);</span>
+</pre>
+<p>HOWEVER, you may only add a single level of subdirectories under images:</p>
+<pre>
+ ### Fine.
+ images/emotes/
+ images/emotes/smile.png
+ images/emotes/cry.png</pre>
+<pre>
+ ### NOT Fine - the additional 'happy' subdirectory will not work.
+ images/emotes/happy/
+ images/emotes/happy/smile.png
+ images/emotes/happy/laugh.png</pre>
+
+</body>
+
+</html>
