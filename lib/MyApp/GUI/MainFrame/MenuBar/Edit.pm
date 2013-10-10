@@ -8,11 +8,6 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
 
-    has 'app' => (
-        is          => 'rw',
-        isa         => 'MyApp',
-        required    => 1,
-    );
     has 'itm_prefs'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
@@ -37,7 +32,7 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU($self->app->GetTopWindow,  $self->itm_prefs, sub{$self->OnPrefs(@_)});
+        EVT_MENU(wxTheApp->GetTopWindow,  $self->itm_prefs, sub{$self->OnPrefs(@_)});
         return 1;
     }#}}}
 
@@ -45,11 +40,11 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
         my $self = shift;
 
         ### Determine starting point of Prefs window
-        my $frame_pos   = $self->app->GetTopWindow->GetPosition();
+        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
         my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
 
         my $dialog = Wx::Dialog->new(
-            $self->app->GetTopWindow, 
+            wxTheApp->GetTopWindow, 
             -1,
             "Preferences Dialog",
             $dialog_pos,

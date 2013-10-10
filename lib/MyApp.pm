@@ -3,6 +3,7 @@ use v5.14;
 package MyApp {
     use warnings;
 
+    use Data::Dumper::GUI;
     use FindBin;
     use Moose;
     use Wx qw(:everything);
@@ -79,12 +80,12 @@ package MyApp {
         ### Make sure that the logging database has been deployed
         $self->o_creat_database_log();
 
+        $self->SetTopWindow( $self->main_frame );
+        $self->main_frame->Show(1);
+
         ### Log the fact that we've started.
         my $logger = $self->resolve( service => '/Log/logger' );
         $logger->debug( 'Starting ' . $self->app_name );
-
-        $self->main_frame->Show(1);
-        $self->SetTopWindow( $self->main_frame );
 
         $self->_set_events();
         return $self;
@@ -104,7 +105,8 @@ package MyApp {
     }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
-        my $frame = MyApp::GUI::MainFrame->new( app => $self );
+        #my $frame = MyApp::GUI::MainFrame->new( app => $self );
+        my $frame = MyApp::GUI::MainFrame->new();
         return $frame;
     }#}}}
     sub _build_timer {#{{{

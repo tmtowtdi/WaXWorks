@@ -8,11 +8,6 @@ package MyApp::GUI::MainFrame::MenuBar::File {
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
 
-    has 'app' => (
-        is          => 'rw',
-        isa         => 'MyApp',
-        required    => 1,
-    );
     has 'itm_exit' => (is => 'rw', isa => 'Wx::MenuItem', lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
@@ -21,6 +16,7 @@ package MyApp::GUI::MainFrame::MenuBar::File {
     sub BUILD {
         my $self = shift;
         $self->Append( $self->itm_exit );
+
         $self->_set_events;
         return $self;
     }
@@ -37,7 +33,7 @@ package MyApp::GUI::MainFrame::MenuBar::File {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( $self->app->GetTopWindow,  $self->itm_exit, sub{$self->OnQuit(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_exit, sub{$self->OnQuit(@_)} );
         return 1;
     }#}}}
 

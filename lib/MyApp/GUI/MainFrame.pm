@@ -1,6 +1,7 @@
 use v5.14;
 
 package MyApp::GUI::MainFrame {
+    use Data::Dumper::GUI;
     use Moose;
     use Wx qw( :everything );
     use Wx::Event qw(EVT_CLOSE);
@@ -9,13 +10,6 @@ package MyApp::GUI::MainFrame {
     extends 'Wx::Frame';
 
     use MyApp::GUI::MainFrame::MenuBar;
-
-    has 'app' => (
-        is          => 'rw',
-        isa         => 'MyApp',
-        required    => 1,
-        weak_ref    => 1,
-    );
 
     has 'menu_bar' => (
         is          => 'rw',
@@ -30,7 +24,7 @@ package MyApp::GUI::MainFrame {
         return(
             undef,
             -1,
-            $args{'app'}{'app_name'},   # Window title
+            wxTheApp->GetAppName(),     # Window title
             wxDefaultPosition,
             wxDefaultSize,
             wxDEFAULT_FRAME_STYLE,
@@ -53,7 +47,7 @@ package MyApp::GUI::MainFrame {
         ###
         ### So set ourselves as the TopWindow now to keep from confusing the 
         ### MenuBar.
-        $self->app->SetTopWindow( $self );
+        wxTheApp->SetTopWindow($self);
 
         $self->SetMenuBar($self->menu_bar);
 
@@ -63,7 +57,7 @@ package MyApp::GUI::MainFrame {
 
     sub _build_menu_bar {#{{{
         my $self = shift;
-        my $mb = MyApp::GUI::MainFrame::MenuBar->new( app => $self->app, frame => $self );
+        my $mb = MyApp::GUI::MainFrame::MenuBar->new();
         return $mb;
     }#}}}
     sub _set_events {

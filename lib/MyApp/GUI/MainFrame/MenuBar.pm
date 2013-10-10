@@ -13,11 +13,6 @@ package MyApp::GUI::MainFrame::MenuBar {
     #use MyApp::GUI::MainFrame::MenuBar::Tools;
     #use MyApp::GUI::MainFrame::MenuBar::Help;
 
-    has 'app' => (
-        is          => 'rw',
-        isa         => 'MyApp',
-        required    => 1,
-    );
 
     has 'menu_file'     => (is => 'rw', isa => 'MyApp::GUI::MainFrame::MenuBar::File',   lazy_build => 1);
     has 'menu_edit'     => (is => 'rw', isa => 'MyApp::GUI::MainFrame::MenuBar::Edit',   lazy_build => 1);
@@ -54,19 +49,19 @@ package MyApp::GUI::MainFrame::MenuBar {
     }
     sub _build_menu_file {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::File->new( app => $self->app );
+        return MyApp::GUI::MainFrame::MenuBar::File->new();
     }#}}}
     sub _build_menu_edit {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Edit->new( app => $self->app );
+        return MyApp::GUI::MainFrame::MenuBar::Edit->new();
     }#}}}
     sub _build_menu_help {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Help->new( app => $self->app );
+        return MyApp::GUI::MainFrame::MenuBar::Help->new();
     }#}}}
     sub _build_menu_tools {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Tools->new( app => $self->app );
+        return MyApp::GUI::MainFrame::MenuBar::Tools->new();
     }#}}}
 
     no Moose;
