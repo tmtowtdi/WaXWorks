@@ -10,7 +10,7 @@ package MyApp::GUI::Dialog::LogViewer {
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Dialog';
 
-    has 'sizer_debug' => ( is => 'rw', isa => 'Int', default => 0 );
+    has 'sizer_debug' => ( is => 'rw', isa => 'Bool', default => 0 );
     ###############
     has 'border_size' => (
         is      => 'ro', 
