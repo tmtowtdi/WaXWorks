@@ -34,16 +34,19 @@ package MyApp::GUI::MainFrame {
     sub BUILD {
         my $self = shift;
 
-        ### The Splash Screen, if used, automatically starts as the TopWindow 
-        ### since it's simply the first window created.
+        ### The SplashScreen, if used, automatically starts as the TopWindow 
+        ### since it's the first window created.
         ###
-        ### MyApp.pm is setting this frame as the top window, but it can't do 
-        ### so until this constructor completes and returns.
+        ### MyApp.pm is setting this MainFrame as the top window, but it can't 
+        ### do so until this constructor completes and returns the MainFrame 
+        ### object.
         ###
-        ### In the meantime, we're over here making a menubar that wants to 
-        ### display a Dialog whose position is relative to the TopWindow.  
-        ### Which should be us (the main frame), but is not; it's still the 
-        ### Splash Screen.
+        ### However, while building the MainFrame object, we're building the  
+        ### menubar (as part of this MainFrame).  That menubar wants to 
+        ### display a Dialog (Edit... Preferences, and likely any other 
+        ### Dialogs it may end up wanting to open) whose position is relative 
+        ### to the TopWindow (which is currently still set as the 
+        ### SplashScreen).
         ###
         ### So set ourselves as the TopWindow now to keep from confusing the 
         ### MenuBar.

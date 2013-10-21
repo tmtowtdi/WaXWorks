@@ -4,21 +4,31 @@ package MyApp {
     use warnings;
 
     use Data::Dumper::GUI;
+    use DateTime;
+    use DateTime::Duration;
     use FindBin;
     use Moose;
     use Wx qw(:everything);
-    use Wx::Event qw(EVT_TIMER);
+    use Wx::Event qw(EVT_CLOSE EVT_TIMER);
 
     use MooseX::NonMoose;
     extends 'Wx::App';
 
     use MyApp::Model::Container;
+    use MyApp::Model::WxContainer;
     use MyApp::GUI::MainFrame;
 
     our $VERSION = '0.1';
 
-    has 'root_dir' => ( is => 'rw', isa => 'Str');
-    has 'app_name' => ( is => 'rw', isa => 'Str', default => 'MyApp');
+    has 'root_dir' => (
+        is          => 'rw',
+        isa         => 'Str',
+        lazy_build  => 1,
+        documentation => q{
+            The application's root; derived based on the location of the main 
+            program (bin/app.pl).
+        }
+    );
 
     has 'bb' => (
         is          => 'rw',
@@ -28,8 +38,37 @@ package MyApp {
             resolve => 'resolve',
         },
         documentation => q{
-            For non-GUI elements only (database connections, paths, etc)
+            For non-GUI elements only (database connections, paths, etc).  See 
+            wxbb for GUI elements.
         }
+    );
+
+    has 'db_log_file' => (
+        is          => 'rw',
+        isa         => 'Str',
+        lazy_build  => 1,
+    );
+
+    has 'logs_expire' => (
+        is          => 'rw',
+        isa         => 'Int',
+        default     => 7,
+        documentation => q{
+            Log entries older than this many days will be pruned from the 
+            logging database on app exit.
+        }
+    );
+
+    has 'main_frame' => (
+        is          => 'rw',
+        isa         => 'MyApp::GUI::MainFrame',
+        lazy_build  => 1,
+    );
+
+    has 'timer' => (
+        is          => 'rw',
+        isa         => 'Wx::Timer',
+        lazy_build  => 1,
     );
 
     has 'wxbb' => (
@@ -40,32 +79,9 @@ package MyApp {
             wxresolve => 'resolve',
         },
         documentation => q{
-            For GUI elements only (images, fonts, etc)
+            For GUI elements only (images, fonts, etc).  See bb for non-GUI 
+            elements.
         }
-    );
-
-    has 'timer' => (
-        is          => 'rw',
-        isa         => 'Wx::Timer',
-        lazy_build  => 1,
-    );
-
-    has 'main_frame' => (
-        is          => 'rw',
-        isa         => 'MyApp::GUI::MainFrame',
-        lazy_build  => 1,
-    );
-
-    has 'db_log_file' => (
-        is          => 'rw',
-        isa         => 'Str',
-        lazy_build  => 1,
-    );
-
-    has 'show_splash' => (
-        is      => 'rw',
-        isa     => 'Bool',
-        default => 1,
     );
 
     sub FOREIGNBUILDARGS {#{{{
@@ -73,9 +89,6 @@ package MyApp {
     }#}}}
     sub BUILD {
         my $self = shift;
-
-        ### Set the app's root directory
-        $self->root_dir( "$FindBin::Bin/../" );
 
         ### Make sure that the logging database has been deployed
         $self->o_creat_database_log();
@@ -85,7 +98,7 @@ package MyApp {
 
         ### Log the fact that we've started.
         my $logger = $self->resolve( service => '/Log/logger' );
-        $logger->debug( 'Starting ' . $self->app_name );
+        $logger->debug( 'Starting ' . $self->GetAppName() );
 
         $self->_set_events();
         return $self;
@@ -105,9 +118,12 @@ package MyApp {
     }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
-        #my $frame = MyApp::GUI::MainFrame->new( app => $self );
         my $frame = MyApp::GUI::MainFrame->new();
         return $frame;
+    }#}}}
+    sub _build_root_dir {#{{{
+        my $self = shift;
+        return "$FindBin::Bin/../";
     }#}}}
     sub _build_timer {#{{{
         my $self = shift;
@@ -134,6 +150,7 @@ package MyApp {
     sub _set_events {#{{{
         my $self = shift;
         EVT_TIMER( $self, $self->timer->GetId,  sub{$self->OnTimer(@_)} );
+        EVT_CLOSE( $self,                       sub{$self->OnClose(@_)} );
         return 1;
     }#}}}
 
@@ -147,7 +164,7 @@ package MyApp {
     sub popmsg {#{{{
         my $self    = shift;
         my $message = shift || 'Everything is fine';
-        my $title   = shift || $self->app_name;
+        my $title   = shift || $self->GetAppName();
         Wx::MessageBox($message,
                         $title,
                         wxOK | wxICON_INFORMATION,
@@ -157,7 +174,7 @@ package MyApp {
     sub popconf {#{{{
         my $self    = shift;
         my $message = shift || 'Everything is fine';
-        my $title   = shift || $self->app_name;
+        my $title   = shift || $self->GetAppName;
 
 =pod
 
@@ -215,11 +232,11 @@ Instead, you need something like this...
         return 1;
     }#}}}
 
-    sub OnClose {#{{{
-        my($self, $frame, $event) = @_;
+    sub OnExit {#{{{
+        my $self = shift;
 
         my $logger = $self->resolve( service => '/Log/logger' );
-        $logger->component($self->app_name);
+        $logger->component($self->GetAppName);
 
         ### Prune old log entries
         my $now   = DateTime->now();
@@ -229,14 +246,22 @@ Instead, you need something like this...
         $logger->prune_bydate( $limit );
         $logger->debug('Closing application');
 
-        $event->Skip();
-        return;
+        return 1;
     }#}}}
     sub OnInit {#{{{
         my $self = shift;
-        ### This gets called automatically by WX; it does not need to be 
-        ### explicitly mentioned anywhere in this module.
         Wx::InitAllImageHandlers();
+
+        ### If the main frame is closed, the application exits.
+        $self->SetExitOnFrameDelete(1);
+
+        ### These don't need to be set to the same string; doing so here for 
+        ### eg.
+        $self->SetAppName( "MyApp" );
+        $self->SetClassName( "MyApp" );
+
+        $self->SetVendorName( "Jonathan D. Barton" );
+
         return 1;
     }#}}}
     sub OnTimer {#{{{

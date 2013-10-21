@@ -65,6 +65,32 @@ package MyApp::Model::WxContainer {
                     }
                 };# images }}}
             };# Assets }}}
+            container 'fonts' => as {#{{{
+                ### Swiss is variable-width sans-serif (arial).
+                ### Modern is fixed-width.
+
+                service 'para_text_1'       => Wx::Font->new(8,  wxSWISS, wxNORMAL, wxNORMAL, 0);
+                service 'para_text_2'       => Wx::Font->new(10, wxSWISS, wxNORMAL, wxNORMAL, 0);
+                service 'para_text_3'       => Wx::Font->new(12, wxSWISS, wxNORMAL, wxNORMAL, 0);
+                service 'bold_para_text_1'  => Wx::Font->new(8,  wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'bold_para_text_2'  => Wx::Font->new(10, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'bold_para_text_3'  => Wx::Font->new(12, wxSWISS, wxNORMAL, wxBOLD, 0);
+
+                service 'modern_text_1'       => Wx::Font->new(8,  wxMODERN, wxNORMAL, wxNORMAL, 0);
+                service 'modern_text_2'       => Wx::Font->new(10, wxMODERN, wxNORMAL, wxNORMAL, 0);
+                service 'modern_text_3'       => Wx::Font->new(12, wxMODERN, wxNORMAL, wxNORMAL, 0);
+                service 'bold_modern_text_1'  => Wx::Font->new(8,  wxMODERN, wxNORMAL, wxBOLD, 0);
+                service 'bold_modern_text_2'  => Wx::Font->new(10, wxMODERN, wxNORMAL, wxBOLD, 0);
+                service 'bold_modern_text_3'  => Wx::Font->new(12, wxMODERN, wxNORMAL, wxBOLD, 0);
+
+                service 'header_1'   => Wx::Font->new(22, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_2'   => Wx::Font->new(20, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_3'   => Wx::Font->new(18, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_4'   => Wx::Font->new(16, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_5'   => Wx::Font->new(14, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_6'   => Wx::Font->new(12, wxSWISS, wxNORMAL, wxBOLD, 0);
+                service 'header_7'   => Wx::Font->new(10, wxSWISS, wxNORMAL, wxBOLD, 0);
+            };#}}}
         };
 
         return $self;
@@ -117,17 +143,42 @@ Services are accessed from the container with:
 
 =over 4
 
-=item * assets/zip_file
+=item * /assets/zip_file
 
 The full path, as a string, to the assets.zip file.
 
-=item * assets/zip
+=item * /assets/zip
 
 An L<Archive::Zip> object representing the assets.zip file.
 
-=item * assets/images/E<lt>DIRECTORYE<gt>/E<lt>IMAGE_FILEE<gt>
+=item * /assets/images/E<lt>DIRECTORYE<gt>/E<lt>IMAGE_FILEE<gt>
 
 The selected image as a Wx::Image object.
+
+=item * /fonts/<FONT TYPE>
+
+Fonts are organized as "para_text", "modern_text", and "header".  
+
+para_text and modern_text fonts are meant to be used as normal paragraph fonts.  
+Both range in size from 1 to 3, with the font size increasing as the number 
+increases.  Both have regular and bolded versions available:
+
+ my $small              = $container->resolve( service => '/fonts/para_text_1' );
+ my $medium_bold        = $container->resolve( service => '/fonts/bold_para_text_2' );
+ my $small_code         = $container->resolve( service => '/fonts/modern_text_1' );
+ my $large_bold_code    = $container->resolve( service => '/fonts/bold_modern_text_3' );
+
+headers range from 1 to 7, with their sizes I<decreasing> as their numbers 
+increase, in the same way that HTML headers do:
+
+ my $large_header = $container->resolve( service => '/fonts/header_1' );
+ my $tiny_header  = $container->resolve( service => '/fonts/header_7' );
+
+Whatever font you go with:
+
+ my $font = $container->resolve( service => '/fonts/CHOSEN_FONT' );
+ my $window = Wx::SomeControl->new( ... );
+ $window->SetFont( $font );
 
 =back
 
