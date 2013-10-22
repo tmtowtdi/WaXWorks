@@ -1,13 +1,13 @@
 
-package LacunaWaX::MainFrame::MenuBar::Help {
+package MyApp::GUI::MainFrame::MenuBar::Help {
     use v5.14;
     use Moose;
     use Wx qw(:everything);
     use Wx::Event qw(EVT_MENU);
-    with 'LacunaWaX::Roles::GuiElement';
+    with 'MyApp::Roles::Platform';
 
-    use LacunaWaX::Dialog::About;
-    use LacunaWaX::Dialog::Help;
+    #use MyApp::GUI::Dialog::About;
+    use MyApp::GUI::Dialog::Help;
 
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
@@ -16,12 +16,14 @@ package LacunaWaX::MainFrame::MenuBar::Help {
     has 'itm_help'  => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
-        return; # Wx::Menu->new() takes no arguments
+        return; 
     }#}}}
     sub BUILD {
         my $self = shift;
-        $self->Append( $self->itm_about );
+        #$self->Append( $self->itm_about );
         $self->Append( $self->itm_help );
+
+        $self->_set_events;
         return $self;
     }
 
@@ -47,8 +49,8 @@ package LacunaWaX::MainFrame::MenuBar::Help {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU($self->parent,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)});
-        EVT_MENU($self->parent,  $self->itm_help->GetId,    sub{$self->OnHelp(@_)});
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)}    );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_help->GetId,    sub{$self->OnHelp(@_)}     );
         return 1;
     }#}}}
 
@@ -56,7 +58,7 @@ package LacunaWaX::MainFrame::MenuBar::Help {
         my $self  = shift;
         my $frame = shift;  # Wx::Frame
         my $event = shift;  # Wx::CommandEvent
-        my $d = LacunaWaX::Dialog::About->new(
+        my $d = MyApp::GUI::Dialog::About->new(
             app         => $self->app,
             ancestor    => $self,
             parent      => undef,
@@ -66,13 +68,7 @@ package LacunaWaX::MainFrame::MenuBar::Help {
     }#}}}
     sub OnHelp {#{{{
         my $self  = shift;
-        my $frame = shift;  # Wx::Frame
-        my $event = shift;  # Wx::CommandEvent
-        my $d = LacunaWaX::Dialog::Help->new(
-            app         => $self->app,
-            ancestor    => $self,
-            parent      => undef,
-        );
+        my $d = MyApp::GUI::Dialog::Help->new();
         return 1;
     }#}}}
 

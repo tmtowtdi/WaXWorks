@@ -34,6 +34,9 @@ package MyApp::GUI::MainFrame {
     sub BUILD {
         my $self = shift;
 
+        $self->Show(0);
+        $self->Centre( wxBOTH );    # Brits!
+
         ### The SplashScreen, if used, automatically starts as the TopWindow 
         ### since it's the first window created.
         ###
@@ -55,6 +58,7 @@ package MyApp::GUI::MainFrame {
         $self->SetMenuBar($self->menu_bar);
 
         $self->_set_events;
+        $self->Show(1);
         return $self;
     }
 

@@ -13,7 +13,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     has 'itm_logview'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
-        return; # Wx::Menu->new() takes no arguments
+        return;
     }#}}}
     sub BUILD {
         my $self = shift;

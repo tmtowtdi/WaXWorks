@@ -20,22 +20,13 @@ package MyApp {
 
     our $VERSION = '0.1';
 
-    has 'root_dir' => (
-        is          => 'rw',
-        isa         => 'Str',
-        lazy_build  => 1,
-        documentation => q{
-            The application's root; derived based on the location of the main 
-            program (bin/app.pl).
-        }
-    );
-
     has 'bb' => (
         is          => 'rw',
         isa         => 'MyApp::Model::Container',
         lazy_build  => 1,
         handles => {
-            resolve => 'resolve',
+            resolve     => 'resolve',
+            root_dir    => 'root_dir',
         },
         documentation => q{
             For non-GUI elements only (database connections, paths, etc).  See 
@@ -47,6 +38,9 @@ package MyApp {
         is          => 'rw',
         isa         => 'Str',
         lazy_build  => 1,
+        documentation => q{
+            SQLite file containing app logs
+        }
     );
 
     has 'logs_expire' => (
@@ -94,22 +88,18 @@ package MyApp {
         $self->o_creat_database_log();
 
         $self->SetTopWindow( $self->main_frame );
-        $self->main_frame->Show(1);
 
         ### Log the fact that we've started.
         my $logger = $self->resolve( service => '/Log/logger' );
         $logger->debug( 'Starting ' . $self->GetAppName() );
 
+        $self->main_frame->Show(1);
         $self->_set_events();
         return $self;
     }
     sub _build_bb {#{{{
         my $self = shift;
-        return MyApp::Model::Container->new(
-            name            => 'plain container',
-            root_dir        => $self->root_dir,
-            db_log_file     => $self->db_log_file,
-        );
+        return MyApp::Model::Container->new( name => 'plain container' );
     }#}}}
     sub _build_db_log_file {#{{{
         my $self = shift;
@@ -123,7 +113,7 @@ package MyApp {
     }#}}}
     sub _build_root_dir {#{{{
         my $self = shift;
-        return "$FindBin::Bin/../";
+        return "$FindBin::Bin/..";
     }#}}}
     sub _build_timer {#{{{
         my $self = shift;
@@ -142,10 +132,7 @@ package MyApp {
     }#}}}
     sub _build_wxbb {#{{{
         my $self = shift;
-        return MyApp::Model::WxContainer->new(
-            name            => 'wx container',
-            root_dir        => $self->root_dir,
-        );
+        return MyApp::Model::WxContainer->new( name => 'wx container' );
     }#}}}
     sub _set_events {#{{{
         my $self = shift;

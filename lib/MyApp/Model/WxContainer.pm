@@ -7,6 +7,7 @@ package MyApp::Model::WxContainer {
     use Bread::Board;
     use Carp;
     use English qw( -no_match_vars );
+    use FindBin;
     use Moose;
     use MooseX::NonMoose;
     use Try::Tiny;
@@ -14,8 +15,16 @@ package MyApp::Model::WxContainer {
 
     extends 'Bread::Board::Container';
 
-    has 'root_dir' => ( is => 'rw', isa => 'Str', required => 1     );
-    has 'zip_file' => ( is => 'rw', isa => 'Str', lazy_build => 1   );
+    has 'root_dir' => (
+        is          => 'rw',
+        isa         => 'Str',
+        lazy_build  => 1,
+    );
+    has 'zip_file' => (
+        is          => 'rw',
+        isa         => 'Str',
+        lazy_build  => 1,
+    );
 
     sub BUILD {
         my $self = shift;
@@ -95,6 +104,11 @@ package MyApp::Model::WxContainer {
 
         return $self;
     }
+
+    sub _build_root_dir {#{{{
+        my $self = shift;
+        return "$FindBin::Bin/..";
+    }#}}}
     sub _build_zip_file {#{{{
         my $self = shift;
         return join q{/}, $self->root_dir, 'var/assets.zip';

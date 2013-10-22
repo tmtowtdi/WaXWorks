@@ -12,15 +12,10 @@ BEGIN {
 
 use Time::HiRes qw(gettimeofday tv_interval);
 
-my $start = [gettimeofday()];
-
 use lib $FindBin::Bin . '/../lib';
 use MyApp;
 
 my $app = MyApp->new();
-
-my $el = tv_interval( $start, [gettimeofday()] );
-#say "-$el-";
 
 
 $app->MainLoop();

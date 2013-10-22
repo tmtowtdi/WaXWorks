@@ -4,6 +4,7 @@ package MyApp::Model::Container {
     use Bread::Board;
     use Carp;
     use DateTime::TimeZone;
+    use FindBin;
     use Moose;
     use MooseX::NonMoose;
 
@@ -16,13 +17,17 @@ package MyApp::Model::Container {
     extends 'Bread::Board::Container';
 
     ### Directories
-    has 'root_dir' => ( is => 'rw', isa => 'Str', required => 1 );
+    has 'root_dir' => (
+        is          => 'rw',
+        isa         => 'Str',
+        lazy_build  => 1,
+    );
 
     ### Logging
     has 'db_log_file'   => (
         is          => 'rw', 
         isa         => 'Str', 
-        required    => 1,
+        lazy_build  => 1,
     );
     has 'local_tz' => (
         is          => 'rw', 
@@ -120,6 +125,12 @@ package MyApp::Model::Container {
                     }
                 );#}}}
             };#}}}
+            container 'Directory' => as {#{{{
+                container 'doc' => as {
+                    service 'html'      => join q{/}, $self->root_dir, qw(var doc html);
+                    service 'html_idx'  => join q{/}, $self->root_dir, qw(var doc html idx);
+                }
+            };#}}}
             container 'Log' => as {#{{{
                 service 'log_tz'        => $self->log_tz;
                 service 'log_component' => $self->log_component;
@@ -171,6 +182,10 @@ package MyApp::Model::Container {
 
         return $self;
     }
+    sub _build_db_log_file {#{{{
+        my $self = shift;
+        return $self->root_dir . '/var/log.sqlite';
+    }#}}}
     sub _build_local_tz {#{{{
         my $self = shift;
         return DateTime::TimeZone->new( name => 'local' )->name();
@@ -185,6 +200,10 @@ package MyApp::Model::Container {
 
         return $self->local_tz;
         return 'UTC'
+    }#}}}
+    sub _build_root_dir {#{{{
+        my $self = shift;
+        return "$FindBin::Bin/..";
     }#}}}
 
     no Moose;
