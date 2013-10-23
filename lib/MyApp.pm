@@ -33,7 +33,6 @@ package MyApp {
             wxbb for GUI elements.
         }
     );
-
     has 'db_log_file' => (
         is          => 'rw',
         isa         => 'Str',
@@ -42,7 +41,6 @@ package MyApp {
             SQLite file containing app logs
         }
     );
-
     has 'logs_expire' => (
         is          => 'rw',
         isa         => 'Int',
@@ -52,19 +50,16 @@ package MyApp {
             logging database on app exit.
         }
     );
-
     has 'main_frame' => (
         is          => 'rw',
         isa         => 'MyApp::GUI::MainFrame',
         lazy_build  => 1,
     );
-
     has 'timer' => (
         is          => 'rw',
         isa         => 'Wx::Timer',
         lazy_build  => 1,
     );
-
     has 'wxbb' => (
         is          => 'rw',
         isa         => 'MyApp::Model::WxContainer',
@@ -91,7 +86,8 @@ package MyApp {
 
         ### Log the fact that we've started.
         my $logger = $self->resolve( service => '/Log/logger' );
-        $logger->debug( 'Starting ' . $self->GetAppName() );
+        $logger->component(wxTheApp->GetAppName);
+        $logger->debug( 'Starting ' . wxTheApp->GetAppName() );
 
         $self->main_frame->Show(1);
         $self->_set_events();
@@ -145,23 +141,25 @@ package MyApp {
         my $self    = shift;
         my $message = shift || 'Unknown error occurred';
         my $title   = shift || 'Error!';
-        Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame->frame );
+        #Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame->frame );
+        Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame );
         return;
     }#}}}
     sub popmsg {#{{{
         my $self    = shift;
         my $message = shift || 'Everything is fine';
-        my $title   = shift || $self->GetAppName();
+        my $title   = shift || wxTheApp->GetAppName();
         Wx::MessageBox($message,
                         $title,
                         wxOK | wxICON_INFORMATION,
-                        $self->main_frame->frame );
+                        #$self->main_frame->frame );
+                        $self->main_frame );
         return;
     }#}}}
     sub popconf {#{{{
         my $self    = shift;
         my $message = shift || 'Everything is fine';
-        my $title   = shift || $self->GetAppName;
+        my $title   = shift || wxTheApp->GetAppName;
 
 =pod
 
@@ -206,7 +204,8 @@ Instead, you need something like this...
         my $resp = Wx::MessageBox($message,
                                     $title,
                                     wxYES_NO|wxYES_DEFAULT|wxICON_QUESTION|wxSTAY_ON_TOP,
-                                    $self->main_frame->frame );
+                                    #$self->main_frame->frame );
+                                    $self->main_frame);
         return $resp;
     }#}}}
     sub o_creat_database_log {#{{{
@@ -223,7 +222,7 @@ Instead, you need something like this...
         my $self = shift;
 
         my $logger = $self->resolve( service => '/Log/logger' );
-        $logger->component($self->GetAppName);
+        $logger->component(wxTheApp->GetAppName);
 
         ### Prune old log entries
         my $now   = DateTime->now();
@@ -244,8 +243,8 @@ Instead, you need something like this...
 
         ### These don't need to be set to the same string; doing so here for 
         ### eg.
-        $self->SetAppName( "MyApp" );
-        $self->SetClassName( "MyApp" );
+        wxTheApp->SetAppName( "MyApp" );
+        wxTheApp->SetClassName( "MyApp" );
 
         $self->SetVendorName( "Jonathan D. Barton" );
 

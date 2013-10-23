@@ -1,0 +1,279 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>MyApp::Model::SearchIndex::Help - A SearchIndex with HTML parsing helpers, for 
+local application help documents.</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#schema">SCHEMA</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#constructor___new">CONSTRUCTOR - new</a></li>
+		<li><a href="#get_doc_title">get_doc_title</a></li>
+		<li><a href="#get_doc_summary">get_doc_summary</a></li>
+		<li><a href="#reset">reset</a></li>
+		<li><a href="#slurp">slurp</a></li>
+		<li><a href="#strip">strip</a></li>
+		<li><a href="#xparse">xparse</a></li>
+	</ul>
+
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>MyApp::Model::SearchIndex::Help - A SearchIndex with HTML parsing helpers, for 
+local application help documents.</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+ <span class="variable">$help</span> <span class="operator">=</span> <span class="variable">MyApp::Model::SearchIndex::Help</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">();</span>
+</pre>
+<pre>
+ <span class="comment">### The HTML help file to parse</span>
+ <span class="variable">$file</span> <span class="operator">=</span> <span class="string">"filename.html"</span><span class="operator">;</span>
+</pre>
+<pre>
+ <span class="variable">$html_content</span> <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">slurp</span><span class="operator">(</span> <span class="variable">$file</span> <span class="operator">);</span>
+ <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">xparse</span><span class="operator">(</span><span class="variable">$html_content</span><span class="operator">);</span>
+</pre>
+<pre>
+ <span class="variable">$title</span>       <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">get_doc_title</span><span class="operator">()</span>              <span class="operator">||</span> <span class="string">'No Title'</span><span class="operator">;</span>
+ <span class="variable">$summary</span>     <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">get_doc_summary</span><span class="operator">()</span>            <span class="operator">||</span> <span class="string">'No Summary'</span><span class="operator">;</span>
+ <span class="variable">$raw_content</span> <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">strip</span><span class="operator">(</span><span class="variable">$html_content</span><span class="operator">);</span>
+ <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">reset</span><span class="operator">;</span>
+</pre>
+<p>Add the document to the existing index...</p>
+<pre>
+ <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">add_docs</span><span class="operator">(</span><span class="operator">[</span>
+  <span class="string">filename</span>    <span class="operator">=&gt;</span> <span class="variable">$file</span><span class="operator">,</span>
+  <span class="string">title</span>       <span class="operator">=&gt;</span> <span class="variable">$title</span><span class="operator">,</span>
+  <span class="string">summary</span>     <span class="operator">=&gt;</span> <span class="variable">$summary</span><span class="operator">,</span>
+  <span class="string">content</span>     <span class="operator">=&gt;</span> <span class="variable">$raw_content</span><span class="operator">,</span>
+ <span class="operator">]</span><span class="operator">);</span>
+</pre>
+<p>...or completely overwrite the existing index</p>
+<pre>
+ <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">replace_docs</span><span class="operator">(</span><span class="operator">[</span>
+  <span class="string">filename</span>    <span class="operator">=&gt;</span> <span class="variable">$file</span><span class="operator">,</span>
+  <span class="string">title</span>       <span class="operator">=&gt;</span> <span class="variable">$title</span><span class="operator">,</span>
+  <span class="string">summary</span>     <span class="operator">=&gt;</span> <span class="variable">$summary</span><span class="operator">,</span>
+  <span class="string">content</span>     <span class="operator">=&gt;</span> <span class="variable">$raw_content</span><span class="operator">,</span>
+ <span class="operator">]</span><span class="operator">);</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>MyApp::Model::SearchableIndex::Help extends <a href="/MyApp/Model/SearchableIndex.html">the MyApp::Model::SearchableIndex manpage</a> 
+with the awareness of dealing specifically with the HTML help documents used 
+in this app.</p>
+<p>
+</p>
+<hr />
+<h1><a name="schema">SCHEMA</a></h1>
+<p>MyApp::Model::SearchableIndex::Help creates the following fields in the 
+index's schema:</p>
+<ul>
+<li><strong><a name="filename" class="item">filename</a></strong>
+
+</li>
+<li><strong><a name="title" class="item">title</a></strong>
+
+</li>
+<li><strong><a name="summary" class="item">summary</a></strong>
+
+</li>
+<li><strong><a name="content" class="item">content</a></strong>
+
+</li>
+</ul>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>These are in addition to what's provided by <a href="/MyApp/Model/SearchableIndex.html">the MyApp::Model::SearchableIndex manpage</a>.</p>
+<p>
+</p>
+<h2><a name="constructor___new">CONSTRUCTOR - new</a></h2>
+<ul>
+<li><strong><a name="args" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong><a name="none" class="item">none</a></strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="myapp_model_searchableindex_help_object" class="item">MyApp::Model::SearchableIndex::Help object</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>
+</p>
+<h2><a name="get_doc_title">get_doc_title</a></h2>
+<ul>
+<li><strong><a name="args2" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong>none</strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns2" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_contents_of_the_document_s_h1_tag_undef_if_no_such_tag_is_found" class="item">scalar - Contents of the document's &lt;H1&gt; tag; undef if no such 
+tag is found.</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>Requires that <a href="#xparse">xparse</a> be called first.</p>
+<p>
+</p>
+<h2><a name="get_doc_summary">get_doc_summary</a></h2>
+<ul>
+<li><strong><a name="args3" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong>none</strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns3" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_the_first_n_characters_of_the_document_skipping_the_contents_of_any_header_tags_n_is_defined_by_the_summary_length_attribute_which_defaults_to_120" class="item">scalar - The first N characters of the document, skipping the contents 
+of any header tags.  N is defined by the summary_length attribute, which 
+defaults to 120.</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>Requires that <a href="#xparse">xparse</a> be called first.</p>
+<p>
+</p>
+<h2><a name="reset">reset</a></h2>
+<ul>
+<li><strong><a name="args4" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong>none</strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns4" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="nothing" class="item">nothing</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>Cleans up the state of the helper parsers after finishing with a document, to  
+prepare for parsing the next.</p>
+<p>
+</p>
+<h2><a name="slurp">slurp</a></h2>
+<ul>
+<li><strong><a name="args5" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_name_of_the_file_to_be_slurped" class="item">scalar - Name of the file to be slurped</a></strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns5" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_contents_of_the_file" class="item">scalar - Contents of the file</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>
+</p>
+<h2><a name="strip">strip</a></h2>
+<ul>
+<li><strong><a name="args6" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong>scalar - HTML content (NOT a filename) to be stripped</strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns6" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_the_content_passed_in_with_html_tags_removed" class="item">scalar - The content passed in with HTML tags removed</a></strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>See also <a href="#reset">reset</a>.</p>
+<p>
+</p>
+<h2><a name="xparse">xparse</a></h2>
+<ul>
+<li><strong><a name="args7" class="item">ARGS</a></strong>
+
+<ul>
+<li><strong><a name="scalar_file_to_be_parsed" class="item">scalar - file to be parsed</a></strong>
+
+</li>
+</ul>
+</li>
+<li><strong><a name="returns7" class="item">RETURNS</a></strong>
+
+<ul>
+<li><strong>nothing</strong>
+
+</li>
+</ul>
+</li>
+</ul>
+<p>Must be called before either <a href="#get_doc_title">get_doc_title</a> or <a href="#get_doc_summary">get_doc_summary</a> to build 
+the tree to be parsed.</p>
+<p>See also <a href="#reset">reset</a>.</p>
+
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+
+[%#
+    The HTML capabilities of the Wx::HtmlWindow are pretty stark.
+
+    Stylesheets appear to be out of play, so ol-timey font tags it is.
+-%]
+
+<h1>Results for '[%term%]'</h1>
+
+<ol>
+[% FOREACH hit = hits -%]
+    <li>
+        <a href="[%hit.filename%]">[%hit.title%]</a><br>
+        <font color="#777777" size="2">[%hit.summary%]...</font>
+    </li>
+[% END -%]
+</ol>
+

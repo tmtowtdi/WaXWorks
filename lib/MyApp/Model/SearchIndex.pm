@@ -12,12 +12,13 @@ package MyApp::Model::SearchIndex {
     use Try::Tiny;
 
     subtype 'pc_from_str', as 'Path::Class::Dir';
-    coerce 'pc_from_str', from 'Str', via{ say "-$_-"; return Path::Class::dir($_) };
+    coerce 'pc_from_str', from 'Str', via{ return Path::Class::dir($_) };
 
-    has 'index' => (
+    has 'index_directory' => (
         is          => 'ro',
         isa         => 'pc_from_str',
         coerce      => 1,
+        required    => 1,
         documentation => q{ Must be a directory. },
     );
     has 'fields' => (
@@ -40,7 +41,7 @@ package MyApp::Model::SearchIndex {
         is          => 'ro',
         isa         => 'Lucy::Search::IndexSearcher',
         lazy        => 1,
-        default     => sub{ Lucy::Search::IndexSearcher->new(index => $_[0]->index) },
+        default     => sub{ Lucy::Search::IndexSearcher->new(index => $_[0]->index_directory) },
     );
     has 'schema' => (
         is          => 'ro',
@@ -57,10 +58,10 @@ package MyApp::Model::SearchIndex {
     sub BUILD {
         my $self = shift;
 
-        try { $self->index->resolve }
+        try { $self->index_directory->resolve }
         catch {
-            try{ $self->index->mkpath }
-            catch{ croak "Index $self->index is not a directory and could not be created." }
+            try{ $self->index_directory->mkpath }
+            catch{ croak "Index $self->index_directory is not a directory and could not be created." }
         };
 
         return $self;
@@ -69,6 +70,13 @@ package MyApp::Model::SearchIndex {
     sub _build_schema {#{{{
         my $self = shift;
         return Lucy::Plan::Schema->new();
+    }#}}}
+    sub _set_schema_fields {#{{{
+        my $self = shift;
+        foreach my $f( $self->list_fields ) {
+            $self->schema->spec_field( name => $f, type => $self->text_type );
+        }
+        $self->is_schema_synced(1);
     }#}}}
 
     sub add_docs {#{{{
@@ -86,12 +94,6 @@ package MyApp::Model::SearchIndex {
         }
         $indexer->commit;
     }#}}}
-    sub replace_docs {#{{{
-        my $self = shift;
-        my $docs = shift;
-
-        $self->add_docs( $docs, $self->get_clean_indexer );
-    }#}}}
     sub add_field {#{{{
         my $self = shift;
         my $field = shift;
@@ -107,20 +109,20 @@ package MyApp::Model::SearchIndex {
     }#}}}
     sub get_clean_indexer {#{{{
         my $self = shift;
-        $self->set_schema_fields unless $self->is_schema_synced;
+        $self->_set_schema_fields unless $self->is_schema_synced;
         my $indexer = Lucy::Index::Indexer->new(
             schema => $self->schema,  
-            index  => $self->index,
+            index  => $self->index_directory,
             create => 1,
             truncate => 1,
         );
     }#}}}
     sub get_indexer {#{{{
         my $self = shift;
-        $self->set_schema_fields unless $self->is_schema_synced;
+        $self->_set_schema_fields unless $self->is_schema_synced;
         my $indexer = Lucy::Index::Indexer->new(
             schema => $self->schema,  
-            index  => $self->index,
+            index  => $self->index_directory,
             create => 1,
         );
     }#}}}
@@ -128,12 +130,10 @@ package MyApp::Model::SearchIndex {
         my $self = shift;
         return keys %{ $self->fields };
     }#}}}
-    sub set_schema_fields {#{{{
+    sub replace_docs {#{{{
         my $self = shift;
-        foreach my $f( $self->list_fields ) {
-            $self->schema->spec_field( name => $f, type => $self->text_type );
-        }
-        $self->is_schema_synced(1);
+        my $docs = shift;
+        $self->add_docs( $docs, $self->get_clean_indexer );
     }#}}}
 
     no Moose;
@@ -151,7 +151,9 @@ MyApp::Model::SearchIndex - A searchable document index
 =head1 SYNOPSIS
 
  ### Directory will be created if it does not already exist.
- $idx = MyApp::Model::SearchIndex->new( index => '/path/to/index/directory' ); 
+ $idx = MyApp::Model::SearchIndex->new(
+  index_directory => '/path/to/index/directory'
+ ); 
 
  $idx->add_field('summary');
  $idx->delete_field('title');
@@ -187,4 +189,216 @@ The index now contains only one document.
     say $h->{'summary'};    # 'This is a...',
     say $h->{'content'};    # 'This is a brand new document content to overwrite the previous.',
  }
+
+=head1 DESCRIPTION
+
+Creates and searches a L<Lucy> document index, and is used by the included 
+Help browser.  SearchIndex can also be useful to other parts of your final app 
+if you have need of another searchable document index.
+
+=head1 METHODS
+
+=head2 CONSTRUCTOR - new
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * hash
+
+=over 12
+
+=item * C<index_directory =E<gt> '/path/to/directory'>
+
+=back
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * MyApp::Model::SearchableIndex object
+
+=back
+
+=back
+
+The C<index_directory> will be created if it does not already exist, and will 
+contain the document index.
+
+=head2 add_docs
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * arrayref - of files to be I<added to the existing index>
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=back
+
+See also L</replace_docs>.
+
+=head2 add_field
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * scalar - name of the field to add
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=back
+
+Adds a field to the schema.
+
+=head2 delete_field
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * scalar - field to be deleted
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=back
+
+Removes a field from the schema
+
+=head2 get_clean_indexer
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * Lucy::Index::Indexer object
+
+=back
+
+=back
+
+Returns a L<Lucy::Index::Indexer> object I<pointing to a clean index>.  This 
+means that the document index (pointed to by L</index_directory>) will be 
+I<completely cleared of all of its content>!
+
+So only use this when you're about to fully re-create your index.  See 
+L</get_indexer> to non-destructively get an indexer.
+
+=head2 get_indexer
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item *
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * Lucy::Index::Indexer object
+
+=back
+
+=back
+
+Returns a L<Lucy::Index::Indexer> object.  Points to the existing 
+L</index_directory> without cleaning it out first.
+
+=head2 list_fields
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * list - Names of the fields that have so far been added to the schema.
+
+=back
+
+=back
+
+=head2 replace_docs
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * arrayref - files to be I<inserted into a new, clean index, destroying 
+any already-existing documents>
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * nothing
+
+=back
+
+=back
+
+See also L</add_docs>
 

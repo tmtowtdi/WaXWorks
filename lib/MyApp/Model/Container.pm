@@ -40,12 +40,12 @@ package MyApp::Model::Container {
     has 'log_tz' => (
         is          => 'rw', 
         isa         => 'Str', 
-        lazy_build  => 1,
+        lazy        => 1,
+        default     => sub{ $_[0]->local_tz },
+        #default    => 'UTC';
         documentation => q{
-            The TZ that gets used for log entries; either your local TZ or 'UTC'.
-            ***
-            You must manually edit "_build_log_tz" to be sure it's doing what you want.
-            ***
+            The TZ that gets used for log entries; choose the default that 
+            makes you happy.
         }
     );
     has 'log_component' => (
@@ -189,17 +189,6 @@ package MyApp::Model::Container {
     sub _build_local_tz {#{{{
         my $self = shift;
         return DateTime::TimeZone->new( name => 'local' )->name();
-    }#}}}
-    sub _build_log_tz {#{{{
-        my $self = shift;
-
-        ### Up to you depending on your needs.  You'll usually want log 
-        ### entries reporting the local TZ, but occasionally you'll want UTC 
-        ### instead.  Pick the return below that makes sense and delete the 
-        ### other.
-
-        return $self->local_tz;
-        return 'UTC'
     }#}}}
     sub _build_root_dir {#{{{
         my $self = shift;

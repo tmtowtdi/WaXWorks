@@ -1,0 +1,931 @@
+lib\MyApp\GUI\Dialog\Copy of Help.pm:77:        default     => sub{ MyApp::Model::SearchIndex::Help->new() },
+lib\MyApp\GUI\Dialog\Copy of Help.pm:96:        default => sub{ Wx::Size->new( 500, 600 ) },
+lib\MyApp\GUI\Dialog\Copy of Help.pm:123:            undef, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:126:            Wx::Size->new(600, 700),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:133:        $self->Show(0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:135:#        $self->make_search_index;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:138:        $self->make_navbar();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:139:        $self->szr_navbar->SetMinSize( $self->GetClientSize->width, -1 ); 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:142:        $self->szr_html->Add($self->html_window, 1, wxEXPAND, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:143:        $self->szr_html->SetMinSize(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:144:            $self->get_html_width, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:145:            $self->get_html_height,
+lib\MyApp\GUI\Dialog\Copy of Help.pm:149:        $self->szr_main->AddSpacer(5);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:150:        $self->szr_main->Add($self->szr_navbar, 0, wxEXPAND|wxLEFT|wxRIGHT, $self->border_size);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:151:        $self->szr_main->AddSpacer(5);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:152:        $self->szr_main->Add($self->szr_html, 1, wxEXPAND|wxALL, $self->border_size);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:155:        unless( $self->load_html_file($self->index_file) ) {
+lib\MyApp\GUI\Dialog\Copy of Help.pm:156:            $self->poperr("GONG!  Unable to load help files!", "GONG!");
+lib\MyApp\GUI\Dialog\Copy of Help.pm:157:            $self->Destroy;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:161:        $self->SetTitle( $self->title );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:162:        $self->SetSizer( $self->szr_main );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:163:        $self->Layout();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:164:        $self->_set_events();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:165:        $self->Show(1);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:172:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/home.png');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:174:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Copy of Help.pm:175:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:176:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:177:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:180:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:187:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-left.png');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:191:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:192:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:193:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:194:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:197:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:204:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-right.png');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:205:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Copy of Help.pm:206:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:207:        return Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:208:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:211:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:217:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/search.png');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:218:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Copy of Help.pm:219:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:220:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:221:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:224:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:231:        return [$self->index_file];
+lib\MyApp\GUI\Dialog\Copy of Help.pm:239:        my $v = Wx::HtmlWindow->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:240:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:243:            #Wx::Size->new($self->get_html_width, $self->get_html_height),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:251:        return Wx::Size->new( 500, 600 );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:255:        my $v = $self->build_sizer($self, wxVERTICAL, 'Main Sizer');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:260:        my $v = $self->build_sizer($self, wxVERTICAL, 'Help');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:265:        my $v = $self->build_sizer($self, wxHORIZONTAL, 'Nav bar');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:270:        my $tt = Template->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:271:            INCLUDE_PATH => $self->html_dir,
+lib\MyApp\GUI\Dialog\Copy of Help.pm:273:            OUTPUT_PATH => $self->html_dir,
+lib\MyApp\GUI\Dialog\Copy of Help.pm:280:        my $v = Wx::TextCtrl->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:281:            $self, -1, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:284:            Wx::Size->new($self->search_box_w, $self->search_box_h),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:287:        $v->SetToolTip("Type search terms and hit <enter> or click the search button");
+lib\MyApp\GUI\Dialog\Copy of Help.pm:292:        EVT_CLOSE(              $self,                              sub{$self->OnClose(@_)}         );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:293:        EVT_BUTTON(             $self,  $self->bmp_home->GetId,     sub{$self->OnHomeNav(@_)}       );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:294:        EVT_BUTTON(             $self,  $self->bmp_left->GetId,     sub{$self->OnLeftNav(@_)}       );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:295:        EVT_BUTTON(             $self,  $self->bmp_right->GetId,    sub{$self->OnRightNav(@_)}      );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:296:        EVT_BUTTON(             $self,  $self->bmp_search->GetId,   sub{$self->OnSearchNav(@_)}     );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:297:        EVT_HTML_LINK_CLICKED(  $self,  $self->html_window->GetId,  sub{$self->OnLinkClicked(@_)}   );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:298:        EVT_SIZE(               $self,                              sub{$self->OnResize(@_)}        );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:299:        EVT_TEXT_ENTER(         $self,  $self->txt_search->GetId,   sub{$self->OnSearchNav(@_)}     );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:314:        my $kandi   = HTML::Strip->new();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:316:        my $dir     = wxTheApp->resolve(service => '/Directory/doc/html');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:320:            my $content = $kandi->parse( $html );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:321:            $kandi->eof;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:327:            my $x = HTML::TreeBuilder::XPath->new();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:328:            $x->parse("<html><body>$html</body></html>");
+lib\MyApp\GUI\Dialog\Copy of Help.pm:329:            my $title   = $x->findvalue('/html/body/h1') || 'No Title';
+lib\MyApp\GUI\Dialog\Copy of Help.pm:330:            my $summary = $self->get_doc_summary($x) || 'No Summary';
+lib\MyApp\GUI\Dialog\Copy of Help.pm:332:            $docs->{$f} = {
+lib\MyApp\GUI\Dialog\Copy of Help.pm:344:        my @nodeset = $xpath->findnodes('/html/body/*');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:348:            next if $n->getName =~ /^h/i;   # skip headers
+lib\MyApp\GUI\Dialog\Copy of Help.pm:349:            $summary .= $self->clean_text($n->getValue);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:350:            last NODE if length $summary > $self->summary_length;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:356:        return $self->GetClientSize->width;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:361:            $self->GetClientSize->height
+lib\MyApp\GUI\Dialog\Copy of Help.pm:362:                - $self->bmp_left->GetSize->height, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:369:        my $fqfn = join q{/}, ($self->html_dir, $file);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:370:        unless(-e $fqfn) {
+lib\MyApp\GUI\Dialog\Copy of Help.pm:371:            $self->poperr("$fqfn: No such file or directory");
+lib\MyApp\GUI\Dialog\Copy of Help.pm:376:            #bin_dir     => File::Spec->rel2abs(wxTheApp->resolve(service => '/Directory/bin')),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:377:            dir_sep     => File::Util->SL,
+lib\MyApp\GUI\Dialog\Copy of Help.pm:378:            html_dir    => File::Spec->rel2abs($self->html_dir),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:379:            #user_dir    => File::Spec->rel2abs($self->bb->resolve(service => '/Directory/user')),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:380:            #lucy_index  => File::Spec->rel2abs($self->bb->resolve(service => '/Lucy/index')),
+lib\MyApp\GUI\Dialog\Copy of Help.pm:384:        $self->tt->process($file, $vars, \$output);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:385:        $self->html_window->SetPage($output);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:391:        my $idx = $self->bb->resolve(service => '/Lucy/index');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:392:        return if -e $idx;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:393:        my $docs = $self->get_docs;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:396:        my $schema = Lucy::Plan::Schema->new;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:397:        my $polyanalyzer = Lucy::Analysis::PolyAnalyzer->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:400:        my $type = Lucy::Plan::FullTextType->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:403:        $schema->spec_field( name => 'content',     type => $type );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:404:        $schema->spec_field( name => 'filename',    type => $type );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:405:        $schema->spec_field( name => 'summary',     type => $type );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:406:        $schema->spec_field( name => 'title',       type => $type );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:409:        my $indexer = Lucy::Index::Indexer->new(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:418:            $indexer->add_doc({
+lib\MyApp\GUI\Dialog\Copy of Help.pm:420:                content     => $hr->{'content'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:421:                summary     => $hr->{'summary'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:422:                title       => $hr->{'title'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:425:        $indexer->commit;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:431:        $self->clear_szr_navbar;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:432:        $self->szr_navbar->Add($self->bmp_left, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:433:        $self->szr_navbar->Add($self->bmp_right, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:434:        $self->szr_navbar->Add($self->home_spacer_w, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:435:        $self->szr_navbar->Add($self->bmp_home, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:436:        $self->szr_navbar->AddStretchSpacer(1);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:445:        $self->szr_navbar->Add(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:446:            $self->txt_search, 0, wxTOP, 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:447:            ($self->bmp_search->GetSize->height - $self->search_box_h - 1)
+lib\MyApp\GUI\Dialog\Copy of Help.pm:450:        $self->szr_navbar->Add($self->bmp_search, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:452:        $self->txt_search->SetFocus;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:458:        my $spacer_width = $self->GetClientSize->width;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:459:        $spacer_width -= $self->nav_img_w * 4;  # left, right, home, search buttons
+lib\MyApp\GUI\Dialog\Copy of Help.pm:460:        $spacer_width -= $self->home_spacer_w;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:461:        $spacer_width -= $self->search_box_w;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:462:        $spacer_width -= 10;                    # right margin
+lib\MyApp\GUI\Dialog\Copy of Help.pm:470:        $self->clear_szr_navbar;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:471:        $self->szr_navbar->Add($self->bmp_left, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:472:        $self->szr_navbar->Add($self->bmp_right, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:473:        $self->szr_navbar->Add($self->home_spacer_w, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:474:        $self->szr_navbar->Add($self->bmp_home, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:475:        $self->szr_navbar->Add($spacer_width, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:476:        $self->szr_navbar->Add($self->txt_search, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:477:        $self->szr_navbar->Add($self->bmp_search, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:479:        $self->txt_search->SetFocus;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:487:        $self->Destroy;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:488:        $event->Skip();
+lib\MyApp\GUI\Dialog\Copy of Help.pm:496:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:497:        $self->history->[ $self->history_idx ] = $self->index_file;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:498:        $self->prev_click_href( $self->index_file );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:499:        $self->load_html_file( $self->index_file );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:507:        return if $self->history_idx == 0;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:509:        my $page = $self->history->[ $self->history_idx - 1 ];
+lib\MyApp\GUI\Dialog\Copy of Help.pm:510:        $self->history_idx( $self->history_idx - 1 );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:511:        $self->prev_click_href( $page );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:512:        $self->load_html_file( $page );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:520:        my $info = $event->GetLinkInfo;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:521:        if( $info->GetHref =~ /^http/ ) {# Deal with real URLs {{{
+lib\MyApp\GUI\Dialog\Copy of Help.pm:523:            ###     - retval == undef --> no open cmd found
+lib\MyApp\GUI\Dialog\Copy of Help.pm:524:            ###     - retval != 0     --> open cmd found but error encountered
+lib\MyApp\GUI\Dialog\Copy of Help.pm:526:            my $ok = Browser::Open::open_browser($info->GetHref);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:529:                $self->poperr(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:530:                    "App encountered an error while attempting to open the URL in your web browser.  The URL you were attempting to reach was '" . $info->GetHref . q{'.},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:535:                $self->poperr(
+lib\MyApp\GUI\Dialog\Copy of Help.pm:536:                    "App was unable to open the URL in your web browser.  The URL you were attempting to reach was '" . $info->GetHref . q{'.},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:545:        if( $self->prev_click_href eq $info->GetHref ) {
+lib\MyApp\GUI\Dialog\Copy of Help.pm:548:        $self->prev_click_href( $info->GetHref );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:551:        ### link, we need to diverge to an alternate timeline - truncate the 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:553:        $#{$self->history} = $self->history_idx;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:555:        push @{$self->history}, $info->GetHref;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:556:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:557:        $self->load_html_file($info->GetHref);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:563:        $self->szr_navbar->SetMinSize( $self->GetClientSize->width, -1 ); 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:564:        $self->szr_html->SetMinSize  ( $self->get_html_width, $self->get_html_height ); 
+lib\MyApp\GUI\Dialog\Copy of Help.pm:569:        $self->Layout;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:571:        #$self->html_window->SetSize( Wx::Size->new($self->get_html_width, $self->get_html_height) );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:579:        return if $self->history_idx == $#{$self->history};
+lib\MyApp\GUI\Dialog\Copy of Help.pm:581:        my $page = $self->history->[ $self->history_idx + 1];
+lib\MyApp\GUI\Dialog\Copy of Help.pm:582:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:583:        $self->prev_click_href( $page );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:584:        $self->load_html_file( $page );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:592:        my $term = $self->txt_search->GetValue;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:594:            $self->popmsg("Searching for nothing isn't going to return many results.");
+lib\MyApp\GUI\Dialog\Copy of Help.pm:600:        my $searcher = $self->bb->resolve(service => '/Lucy/searcher');
+lib\MyApp\GUI\Dialog\Copy of Help.pm:601:        my $hits = $searcher->hits( query => $term );
+lib\MyApp\GUI\Dialog\Copy of Help.pm:605:        while ( my $hit = $hits->next ) {
+lib\MyApp\GUI\Dialog\Copy of Help.pm:607:                content     => $hit->{'content'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:608:                filename    => $hit->{'filename'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:609:                summary     => $hit->{'summary'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:610:                title       => $hit->{'title'},
+lib\MyApp\GUI\Dialog\Copy of Help.pm:612:            push @{$vars->{'hits'}}, $hr;
+lib\MyApp\GUI\Dialog\Copy of Help.pm:616:        $self->tt->process('hitlist.tmpl', $vars, \$output);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:617:        $self->html_window->SetPage($output);
+lib\MyApp\GUI\Dialog\Copy of Help.pm:622:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\GUI\Dialog\Help.pm:59:        default     => sub{ MyApp::Model::SearchIndex::Help->new() },
+lib\MyApp\GUI\Dialog\Help.pm:67:        default     => sub{[$_[0]->index_file]},
+lib\MyApp\GUI\Dialog\Help.pm:94:        default => sub{ Wx::Size->new( 500, 600 ) },
+lib\MyApp\GUI\Dialog\Help.pm:121:            undef, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:124:            Wx::Size->new(600, 700),
+lib\MyApp\GUI\Dialog\Help.pm:131:        $self->Show(0);
+lib\MyApp\GUI\Dialog\Help.pm:134:        $self->make_navbar();
+lib\MyApp\GUI\Dialog\Help.pm:135:        $self->szr_navbar->SetMinSize( $self->GetClientSize->width, -1 ); 
+lib\MyApp\GUI\Dialog\Help.pm:138:        $self->szr_html->Add($self->html_window, 1, wxEXPAND, 0);
+lib\MyApp\GUI\Dialog\Help.pm:139:        $self->szr_html->SetMinSize(
+lib\MyApp\GUI\Dialog\Help.pm:140:            $self->get_html_width, 
+lib\MyApp\GUI\Dialog\Help.pm:141:            $self->get_html_height,
+lib\MyApp\GUI\Dialog\Help.pm:145:        $self->szr_main->AddSpacer(5);
+lib\MyApp\GUI\Dialog\Help.pm:146:        $self->szr_main->Add($self->szr_navbar, 0, wxEXPAND|wxLEFT|wxRIGHT, $self->border_size);
+lib\MyApp\GUI\Dialog\Help.pm:147:        $self->szr_main->AddSpacer(5);
+lib\MyApp\GUI\Dialog\Help.pm:148:        $self->szr_main->Add($self->szr_html, 1, wxEXPAND|wxALL, $self->border_size);
+lib\MyApp\GUI\Dialog\Help.pm:151:        unless( $self->load_html_file($self->index_file) ) {
+lib\MyApp\GUI\Dialog\Help.pm:152:            wxTheApp->poperr("GONG!  Unable to load help files!", "GONG!");
+lib\MyApp\GUI\Dialog\Help.pm:153:            $self->Destroy;
+lib\MyApp\GUI\Dialog\Help.pm:157:        $self->SetTitle( $self->title );
+lib\MyApp\GUI\Dialog\Help.pm:158:        $self->SetSizer( $self->szr_main );
+lib\MyApp\GUI\Dialog\Help.pm:159:        $self->Layout();
+lib\MyApp\GUI\Dialog\Help.pm:160:        $self->_set_events();
+lib\MyApp\GUI\Dialog\Help.pm:161:        $self->Show(1);
+lib\MyApp\GUI\Dialog\Help.pm:168:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/home.png');
+lib\MyApp\GUI\Dialog\Help.pm:170:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Help.pm:171:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Help.pm:172:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Help.pm:173:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:176:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Help.pm:183:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-left.png');
+lib\MyApp\GUI\Dialog\Help.pm:187:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);
+lib\MyApp\GUI\Dialog\Help.pm:188:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Help.pm:189:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Help.pm:190:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:193:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Help.pm:200:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-right.png');
+lib\MyApp\GUI\Dialog\Help.pm:201:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Help.pm:202:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Help.pm:203:        return Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Help.pm:204:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:207:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Help.pm:213:        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/search.png');
+lib\MyApp\GUI\Dialog\Help.pm:214:        $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
+lib\MyApp\GUI\Dialog\Help.pm:215:        my $bmp = Wx::Bitmap->new($img);
+lib\MyApp\GUI\Dialog\Help.pm:216:        my $v = Wx::BitmapButton->new(
+lib\MyApp\GUI\Dialog\Help.pm:217:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:220:            Wx::Size->new($self->nav_img_w, $self->nav_img_h),
+lib\MyApp\GUI\Dialog\Help.pm:228:        my $v = Wx::HtmlWindow->new(
+lib\MyApp\GUI\Dialog\Help.pm:229:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:232:            #Wx::Size->new($self->get_html_width, $self->get_html_height),
+lib\MyApp\GUI\Dialog\Help.pm:240:        my $v = $self->build_sizer($self, wxVERTICAL, 'Help');
+lib\MyApp\GUI\Dialog\Help.pm:245:        my $v = $self->build_sizer($self, wxVERTICAL, 'Main Sizer');
+lib\MyApp\GUI\Dialog\Help.pm:250:        my $v = $self->build_sizer($self, wxHORIZONTAL, 'Nav bar');
+lib\MyApp\GUI\Dialog\Help.pm:255:        my $tt = Template->new(
+lib\MyApp\GUI\Dialog\Help.pm:257:            INCLUDE_PATH    => $self->html_dir,
+lib\MyApp\GUI\Dialog\Help.pm:259:            OUTPUT_PATH     => $self->html_dir,
+lib\MyApp\GUI\Dialog\Help.pm:267:            dir_sep     => File::Util->SL,
+lib\MyApp\GUI\Dialog\Help.pm:268:            html_dir    => File::Spec->rel2abs($self->html_dir),
+lib\MyApp\GUI\Dialog\Help.pm:273:        my $v = Wx::TextCtrl->new(
+lib\MyApp\GUI\Dialog\Help.pm:274:            $self, -1, 
+lib\MyApp\GUI\Dialog\Help.pm:277:            Wx::Size->new($self->search_box_w, $self->search_box_h),
+lib\MyApp\GUI\Dialog\Help.pm:280:        $v->SetToolTip("Type search terms and hit <enter> or click the search button");
+lib\MyApp\GUI\Dialog\Help.pm:285:        EVT_CLOSE(              $self,                              sub{$self->OnClose(@_)}         );
+lib\MyApp\GUI\Dialog\Help.pm:286:        EVT_BUTTON(             $self,  $self->bmp_home->GetId,     sub{$self->OnHomeNav(@_)}       );
+lib\MyApp\GUI\Dialog\Help.pm:287:        EVT_BUTTON(             $self,  $self->bmp_left->GetId,     sub{$self->OnLeftNav(@_)}       );
+lib\MyApp\GUI\Dialog\Help.pm:288:        EVT_BUTTON(             $self,  $self->bmp_right->GetId,    sub{$self->OnRightNav(@_)}      );
+lib\MyApp\GUI\Dialog\Help.pm:289:        EVT_BUTTON(             $self,  $self->bmp_search->GetId,   sub{$self->OnSearchNav(@_)}     );
+lib\MyApp\GUI\Dialog\Help.pm:290:        EVT_HTML_LINK_CLICKED(  $self,  $self->html_window->GetId,  sub{$self->OnLinkClicked(@_)}   );
+lib\MyApp\GUI\Dialog\Help.pm:291:        EVT_SIZE(               $self,                              sub{$self->OnResize(@_)}        );
+lib\MyApp\GUI\Dialog\Help.pm:292:        EVT_TEXT_ENTER(         $self,  $self->txt_search->GetId,   sub{$self->OnSearchNav(@_)}     );
+lib\MyApp\GUI\Dialog\Help.pm:307:        my $kandi   = HTML::Strip->new();
+lib\MyApp\GUI\Dialog\Help.pm:309:        my $dir     = wxTheApp->resolve(service => '/Directory/doc/html');
+lib\MyApp\GUI\Dialog\Help.pm:313:            my $content = $kandi->parse( $html );
+lib\MyApp\GUI\Dialog\Help.pm:314:            $kandi->eof;
+lib\MyApp\GUI\Dialog\Help.pm:320:            my $x = HTML::TreeBuilder::XPath->new();
+lib\MyApp\GUI\Dialog\Help.pm:321:            $x->parse("<html><body>$html</body></html>");
+lib\MyApp\GUI\Dialog\Help.pm:322:            my $title   = $x->findvalue('/html/body/h1') || 'No Title';
+lib\MyApp\GUI\Dialog\Help.pm:323:            my $summary = $self->get_doc_summary($x) || 'No Summary';
+lib\MyApp\GUI\Dialog\Help.pm:325:            $docs->{$f} = {
+lib\MyApp\GUI\Dialog\Help.pm:337:        my @nodeset = $xpath->findnodes('/html/body/*');
+lib\MyApp\GUI\Dialog\Help.pm:341:            next if $n->getName =~ /^h/i;   # skip headers
+lib\MyApp\GUI\Dialog\Help.pm:342:            $summary .= $self->clean_text($n->getValue);
+lib\MyApp\GUI\Dialog\Help.pm:343:            last NODE if length $summary > $self->summary_length;
+lib\MyApp\GUI\Dialog\Help.pm:349:        return $self->GetClientSize->width;
+lib\MyApp\GUI\Dialog\Help.pm:354:            $self->GetClientSize->height
+lib\MyApp\GUI\Dialog\Help.pm:355:                - $self->bmp_left->GetSize->height, 
+lib\MyApp\GUI\Dialog\Help.pm:364:        my $dir  = quotemeta $self->html_dir;
+lib\MyApp\GUI\Dialog\Help.pm:365:        my $fqfn = ( $file =~ m/^$dir/ ) ? $file : join q{/}, ($self->html_dir, $file);
+lib\MyApp\GUI\Dialog\Help.pm:366:        unless(-e $fqfn) {
+lib\MyApp\GUI\Dialog\Help.pm:367:            wxTheApp->poperr("$fqfn: No such file or directory");
+lib\MyApp\GUI\Dialog\Help.pm:372:        $self->tt->process($file, $self->tmpl_vars, \$output);
+lib\MyApp\GUI\Dialog\Help.pm:373:        $self->html_window->SetPage($output);
+lib\MyApp\GUI\Dialog\Help.pm:379:        $self->clear_szr_navbar;
+lib\MyApp\GUI\Dialog\Help.pm:380:        $self->szr_navbar->Add($self->bmp_left, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Help.pm:381:        $self->szr_navbar->Add($self->bmp_right, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Help.pm:382:        $self->szr_navbar->Add($self->home_spacer_w, 0, 0);
+lib\MyApp\GUI\Dialog\Help.pm:383:        $self->szr_navbar->Add($self->bmp_home, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Help.pm:384:        $self->szr_navbar->AddStretchSpacer(1);
+lib\MyApp\GUI\Dialog\Help.pm:393:        $self->szr_navbar->Add(
+lib\MyApp\GUI\Dialog\Help.pm:394:            $self->txt_search, 0, wxTOP, 
+lib\MyApp\GUI\Dialog\Help.pm:395:            ($self->bmp_search->GetSize->height - $self->search_box_h - 1)
+lib\MyApp\GUI\Dialog\Help.pm:398:        $self->szr_navbar->Add($self->bmp_search, 0, 0, 0);
+lib\MyApp\GUI\Dialog\Help.pm:400:        $self->txt_search->SetFocus;
+lib\MyApp\GUI\Dialog\Help.pm:408:        $self->Destroy;
+lib\MyApp\GUI\Dialog\Help.pm:409:        $event->Skip();
+lib\MyApp\GUI\Dialog\Help.pm:417:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Help.pm:418:        $self->history->[ $self->history_idx ] = $self->index_file;
+lib\MyApp\GUI\Dialog\Help.pm:419:        $self->prev_click_href( $self->index_file );
+lib\MyApp\GUI\Dialog\Help.pm:420:        $self->load_html_file( $self->index_file );
+lib\MyApp\GUI\Dialog\Help.pm:428:        return if $self->history_idx == 0;
+lib\MyApp\GUI\Dialog\Help.pm:430:        my $page = $self->history->[ $self->history_idx - 1 ];
+lib\MyApp\GUI\Dialog\Help.pm:431:        $self->history_idx( $self->history_idx - 1 );
+lib\MyApp\GUI\Dialog\Help.pm:432:        $self->prev_click_href( $page );
+lib\MyApp\GUI\Dialog\Help.pm:433:        $self->load_html_file( $page );
+lib\MyApp\GUI\Dialog\Help.pm:441:        my $info = $event->GetLinkInfo;
+lib\MyApp\GUI\Dialog\Help.pm:443:        if( $info->GetHref =~ /^http/ ) {# Deal with real URLs {{{
+lib\MyApp\GUI\Dialog\Help.pm:445:            ###     - retval == undef --> no open cmd found
+lib\MyApp\GUI\Dialog\Help.pm:446:            ###     - retval != 0     --> open cmd found but error encountered
+lib\MyApp\GUI\Dialog\Help.pm:448:            my $ok = Browser::Open::open_browser($info->GetHref);
+lib\MyApp\GUI\Dialog\Help.pm:451:                wxTheApp->poperr(
+lib\MyApp\GUI\Dialog\Help.pm:452:                    "App encountered an error while attempting to open the URL in your web browser.  The URL you were attempting to reach was '" . $info->GetHref . q{'.},
+lib\MyApp\GUI\Dialog\Help.pm:457:                wxTheApp->poperr(
+lib\MyApp\GUI\Dialog\Help.pm:458:                    "App was unable to open the URL in your web browser.  The URL you were attempting to reach was '" . $info->GetHref . q{'.},
+lib\MyApp\GUI\Dialog\Help.pm:467:        if( $self->prev_click_href eq $info->GetHref ) {
+lib\MyApp\GUI\Dialog\Help.pm:470:        $self->prev_click_href( $info->GetHref );
+lib\MyApp\GUI\Dialog\Help.pm:473:        ### link, we need to diverge to an alternate timeline - truncate the 
+lib\MyApp\GUI\Dialog\Help.pm:475:        $#{$self->history} = $self->history_idx;
+lib\MyApp\GUI\Dialog\Help.pm:477:        push @{$self->history}, $info->GetHref;
+lib\MyApp\GUI\Dialog\Help.pm:478:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Help.pm:479:        $self->load_html_file($info->GetHref);
+lib\MyApp\GUI\Dialog\Help.pm:485:        $self->szr_navbar->SetMinSize( $self->GetClientSize->width, -1 ); 
+lib\MyApp\GUI\Dialog\Help.pm:486:        $self->szr_html->SetMinSize  ( $self->get_html_width, $self->get_html_height ); 
+lib\MyApp\GUI\Dialog\Help.pm:491:        $self->Layout;
+lib\MyApp\GUI\Dialog\Help.pm:493:        #$self->html_window->SetSize( Wx::Size->new($self->get_html_width, $self->get_html_height) );
+lib\MyApp\GUI\Dialog\Help.pm:501:        return if $self->history_idx == $#{$self->history};
+lib\MyApp\GUI\Dialog\Help.pm:503:        my $page = $self->history->[ $self->history_idx + 1];
+lib\MyApp\GUI\Dialog\Help.pm:504:        $self->history_idx( $self->history_idx + 1 );
+lib\MyApp\GUI\Dialog\Help.pm:505:        $self->prev_click_href( $page );
+lib\MyApp\GUI\Dialog\Help.pm:506:        $self->load_html_file( $page );
+lib\MyApp\GUI\Dialog\Help.pm:514:        my $term = $self->txt_search->GetValue;
+lib\MyApp\GUI\Dialog\Help.pm:516:            wxTheApp->popmsg("Searching for nothing isn't going to return many results.");
+lib\MyApp\GUI\Dialog\Help.pm:522:        my $hits = $self->help_idx->searcher->hits( query => $term );
+lib\MyApp\GUI\Dialog\Help.pm:526:        while ( my $hit = $hits->next ) {
+lib\MyApp\GUI\Dialog\Help.pm:528:                content     => $hit->{'content'},
+lib\MyApp\GUI\Dialog\Help.pm:529:                filename    => $hit->{'filename'},
+lib\MyApp\GUI\Dialog\Help.pm:530:                summary     => $hit->{'summary'},
+lib\MyApp\GUI\Dialog\Help.pm:531:                title       => $hit->{'title'},
+lib\MyApp\GUI\Dialog\Help.pm:533:            push @{$vars->{'hits'}}, $hr;
+lib\MyApp\GUI\Dialog\Help.pm:537:        $self->tt->process('tmpl/hitlist.tmpl', $vars, \$output);
+lib\MyApp\GUI\Dialog\Help.pm:538:        $self->html_window->SetPage($output);
+lib\MyApp\GUI\Dialog\Help.pm:543:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\GUI\Dialog\Help.pm:550:MyApp::GUI::Dialog::Help - Dialog for navigating, searching, and displaying 
+lib\MyApp\GUI\Dialog\Help.pm:551:app-specific help files.
+lib\MyApp\GUI\Dialog\Help.pm:555: $dialog = MyApp::GUI::Dialog::Help->new();
+lib\MyApp\GUI\Dialog\Help.pm:562:simply re-navigating to your changed document (the Help browser does not have 
+lib\MyApp\GUI\Dialog\Help.pm:564:existence might confuse the end-user).
+lib\MyApp\GUI\Dialog\Help.pm:568:and re-open the help browser; it's not necessary to restart the entire app.
+lib\MyApp\GUI\Dialog\Help.pm:582:The help browser itself is pretty rudimentary, HTML-wise, and has no concept 
+lib\MyApp\GUI\Dialog\LogViewer.pm:27:        default => sub{ Wx::Point->new(10,10) },
+lib\MyApp\GUI\Dialog\LogViewer.pm:35:        default => sub{ Wx::Size->new(650,700) },
+lib\MyApp\GUI\Dialog\LogViewer.pm:56:            per-component, so each time a new radio button is chosen.
+lib\MyApp\GUI\Dialog\LogViewer.pm:83:            All records for the currently-selected component.  Changes when the 
+lib\MyApp\GUI\Dialog\LogViewer.pm:117:        my $pos = $args{'position'} // Wx::Point->new(10,10);
+lib\MyApp\GUI\Dialog\LogViewer.pm:120:            undef, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:130:        $self->Show(0);
+lib\MyApp\GUI\Dialog\LogViewer.pm:131:        $self->SetTitle( $self->title );
+lib\MyApp\GUI\Dialog\LogViewer.pm:132:        $self->SetSize( $self->size );
+lib\MyApp\GUI\Dialog\LogViewer.pm:134:        $self->szr_component->Add($self->lbl_component,    0, wxLEFT|wxTOP, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:135:        $self->szr_component->Add($self->choice_component, 0, wxLEFT|wxTOP, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:137:        $self->szr_log->Add($self->list_log, 1, wxEXPAND|wxLEFT|wxRIGHT|wxTOP, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:139:        $self->szr_pagination->Add($self->btn_prev, 0, wxLEFT|wxTOP|wxBOTTOM, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:140:        $self->szr_pagination->AddStretchSpacer(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:141:        $self->szr_pagination->Add($self->lbl_page, 0, wxTOP, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:142:        $self->szr_pagination->AddStretchSpacer(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:143:        $self->szr_pagination->Add($self->btn_next, 0, wxRIGHT|wxTOP|wxBOTTOM, $self->border_size);
+lib\MyApp\GUI\Dialog\LogViewer.pm:144:        $self->szr_pagination->SetMinSize( $self->GetClientSize->width, -1 );
+lib\MyApp\GUI\Dialog\LogViewer.pm:146:        $self->szr_main->Add($self->szr_component, 0, 0, 0);
+lib\MyApp\GUI\Dialog\LogViewer.pm:147:        $self->szr_main->Add($self->szr_log, 0, 0, 0);
+lib\MyApp\GUI\Dialog\LogViewer.pm:148:        $self->szr_main->Add($self->szr_pagination, 0, 0, 0);
+lib\MyApp\GUI\Dialog\LogViewer.pm:151:        $self->choice_component->Select(0);
+lib\MyApp\GUI\Dialog\LogViewer.pm:152:        $self->OnChoice();
+lib\MyApp\GUI\Dialog\LogViewer.pm:154:        $self->resize_list_headers;
+lib\MyApp\GUI\Dialog\LogViewer.pm:156:        $self->SetSizer($self->szr_main);
+lib\MyApp\GUI\Dialog\LogViewer.pm:157:        $self->_set_events();
+lib\MyApp\GUI\Dialog\LogViewer.pm:158:        $self->Layout();
+lib\MyApp\GUI\Dialog\LogViewer.pm:159:        $self->Show(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:164:        my $v = Wx::Button->new($self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:167:            Wx::Size->new(50, 30)
+lib\MyApp\GUI\Dialog\LogViewer.pm:169:        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+lib\MyApp\GUI\Dialog\LogViewer.pm:170:        my $enabled = ($self->ttl_record_count > $self->recs_per_page) ? 1 : 0;
+lib\MyApp\GUI\Dialog\LogViewer.pm:171:        $v->Enable($enabled);
+lib\MyApp\GUI\Dialog\LogViewer.pm:176:        my $v = Wx::Button->new($self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:179:            Wx::Size->new(50, 30)
+lib\MyApp\GUI\Dialog\LogViewer.pm:181:        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+lib\MyApp\GUI\Dialog\LogViewer.pm:182:        $v->Enable(0); # Always start the Prev button disabled.
+lib\MyApp\GUI\Dialog\LogViewer.pm:188:        my $v = Wx::Choice->new(
+lib\MyApp\GUI\Dialog\LogViewer.pm:189:            $self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:191:            Wx::Size->new(200,30), 
+lib\MyApp\GUI\Dialog\LogViewer.pm:192:            $self->components,
+lib\MyApp\GUI\Dialog\LogViewer.pm:195:        #$v->SetSize( $v->GetBestSize );
+lib\MyApp\GUI\Dialog\LogViewer.pm:201:        my $rs = $self->schema->resultset('Logs')->search(
+lib\MyApp\GUI\Dialog\LogViewer.pm:210:        my $v = [ $self->str_show_all ];
+lib\MyApp\GUI\Dialog\LogViewer.pm:211:        while( my $rec = $rs->next ) {
+lib\MyApp\GUI\Dialog\LogViewer.pm:212:            push @{$v}, $rec->component;
+lib\MyApp\GUI\Dialog\LogViewer.pm:221:        my $v = Wx::StaticText->new( $self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:224:            Wx::Size->new(-1, 20)
+lib\MyApp\GUI\Dialog\LogViewer.pm:226:        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_2') );
+lib\MyApp\GUI\Dialog\LogViewer.pm:233:        my $v = Wx::StaticText->new( $self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:235:            $self->get_this_page . q{ / } . $self->get_last_page,
+lib\MyApp\GUI\Dialog\LogViewer.pm:237:            Wx::Size->new(-1, 20)
+lib\MyApp\GUI\Dialog\LogViewer.pm:239:        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_2') );
+lib\MyApp\GUI\Dialog\LogViewer.pm:253:        my $width  = $self->GetClientSize->width - $self->border_size * 2;
+lib\MyApp\GUI\Dialog\LogViewer.pm:254:        my $height = $self->GetClientSize->height 
+lib\MyApp\GUI\Dialog\LogViewer.pm:256:                    - $self->choice_component->GetSize->height - $self->border_size
+lib\MyApp\GUI\Dialog\LogViewer.pm:258:                    - $self->btn_prev->GetSize->height - $self->border_size * 2
+lib\MyApp\GUI\Dialog\LogViewer.pm:260:                    - $self->border_size * 2 
+lib\MyApp\GUI\Dialog\LogViewer.pm:262:        my $v = Wx::ListCtrl->new(
+lib\MyApp\GUI\Dialog\LogViewer.pm:263:            $self, -1, 
+lib\MyApp\GUI\Dialog\LogViewer.pm:265:            Wx::Size->new($width, $height),
+lib\MyApp\GUI\Dialog\LogViewer.pm:271:        $v->InsertColumn(0, 'Date');
+lib\MyApp\GUI\Dialog\LogViewer.pm:272:        $v->InsertColumn(1, 'Run');
+lib\MyApp\GUI\Dialog\LogViewer.pm:273:        $v->InsertColumn(2, 'Component');
+lib\MyApp\GUI\Dialog\LogViewer.pm:274:        $v->InsertColumn(3, 'Message');
+lib\MyApp\GUI\Dialog\LogViewer.pm:275:        $v->Arrange(wxLIST_ALIGN_TOP);
+lib\MyApp\GUI\Dialog\LogViewer.pm:276:        wxTheApp->Yield;
+lib\MyApp\GUI\Dialog\LogViewer.pm:282:        return Wx::Point->new(10, 10);
+lib\MyApp\GUI\Dialog\LogViewer.pm:286:        return wxTheApp->resolve(service => '/DatabaseLog/schema');
+lib\MyApp\GUI\Dialog\LogViewer.pm:290:        my $s = Wx::Size->new(650, 700);
+lib\MyApp\GUI\Dialog\LogViewer.pm:296:        return $self->build_sizer($self, wxHORIZONTAL, 'Log List');
+lib\MyApp\GUI\Dialog\LogViewer.pm:301:        return $self->build_sizer($self, wxVERTICAL, 'Main');
+lib\MyApp\GUI\Dialog\LogViewer.pm:306:        return $self->build_sizer($self, wxHORIZONTAL, 'Component');
+lib\MyApp\GUI\Dialog\LogViewer.pm:310:        return $self->build_sizer($self, wxHORIZONTAL, 'Pagination');
+lib\MyApp\GUI\Dialog\LogViewer.pm:314:        EVT_BUTTON(     $self, $self->btn_prev->GetId,      sub{$self->OnPrev(@_)}          );
+lib\MyApp\GUI\Dialog\LogViewer.pm:315:        EVT_BUTTON(     $self, $self->btn_next->GetId,      sub{$self->OnNext(@_)}          );
+lib\MyApp\GUI\Dialog\LogViewer.pm:316:        EVT_CHOICE(     $self, $self->choice_component,     sub{$self->OnChoice(@_)}        );
+lib\MyApp\GUI\Dialog\LogViewer.pm:317:        EVT_CLOSE(      $self,                              sub{$self->OnClose(@_)}         );
+lib\MyApp\GUI\Dialog\LogViewer.pm:318:#        EVT_RADIOBOX(   $self, $self->rdo_component->GetId, sub{$self->OnRadio(@_)}         );
+lib\MyApp\GUI\Dialog\LogViewer.pm:319:        EVT_SIZE(       $self,                              sub{$self->OnResize(@_)}        );
+lib\MyApp\GUI\Dialog\LogViewer.pm:329:        my $lp_len = length $self->get_last_page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:330:        return sprintf "%0${lp_len}d", $self->page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:334:        my $lp = int( $self->ttl_record_count / $self->recs_per_page );
+lib\MyApp\GUI\Dialog\LogViewer.pm:335:        $lp++ if $self->ttl_record_count % $self->recs_per_page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:342:        $subtract += $self->list_log->GetColumnWidth($_) for( 0..2 ); 
+lib\MyApp\GUI\Dialog\LogViewer.pm:343:        my $msg_width = $self->list_log->GetClientSize->width - $subtract;
+lib\MyApp\GUI\Dialog\LogViewer.pm:344:        $self->list_log->SetColumnWidth(3, $msg_width);
+lib\MyApp\GUI\Dialog\LogViewer.pm:350:        $self->list_log->DeleteAllItems;
+lib\MyApp\GUI\Dialog\LogViewer.pm:352:        my $offset  = $self->page - 1;
+lib\MyApp\GUI\Dialog\LogViewer.pm:353:        my $start   = $self->recs_per_page * $offset;
+lib\MyApp\GUI\Dialog\LogViewer.pm:354:        my $end     = $start + $self->recs_per_page - 1;
+lib\MyApp\GUI\Dialog\LogViewer.pm:355:        my $slice   = $self->results->slice($start, $end);
+lib\MyApp\GUI\Dialog\LogViewer.pm:358:        while(my $r = $slice->next) {
+lib\MyApp\GUI\Dialog\LogViewer.pm:359:            $self->list_log->InsertStringItem($row, $r->datetime->dmy . q{ } . $r->datetime->hms);
+lib\MyApp\GUI\Dialog\LogViewer.pm:360:            $self->list_log->SetItem($row, 1, $r->run);
+lib\MyApp\GUI\Dialog\LogViewer.pm:361:            $self->list_log->SetItem($row, 2, $r->component);
+lib\MyApp\GUI\Dialog\LogViewer.pm:362:            $self->list_log->SetItem($row, 3, $r->message);
+lib\MyApp\GUI\Dialog\LogViewer.pm:364:            wxTheApp->Yield;
+lib\MyApp\GUI\Dialog\LogViewer.pm:366:        $self->list_log->SetColumnWidth(0, wxLIST_AUTOSIZE);
+lib\MyApp\GUI\Dialog\LogViewer.pm:367:        $self->list_log->SetColumnWidth(1, wxLIST_AUTOSIZE_USEHEADER);
+lib\MyApp\GUI\Dialog\LogViewer.pm:368:        $self->list_log->SetColumnWidth(2, wxLIST_AUTOSIZE_USEHEADER);
+lib\MyApp\GUI\Dialog\LogViewer.pm:369:        $self->list_log->SetColumnWidth(3, wxLIST_AUTOSIZE);
+lib\MyApp\GUI\Dialog\LogViewer.pm:371:        $self->update_pagination();
+lib\MyApp\GUI\Dialog\LogViewer.pm:377:        my $next_enabled = ($self->page * $self->recs_per_page <  $self->ttl_record_count) ? 1 : 0;
+lib\MyApp\GUI\Dialog\LogViewer.pm:378:        $self->btn_next->Enable($next_enabled);
+lib\MyApp\GUI\Dialog\LogViewer.pm:380:        my $prev_enabled = ($self->page > 1) ? 1 : 0;
+lib\MyApp\GUI\Dialog\LogViewer.pm:381:        $self->btn_prev->Enable($prev_enabled);
+lib\MyApp\GUI\Dialog\LogViewer.pm:383:        #my $text = "Page " . $self->page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:384:        my $text = $self->get_this_page . q{ / } . $self->get_last_page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:385:        $self->lbl_page->SetLabel($text);
+lib\MyApp\GUI\Dialog\LogViewer.pm:393:        my $component = $self->choice_component->GetString( $self->choice_component->GetSelection );
+lib\MyApp\GUI\Dialog\LogViewer.pm:395:        my $search_hr = ( $component eq $self->str_show_all ) 
+lib\MyApp\GUI\Dialog\LogViewer.pm:399:        my $rs = $self->schema->resultset('Logs')->search(
+lib\MyApp\GUI\Dialog\LogViewer.pm:403:                    { -desc => ['run'] },
+lib\MyApp\GUI\Dialog\LogViewer.pm:404:                    { -asc  => ['datetime'] },
+lib\MyApp\GUI\Dialog\LogViewer.pm:407:                    { -asc  => ['id'] },
+lib\MyApp\GUI\Dialog\LogViewer.pm:412:        $self->results( $rs );
+lib\MyApp\GUI\Dialog\LogViewer.pm:413:        $self->set_page(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:414:        $self->set_count( $rs->count );
+lib\MyApp\GUI\Dialog\LogViewer.pm:415:        $self->show_page();
+lib\MyApp\GUI\Dialog\LogViewer.pm:421:        $self->Destroy;
+lib\MyApp\GUI\Dialog\LogViewer.pm:422:        $event->Skip();
+lib\MyApp\GUI\Dialog\LogViewer.pm:430:        $self->next_page(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:431:        $self->show_page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:440:        $self->szr_log->SetMinSize( $self->GetClientSize->width, -1 );
+lib\MyApp\GUI\Dialog\LogViewer.pm:441:        $self->szr_pagination->SetMinSize( $self->GetClientSize->width, -1 );
+lib\MyApp\GUI\Dialog\LogViewer.pm:442:        $self->resize_list_headers;
+lib\MyApp\GUI\Dialog\LogViewer.pm:444:        $self->Layout;
+lib\MyApp\GUI\Dialog\LogViewer.pm:452:        $self->prev_page(1);
+lib\MyApp\GUI\Dialog\LogViewer.pm:453:        $self->show_page;
+lib\MyApp\GUI\Dialog\LogViewer.pm:459:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\GUI\Dialog\LogViewer.pm:468:MyApp::GUI::Dialog::LogViewer - Dialog for browsing log entries
+lib\MyApp\GUI\Dialog\LogViewer.pm:472: $pos     = Wx::Position->new( $some_x, $some_y );
+lib\MyApp\GUI\Dialog\LogViewer.pm:473: $l_view  = MyApp::GUI::Dialog::LogViewer->new( position => $pos );
+lib\MyApp\GUI\Dialog\LogViewer.pm:474: $l_view->Show(1);
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:14:        return; # Wx::Menu->new() takes no arguments
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:18:        $self->Append( $self->itm_prefs );
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:19:        $self->_set_events;
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:25:        return Wx::MenuItem->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:26:            $self, -1,
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:30:            undef   # if defined, this is a sub-menu
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:35:        EVT_MENU(wxTheApp->GetTopWindow,  $self->itm_prefs, sub{$self->OnPrefs(@_)});
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:43:        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:44:        my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:46:        my $dialog = Wx::Dialog->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:47:            wxTheApp->GetTopWindow, 
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:48:            -1,
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:55:        $dialog->Show(1);
+lib\MyApp\GUI\MainFrame\MenuBar\Edit.pm:60:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:18:        $self->Append( $self->itm_exit );
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:20:        $self->_set_events;
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:26:        return Wx::MenuItem->new(
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:27:            $self, -1,
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:31:            undef   # if defined, this is a sub-menu
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:36:        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_exit, sub{$self->OnQuit(@_)} );
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:44:        $frame->Close(1);
+lib\MyApp\GUI\MainFrame\MenuBar\File.pm:49:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:23:        #$self->Append( $self->itm_about );
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:24:        $self->Append( $self->itm_help );
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:26:        $self->_set_events;
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:32:        return Wx::MenuItem->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:33:            $self, -1,
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:37:            undef   # if defined, this is a sub-menu
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:42:        return Wx::MenuItem->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:43:            $self, -1,
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:47:            undef   # if defined, this is a sub-menu
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:52:        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)}    );
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:53:        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_help->GetId,    sub{$self->OnHelp(@_)}     );
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:61:        my $d = MyApp::GUI::Dialog::About->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:62:            app         => $self->app,
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:66:        $d->show();
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:71:        my $d = MyApp::GUI::Dialog::Help->new();
+lib\MyApp\GUI\MainFrame\MenuBar\Help.pm:76:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:21:        $self->Append( $self->itm_logview   );
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:23:        $self->_set_events;
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:29:        return Wx::MenuItem->new(
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:30:            $self, -1,
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:34:            undef   # if defined, this is a sub-menu
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:39:        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_logview, sub{$self->OnLogViewer(@_)} );
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:47:        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:48:        my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:49:        my $log_viewer  = MyApp::GUI::Dialog::LogViewer->new( position => $dialog_pos );
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:50:        $log_viewer->Show(1);
+lib\MyApp\GUI\MainFrame\MenuBar\Tools.pm:55:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\GUI\MainFrame\MenuBar.pm:42:        foreach my $submenu( @{$self->menu_list} ) {
+lib\MyApp\GUI\MainFrame\MenuBar.pm:43:            my $a = $submenu->{'attribute'};
+lib\MyApp\GUI\MainFrame\MenuBar.pm:44:            my $l = $submenu->{'label'};
+lib\MyApp\GUI\MainFrame\MenuBar.pm:45:            $self->Append( $self->$a, $l );
+lib\MyApp\GUI\MainFrame\MenuBar.pm:52:        return MyApp::GUI::MainFrame::MenuBar::File->new();
+lib\MyApp\GUI\MainFrame\MenuBar.pm:56:        return MyApp::GUI::MainFrame::MenuBar::Edit->new();
+lib\MyApp\GUI\MainFrame\MenuBar.pm:60:        return MyApp::GUI::MainFrame::MenuBar::Help->new();
+lib\MyApp\GUI\MainFrame\MenuBar.pm:64:        return MyApp::GUI::MainFrame::MenuBar::Tools->new();
+lib\MyApp\GUI\MainFrame\MenuBar.pm:68:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\GUI\MainFrame.pm:26:            -1,
+lib\MyApp\GUI\MainFrame.pm:27:            wxTheApp->GetAppName(),     # Window title
+lib\MyApp\GUI\MainFrame.pm:37:        $self->Show(0);
+lib\MyApp\GUI\MainFrame.pm:38:        $self->Centre( wxBOTH );    # Brits!
+lib\MyApp\GUI\MainFrame.pm:56:        wxTheApp->SetTopWindow($self);
+lib\MyApp\GUI\MainFrame.pm:58:        $self->SetMenuBar($self->menu_bar);
+lib\MyApp\GUI\MainFrame.pm:60:        $self->_set_events;
+lib\MyApp\GUI\MainFrame.pm:61:        $self->Show(1);
+lib\MyApp\GUI\MainFrame.pm:67:        my $mb = MyApp::GUI::MainFrame::MenuBar->new();
+lib\MyApp\GUI\MainFrame.pm:75:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\Model\Container.pm:44:        default     => sub{ $_[0]->local_tz },
+lib\MyApp\Model\Container.pm:58:                log->component( 'ArbitraryString' );
+lib\MyApp\Model\Container.pm:59:                log->debug( 'some debug message' );
+lib\MyApp\Model\Container.pm:84:                service 'db_file'       => $self->db_log_file;
+lib\MyApp\Model\Container.pm:85:                service 'sql_options'   => $self->sql_options;
+lib\MyApp\Model\Container.pm:92:                        my $dsn = 'DBI:SQLite:dbname=' . $s->param('db_file');
+lib\MyApp\Model\Container.pm:104:                        return DBI->connect(
+lib\MyApp\Model\Container.pm:105:                            $s->param('dsn'),
+lib\MyApp\Model\Container.pm:108:                            $s->param('sql_options'),
+lib\MyApp\Model\Container.pm:120:                        my $conn = MyApp::Model::LogsSchema->connect(
+lib\MyApp\Model\Container.pm:121:                            $s->param('dsn'),
+lib\MyApp\Model\Container.pm:122:                            $s->param('sql_options'),
+lib\MyApp\Model\Container.pm:130:                    service 'html'      => join q{/}, $self->root_dir, qw(var doc html);
+lib\MyApp\Model\Container.pm:131:                    service 'html_idx'  => join q{/}, $self->root_dir, qw(var doc html idx);
+lib\MyApp\Model\Container.pm:135:                service 'log_tz'        => $self->log_tz;
+lib\MyApp\Model\Container.pm:136:                service 'log_component' => $self->log_component;
+lib\MyApp\Model\Container.pm:151:                                component   => $s->param('log_component'),
+lib\MyApp\Model\Container.pm:152:                                time_zone   => $s->param('log_tz'),
+lib\MyApp\Model\Container.pm:153:                                dbh         => $s->param('db_connection'),
+lib\MyApp\Model\Container.pm:158:                            if( $self->run ) { $args{'run'} = $self->run; }
+lib\MyApp\Model\Container.pm:159:                            my $l = MyApp::Model::DBILogger->new(%args);
+lib\MyApp\Model\Container.pm:160:                            unless( $self->run ) { $self->run( $l->run ); }
+lib\MyApp\Model\Container.pm:173:                        my $Outputs_container   = $s->parent;
+lib\MyApp\Model\Container.pm:174:                        my $outputs             = $Outputs_container->get_sub_container('Outputs');
+lib\MyApp\Model\Container.pm:175:                        my $log                 = Log::Dispatch->new;
+lib\MyApp\Model\Container.pm:176:                        $log->add( $outputs->get_service('dbi')->get );
+lib\MyApp\Model\Container.pm:187:        return $self->root_dir . '/var/log.sqlite';
+lib\MyApp\Model\Container.pm:191:        return DateTime::TimeZone->new( name => 'local' )->name();
+lib\MyApp\Model\Container.pm:199:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\Model\DBILogger.pm:23:        my $sth  = $self->{'dbh'}->prepare("SELECT MAX(run) FROM $self->{'table'}");
+lib\MyApp\Model\DBILogger.pm:24:        $sth->execute() or croak DBI::errstr;
+lib\MyApp\Model\DBILogger.pm:25:        $maxrun = $sth->fetchrow_array() || 0;
+lib\MyApp\Model\DBILogger.pm:30:        my $sth = $self->{dbh}->prepare(<<"SQL");
+lib\MyApp\Model\DBILogger.pm:31:INSERT INTO $self->{table} ('run', 'component', 'level', 'datetime', 'message') VALUES (?, ?, ?, ?, ?)
+lib\MyApp\Model\DBILogger.pm:42:                $date = $params{'datetime'}->iso8601;
+lib\MyApp\Model\DBILogger.pm:44:            elsif( $params{'datetime'} =~ m/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d$/ ) {
+lib\MyApp\Model\DBILogger.pm:52:            $date = DateTime->now( time_zone => $self->time_zone );
+lib\MyApp\Model\DBILogger.pm:55:        $self->{sth}->execute(
+lib\MyApp\Model\DBILogger.pm:56:            $self->run, 
+lib\MyApp\Model\DBILogger.pm:57:            $self->component, 
+lib\MyApp\Model\DBILogger.pm:68:        my $oldest = $date->iso8601;
+lib\MyApp\Model\DBILogger.pm:69:        my $sth = $self->{'dbh'}->prepare(qq/ DELETE FROM $self->{'table'} WHERE datetime < ? /);
+lib\MyApp\Model\DBILogger.pm:70:        return $sth->execute($oldest);
+lib\MyApp\Model\DBILogger.pm:74:    __PACKAGE__->meta->make_immutable;
+lib\MyApp\Model\DBILogger.pm:82:    $self->{'outputs'}{'dbi'}->component( $component );
+lib\MyApp\Model\DBILogger.pm:89:    return $self->{'outputs'}{'dbi'}->prune_bydate( $date );
+lib\MyApp\Model\DBILogger.pm:94:    $self->{'outputs'}{'dbi'}->time_zone( $time_zone );
+lib\MyApp\Model\DBILogger.pm:115:MyApp::Model::DBILogger - DBI-based output channel for Log::Dispatch.
+lib\MyApp\Model\DBILogger.pm:119: my $dbh = DBI->connect("dbi:SQLite:dbname=/path/to/database/file.sqlite", q{}, q{} );
+lib\MyApp\Model\DBILogger.pm:121: my $dbi_output = MyApp::Model::DBILogger->new(
+lib\MyApp\Model\DBILogger.pm:129: my $l = Log::Dispatch->new();
+lib\MyApp\Model\DBILogger.pm:130: $l->add( $dbi_output );
+lib\MyApp\Model\DBILogger.pm:132: $l->debug("This is a debug level message in component 'main'");
+lib\MyApp\Model\DBILogger.pm:133: $l->log(level => 'debug', message => "This too; just more explicit syntax.");
+lib\MyApp\Model\DBILogger.pm:135: $l->component("Some::Class");
+lib\MyApp\Model\DBILogger.pm:136: $l->info("This is an info level message in component 'Some::Class'");
+lib\MyApp\Model\DBILogger.pm:138: $l->component("Some::Other::Class");
+lib\MyApp\Model\DBILogger.pm:139: $l->time_zone("America/New_York");
+lib\MyApp\Model\DBILogger.pm:140: $l->info("This is an info level message in component 'Some::Other::Class' using a custom time zone.");
+lib\MyApp\Model\DBILogger.pm:146: my $now   = DateTime->now();
+lib\MyApp\Model\DBILogger.pm:147: my $dur   = DateTime::Duration->new(days => 7);
+lib\MyApp\Model\DBILogger.pm:148: my $limit = $now->subtract( $dur );
+lib\MyApp\Model\DBILogger.pm:149: $l->prune_bydate( $limit );
+lib\MyApp\Model\DBILogger.pm:159:that it will remain there, so you should re-set it each time you want to 
+lib\MyApp\Model\DBILogger.pm:162: $obj->logger->info("This is in the 'main' component.");
+lib\MyApp\Model\DBILogger.pm:163: $obj->some_random_sub();
+lib\MyApp\Model\DBILogger.pm:164: $obj->logger->info("WHOOPS - this is in the 'some_random_sub' component.");
+lib\MyApp\Model\DBILogger.pm:166: $obj->logger->component('main');
+lib\MyApp\Model\DBILogger.pm:167: $obj->logger->info("Yay - this is back in the 'main' component.");
+lib\MyApp\Model\DBILogger.pm:171:  $s->logger->component('some_random_sub');
+lib\MyApp\Model\DBILogger.pm:172:  $s->logger->info("This is in the 'some_random_sub' component.");
+lib\MyApp\Model\DBILogger.pm:180: $obj->logger->info('This will have a UTC timestamp attached to it.');
+lib\MyApp\Model\DBILogger.pm:182: $obj->logger->time_zone('America/New_York');
+lib\MyApp\Model\DBILogger.pm:183: $obj->logger->info('This will have an America/New_York timestamp attached to it.');
+lib\MyApp\Model\DBILogger.pm:192: $obj->logger->info("Assuming this is the user's very first run of this program, this will have a 'run' setting of '1'.");
+lib\MyApp\Model\DBILogger.pm:193: $obj->logger->info("So will this.");
+lib\MyApp\Model\DBILogger.pm:195: $obj->component("Changing::Components::Here");
+lib\MyApp\Model\DBILogger.pm:196: $obj->time_zone("America/New_York");
+lib\MyApp\Model\DBILogger.pm:198: $obj->logger->info("Still 'run' ID of '1'.");
+lib\MyApp\Model\DBILogger.pm:200: ...user exits the program, later in the day re-runs it...
+lib\MyApp\Model\DBILogger.pm:202: $obj->logger->info("This will have a 'run' setting of '2'.");
+lib\MyApp\Model\DBILogger.pm:203: $obj->logger->info("So will this.");
+lib\MyApp\Model\LogsSchema.pm:9:    __PACKAGE__->table('Logs');
+lib\MyApp\Model\LogsSchema.pm:10:    __PACKAGE__->load_components(qw/FilterColumn/);
+lib\MyApp\Model\LogsSchema.pm:11:    __PACKAGE__->add_columns( 
+lib\MyApp\Model\LogsSchema.pm:19:    __PACKAGE__->set_primary_key( 'id' ); 
+lib\MyApp\Model\LogsSchema.pm:20:    __PACKAGE__->filter_column( datetime => {
+lib\MyApp\Model\LogsSchema.pm:29:        return $cand->iso8601 if ref $cand eq 'DateTime';
+lib\MyApp\Model\LogsSchema.pm:31:        croak "Invalid date format" unless $cand =~ m/^\d{4}-\d\d-\d\d[T ]\d\d:\d\d:\d\d$/;
+lib\MyApp\Model\LogsSchema.pm:45:        $cand =~ s/^(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d)$/$1T$2/;
+lib\MyApp\Model\LogsSchema.pm:47:        if( $cand =~ m/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d$/ ) {
+lib\MyApp\Model\LogsSchema.pm:48:            return DateTime::Format::ISO8601->parse_datetime($cand);
+lib\MyApp\Model\LogsSchema.pm:51:            croak "Invalid datetime format in database -$cand-"
+lib\MyApp\Model\LogsSchema.pm:61:    __PACKAGE__->load_classes(qw/Logs/);
+lib\MyApp\Model\Model Readme.txt:14:        default     => sub{ MyApp::Model::Container->new(name => 'update help') },
+lib\MyApp\Model\SearchIndex\help.html:2:<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+lib\MyApp\Model\SearchIndex\help.html:5:<title>MyApp::Model::SearchIndex::Help - A SearchIndex with HTML parsing helpers, for 
+lib\MyApp\Model\SearchIndex\help.html:7:<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+lib\MyApp\Model\SearchIndex\help.html:11:<body style="background-color: white">
+lib\MyApp\Model\SearchIndex\help.html:14:<!-- INDEX BEGIN -->
+lib\MyApp\Model\SearchIndex\help.html:27:		<li><a href="#constructor___new">CONSTRUCTOR - new</a></li>
+lib\MyApp\Model\SearchIndex\help.html:40:<!-- INDEX END -->
+lib\MyApp\Model\SearchIndex\help.html:45:<p>MyApp::Model::SearchIndex::Help - A SearchIndex with HTML parsing helpers, for 
+lib\MyApp\Model\SearchIndex\help.html:52: <span class="variable">$help</span> <span class="operator">=</span> <span class="variable">MyApp::Model::SearchIndex::Help</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">();</span>
+lib\MyApp\Model\SearchIndex\help.html:59: <span class="variable">$html_content</span> <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">slurp</span><span class="operator">(</span> <span class="variable">$file</span> <span class="operator">);</span>
+lib\MyApp\Model\SearchIndex\help.html:60: <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">xparse</span><span class="operator">(</span><span class="variable">$html_content</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex\help.html:63: <span class="variable">$title</span>       <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">get_doc_title</span><span class="operator">()</span>              <span class="operator">||</span> <span class="string">'No Title'</span><span class="operator">;</span>
+lib\MyApp\Model\SearchIndex\help.html:64: <span class="variable">$summary</span>     <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">get_doc_summary</span><span class="operator">()</span>            <span class="operator">||</span> <span class="string">'No Summary'</span><span class="operator">;</span>
+lib\MyApp\Model\SearchIndex\help.html:65: <span class="variable">$raw_content</span> <span class="operator">=</span> <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">strip</span><span class="operator">(</span><span class="variable">$html_content</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex\help.html:66: <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">reset</span><span class="operator">;</span>
+lib\MyApp\Model\SearchIndex\help.html:70: <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">add_docs</span><span class="operator">(</span><span class="operator">[</span>
+lib\MyApp\Model\SearchIndex\help.html:79: <span class="variable">$help</span><span class="operator">-&gt;</span><span class="variable">replace_docs</span><span class="operator">(</span><span class="operator">[</span>
+lib\MyApp\Model\SearchIndex\help.html:120:<h2><a name="constructor___new">CONSTRUCTOR - new</a></h2>
+lib\MyApp\Model\SearchIndex\help.html:154:<li><strong><a name="scalar_contents_of_the_document_s_h1_tag_undef_if_no_such_tag_is_found" class="item">scalar - Contents of the document's &lt;H1&gt; tag; undef if no such 
+lib\MyApp\Model\SearchIndex\help.html:177:<li><strong><a name="scalar_the_first_n_characters_of_the_document_skipping_the_contents_of_any_header_tags_n_is_defined_by_the_summary_length_attribute_which_defaults_to_120" class="item">scalar - The first N characters of the document, skipping the contents 
+lib\MyApp\Model\SearchIndex\help.html:216:<li><strong><a name="scalar_name_of_the_file_to_be_slurped" class="item">scalar - Name of the file to be slurped</a></strong>
+lib\MyApp\Model\SearchIndex\help.html:224:<li><strong><a name="scalar_contents_of_the_file" class="item">scalar - Contents of the file</a></strong>
+lib\MyApp\Model\SearchIndex\help.html:237:<li><strong>scalar - HTML content (NOT a filename) to be stripped</strong>
+lib\MyApp\Model\SearchIndex\help.html:245:<li><strong><a name="scalar_the_content_passed_in_with_html_tags_removed" class="item">scalar - The content passed in with HTML tags removed</a></strong>
+lib\MyApp\Model\SearchIndex\help.html:259:<li><strong><a name="scalar_file_to_be_parsed" class="item">scalar - file to be parsed</a></strong>
+lib\MyApp\Model\SearchIndex\Help.pm:17:        default     => sub{ MyApp::Model::Container->new(name => 'update help') },
+lib\MyApp\Model\SearchIndex\Help.pm:26:        default     => sub{ Path::Class::dir( $_[0]->resolve(service => '/Directory/doc/html') ) },
+lib\MyApp\Model\SearchIndex\Help.pm:32:        default     => sub{ HTML::Strip->new() },
+lib\MyApp\Model\SearchIndex\Help.pm:52:        ### There's a minor chicken-and-egg issue here.
+lib\MyApp\Model\SearchIndex\Help.pm:67:        my $bb = MyApp::Model::Container->new(name => 'update help');
+lib\MyApp\Model\SearchIndex\Help.pm:69:            index_directory => $bb->resolve(service => '/Directory/doc/html_idx')
+lib\MyApp\Model\SearchIndex\Help.pm:74:        $self->add_field('filename');
+lib\MyApp\Model\SearchIndex\Help.pm:75:        $self->add_field('summary');
+lib\MyApp\Model\SearchIndex\Help.pm:81:        return HTML::TreeBuilder::XPath->new();
+lib\MyApp\Model\SearchIndex\Help.pm:96:        my @nodeset = $self->findnodes('/html/body/*');
+lib\MyApp\Model\SearchIndex\Help.pm:100:            next if $n->getName =~ /^h/i;   # skip headers
+lib\MyApp\Model\SearchIndex\Help.pm:101:            $summary .= $self->clean_text($n->getValue);
+lib\MyApp\Model\SearchIndex\Help.pm:102:            last NODE if length $summary > $self->summary_length;
+lib\MyApp\Model\SearchIndex\Help.pm:104:        $summary = substr $summary, 0, $self->summary_length;
+lib\MyApp\Model\SearchIndex\Help.pm:109:        my $title = $self->xpath->findvalue("/html/body/h1")  || 'No Title';
+lib\MyApp\Model\SearchIndex\Help.pm:116:        $self->xpath->delete;
+lib\MyApp\Model\SearchIndex\Help.pm:117:        $self->clear_xpath;
+lib\MyApp\Model\SearchIndex\Help.pm:127:        my $stripped = $self->kandi->parse($content);
+lib\MyApp\Model\SearchIndex\Help.pm:128:        $self->kandi->eof;
+lib\MyApp\Model\SearchIndex\Help.pm:139:        $self->xpath->parse($content);
+lib\MyApp\Model\SearchIndex\Help.pm:140:        $self->xpath->eof();
+lib\MyApp\Model\SearchIndex\Help.pm:144:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\Model\SearchIndex\Help.pm:153:MyApp::Model::SearchIndex::Help - A SearchIndex with HTML parsing helpers, for 
+lib\MyApp\Model\SearchIndex\Help.pm:158: $help = MyApp::Model::SearchIndex::Help->new();
+lib\MyApp\Model\SearchIndex\Help.pm:163: $html_content = $help->slurp( $file );
+lib\MyApp\Model\SearchIndex\Help.pm:164: $help->xparse($html_content);
+lib\MyApp\Model\SearchIndex\Help.pm:166: $title       = $help->get_doc_title()              || 'No Title';
+lib\MyApp\Model\SearchIndex\Help.pm:167: $summary     = $help->get_doc_summary()            || 'No Summary';
+lib\MyApp\Model\SearchIndex\Help.pm:168: $raw_content = $help->strip($html_content);
+lib\MyApp\Model\SearchIndex\Help.pm:169: $help->reset;
+lib\MyApp\Model\SearchIndex\Help.pm:173: $help->add_docs([
+lib\MyApp\Model\SearchIndex\Help.pm:182: $help->replace_docs([
+lib\MyApp\Model\SearchIndex\Help.pm:216:=head2 CONSTRUCTOR - new
+lib\MyApp\Model\SearchIndex\Help.pm:254:=item * scalar - Contents of the document's E<lt>H1E<gt> tag; undef if no such 
+lib\MyApp\Model\SearchIndex\Help.pm:279:=item * scalar - The first N characters of the document, skipping the contents 
+lib\MyApp\Model\SearchIndex\Help.pm:324:=item * scalar - Name of the file to be slurped
+lib\MyApp\Model\SearchIndex\Help.pm:332:=item * scalar - Contents of the file
+lib\MyApp\Model\SearchIndex\Help.pm:346:=item * scalar - HTML content (NOT a filename) to be stripped
+lib\MyApp\Model\SearchIndex\Help.pm:354:=item * scalar - The content passed in with HTML tags removed
+lib\MyApp\Model\SearchIndex\Help.pm:370:=item * scalar - file to be parsed
+lib\MyApp\Model\SearchIndex.html:2:<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+lib\MyApp\Model\SearchIndex.html:5:<title>MyApp::Model::SearchIndex - A searchable document index</title>
+lib\MyApp\Model\SearchIndex.html:6:<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+lib\MyApp\Model\SearchIndex.html:10:<body style="background-color: white">
+lib\MyApp\Model\SearchIndex.html:13:<!-- INDEX BEGIN -->
+lib\MyApp\Model\SearchIndex.html:25:		<li><a href="#constructor___new">CONSTRUCTOR - new</a></li>
+lib\MyApp\Model\SearchIndex.html:39:<!-- INDEX END -->
+lib\MyApp\Model\SearchIndex.html:44:<p>MyApp::Model::SearchIndex - A searchable document index</p>
+lib\MyApp\Model\SearchIndex.html:51: <span class="variable">$idx</span> <span class="operator">=</span> <span class="variable">MyApp::Model::SearchIndex</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">(</span>
+lib\MyApp\Model\SearchIndex.html:56: <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">add_field</span><span class="operator">(</span><span class="string">'summary'</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:57: <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">delete_field</span><span class="operator">(</span><span class="string">'title'</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:64: <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">add_docs</span><span class="operator">(</span><span class="operator">[</span> <span class="variable">$document</span> <span class="operator">]</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:75: <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">add_docs</span><span class="operator">(</span><span class="operator">[</span> <span class="variable">$another_document</span><span class="operator">,</span> <span class="variable">$yet_another_document</span> <span class="operator">]</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:83: <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">replace_docs</span><span class="operator">(</span><span class="operator">[</span> <span class="variable">$new_document</span> <span class="operator">]</span><span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:87: <span class="variable">$hits</span> <span class="operator">=</span> <span class="variable">$idx</span><span class="operator">-&gt;</span><span class="variable">searcher</span><span class="operator">-&gt;</span><span class="variable">hits</span><span class="operator">(</span> <span class="string">query</span> <span class="operator">=&gt;</span> <span class="string">'brand new'</span> <span class="operator">);</span>
+lib\MyApp\Model\SearchIndex.html:88: <span class="keyword">while</span><span class="operator">(</span> <span class="keyword">my</span> <span class="variable">$h</span> <span class="operator">=</span> <span class="variable">$hits</span><span class="operator">-&gt;</span><span class="variable">next</span> <span class="operator">)</span> <span class="operator">{</span>
+lib\MyApp\Model\SearchIndex.html:89:    <span class="keyword">say</span> <span class="variable">$h</span><span class="operator">-&gt;</span><span class="operator">{</span><span class="string">'summary'</span><span class="operator">}</span><span class="operator">;</span>    <span class="comment"># 'This is a...',</span>
+lib\MyApp\Model\SearchIndex.html:90:    <span class="keyword">say</span> <span class="variable">$h</span><span class="operator">-&gt;</span><span class="operator">{</span><span class="string">'content'</span><span class="operator">}</span><span class="operator">;</span>    <span class="comment"># 'This is a brand new document content to overwrite the previous.',</span>
+lib\MyApp\Model\SearchIndex.html:104:<h2><a name="constructor___new">CONSTRUCTOR - new</a></h2>
+lib\MyApp\Model\SearchIndex.html:137:<li><strong><a name="arrayref_of_files_to_be_added_to_the_existing_index" class="item">arrayref - of files to be <em>added to the existing index</em></a></strong>
+lib\MyApp\Model\SearchIndex.html:159:<li><strong><a name="scalar_name_of_the_field_to_add" class="item">scalar - name of the field to add</a></strong>
+lib\MyApp\Model\SearchIndex.html:181:<li><strong><a name="scalar_field_to_be_deleted" class="item">scalar - field to be deleted</a></strong>
+lib\MyApp\Model\SearchIndex.html:220:<p>So only use this when you're about to fully re-create your index.  See 
+lib\MyApp\Model\SearchIndex.html:221:<a href="#get_indexer">get_indexer</a> to non-destructively get an indexer.</p>
+lib\MyApp\Model\SearchIndex.html:259:<li><strong><a name="list_names_of_the_fields_that_have_so_far_been_added_to_the_schema" class="item">list - Names of the fields that have so far been added to the schema.</a></strong>
+lib\MyApp\Model\SearchIndex.html:272:<li><strong><a name="arrayref_files_to_be_inserted_into_a_new_clean_index_destroying_any_already_existing_documents" class="item">arrayref - files to be <em>inserted into a new, clean index, destroying 
+lib\MyApp\Model\SearchIndex.html:273:any already-existing documents</em></a></strong>
+lib\MyApp\Model\SearchIndex.pm:38:        default     => sub{ Lucy::Analysis::PolyAnalyzer->new(language => 'en') },
+lib\MyApp\Model\SearchIndex.pm:44:        default     => sub{ Lucy::Search::IndexSearcher->new(index => $_[0]->index_directory) },
+lib\MyApp\Model\SearchIndex.pm:55:        default     => sub{ Lucy::Plan::FullTextType->new(analyzer => $_[0]->poly) },
+lib\MyApp\Model\SearchIndex.pm:61:        try { $self->index_directory->resolve }
+lib\MyApp\Model\SearchIndex.pm:63:            try{ $self->index_directory->mkpath }
+lib\MyApp\Model\SearchIndex.pm:64:            catch{ croak "Index $self->index_directory is not a directory and could not be created." }
+lib\MyApp\Model\SearchIndex.pm:72:        return Lucy::Plan::Schema->new();
+lib\MyApp\Model\SearchIndex.pm:76:        foreach my $f( $self->list_fields ) {
+lib\MyApp\Model\SearchIndex.pm:77:            $self->schema->spec_field( name => $f, type => $self->text_type );
+lib\MyApp\Model\SearchIndex.pm:79:        $self->is_schema_synced(1);
+lib\MyApp\Model\SearchIndex.pm:85:        my $indexer = shift || $self->get_indexer;
+lib\MyApp\Model\SearchIndex.pm:91:            @{$doc_to_add}{$self->list_fields} = @{$doc}{$self->list_fields};
+lib\MyApp\Model\SearchIndex.pm:93:            $indexer->add_doc( $doc_to_add );
+lib\MyApp\Model\SearchIndex.pm:95:        $indexer->commit;
+lib\MyApp\Model\SearchIndex.pm:100:        $self->fields->{$field} = 1;
+lib\MyApp\Model\SearchIndex.pm:101:        $self->is_schema_synced(0);
+lib\MyApp\Model\SearchIndex.pm:107:        $self->is_schema_synced(0);
+lib\MyApp\Model\SearchIndex.pm:108:        return delete $self->fields->{$field};
+lib\MyApp\Model\SearchIndex.pm:112:        $self->_set_schema_fields unless $self->is_schema_synced;
+lib\MyApp\Model\SearchIndex.pm:113:        my $indexer = Lucy::Index::Indexer->new(
+lib\MyApp\Model\SearchIndex.pm:114:            schema => $self->schema,  
+lib\MyApp\Model\SearchIndex.pm:115:            index  => $self->index_directory,
+lib\MyApp\Model\SearchIndex.pm:122:        $self->_set_schema_fields unless $self->is_schema_synced;
+lib\MyApp\Model\SearchIndex.pm:123:        my $indexer = Lucy::Index::Indexer->new(
+lib\MyApp\Model\SearchIndex.pm:124:            schema => $self->schema,  
+lib\MyApp\Model\SearchIndex.pm:125:            index  => $self->index_directory,
+lib\MyApp\Model\SearchIndex.pm:131:        return keys %{ $self->fields };
+lib\MyApp\Model\SearchIndex.pm:136:        $self->add_docs( $docs, $self->get_clean_indexer );
+lib\MyApp\Model\SearchIndex.pm:140:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\Model\SearchIndex.pm:149:MyApp::Model::SearchIndex - A searchable document index
+lib\MyApp\Model\SearchIndex.pm:154: $idx = MyApp::Model::SearchIndex->new(
+lib\MyApp\Model\SearchIndex.pm:158: $idx->add_field('summary');
+lib\MyApp\Model\SearchIndex.pm:159: $idx->delete_field('title');
+lib\MyApp\Model\SearchIndex.pm:165: $idx->add_docs([ $document ]);
+lib\MyApp\Model\SearchIndex.pm:175: $idx->add_docs([ $another_document, $yet_another_document ]);
+lib\MyApp\Model\SearchIndex.pm:183: $idx->replace_docs([ $new_document ]);
+lib\MyApp\Model\SearchIndex.pm:187: $hits = $idx->searcher->hits( query => 'brand new' );
+lib\MyApp\Model\SearchIndex.pm:188: while( my $h = $hits->next ) {
+lib\MyApp\Model\SearchIndex.pm:189:    say $h->{'summary'};    # 'This is a...',
+lib\MyApp\Model\SearchIndex.pm:190:    say $h->{'content'};    # 'This is a brand new document content to overwrite the previous.',
+lib\MyApp\Model\SearchIndex.pm:201:=head2 CONSTRUCTOR - new
+lib\MyApp\Model\SearchIndex.pm:240:=item * arrayref - of files to be I<added to the existing index>
+lib\MyApp\Model\SearchIndex.pm:264:=item * scalar - name of the field to add
+lib\MyApp\Model\SearchIndex.pm:288:=item * scalar - field to be deleted
+lib\MyApp\Model\SearchIndex.pm:330:So only use this when you're about to fully re-create your index.  See 
+lib\MyApp\Model\SearchIndex.pm:331:L</get_indexer> to non-destructively get an indexer.
+lib\MyApp\Model\SearchIndex.pm:374:=item * list - Names of the fields that have so far been added to the schema.
+lib\MyApp\Model\SearchIndex.pm:388:=item * arrayref - files to be I<inserted into a new, clean index, destroying 
+lib\MyApp\Model\SearchIndex.pm:389:any already-existing documents>
+lib\MyApp\Model\WxContainer.pm:9:    use English qw( -no_match_vars );
+lib\MyApp\Model\WxContainer.pm:34:                my $zip             = Archive::Zip->new($self->zip_file);
+lib\MyApp\Model\WxContainer.pm:36:                service 'zip_file'  => $self->zip_file;
+lib\MyApp\Model\WxContainer.pm:40:                    foreach my $member( $zip->membersMatching("images/.*(png|ico|gif|jpe?g)\$") ) {
+lib\MyApp\Model\WxContainer.pm:41:                        $member->fileName =~ m{images/([^/]+)/};
+lib\MyApp\Model\WxContainer.pm:49:                                $image_member->fileName =~ m{images/$dir/(.+)$};
+lib\MyApp\Model\WxContainer.pm:55:                                        my $zfh = Archive::Zip::MemberRead->new(
+lib\MyApp\Model\WxContainer.pm:57:                                            $image_member->fileName,
+lib\MyApp\Model\WxContainer.pm:62:                                            my $read = $zfh->read($buffer, 1024);
+lib\MyApp\Model\WxContainer.pm:67:                                        my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
+lib\MyApp\Model\WxContainer.pm:78:                ### Swiss is variable-width sans-serif (arial).
+lib\MyApp\Model\WxContainer.pm:79:                ### Modern is fixed-width.
+lib\MyApp\Model\WxContainer.pm:81:                service 'para_text_1'       => Wx::Font->new(8,  wxSWISS, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:82:                service 'para_text_2'       => Wx::Font->new(10, wxSWISS, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:83:                service 'para_text_3'       => Wx::Font->new(12, wxSWISS, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:84:                service 'bold_para_text_1'  => Wx::Font->new(8,  wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:85:                service 'bold_para_text_2'  => Wx::Font->new(10, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:86:                service 'bold_para_text_3'  => Wx::Font->new(12, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:88:                service 'modern_text_1'       => Wx::Font->new(8,  wxMODERN, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:89:                service 'modern_text_2'       => Wx::Font->new(10, wxMODERN, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:90:                service 'modern_text_3'       => Wx::Font->new(12, wxMODERN, wxNORMAL, wxNORMAL, 0);
+lib\MyApp\Model\WxContainer.pm:91:                service 'bold_modern_text_1'  => Wx::Font->new(8,  wxMODERN, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:92:                service 'bold_modern_text_2'  => Wx::Font->new(10, wxMODERN, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:93:                service 'bold_modern_text_3'  => Wx::Font->new(12, wxMODERN, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:95:                service 'header_1'   => Wx::Font->new(22, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:96:                service 'header_2'   => Wx::Font->new(20, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:97:                service 'header_3'   => Wx::Font->new(18, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:98:                service 'header_4'   => Wx::Font->new(16, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:99:                service 'header_5'   => Wx::Font->new(14, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:100:                service 'header_6'   => Wx::Font->new(12, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:101:                service 'header_7'   => Wx::Font->new(10, wxSWISS, wxNORMAL, wxBOLD, 0);
+lib\MyApp\Model\WxContainer.pm:114:        return join q{/}, $self->root_dir, 'var/assets.zip';
+lib\MyApp\Model\WxContainer.pm:118:    __PACKAGE__->meta->make_immutable; 
+lib\MyApp\Model\WxContainer.pm:127:MyApp::Model::WxContainer - Bread board containing GUI-related assets and settings.
+lib\MyApp\Model\WxContainer.pm:131: $container = MyApp::Model::WxContainer->new(
+lib\MyApp\Model\WxContainer.pm:136: my $img = $container->resolve(service => '/assets/images/app/home.png');
+lib\MyApp\Model\WxContainer.pm:137: $img->rescale( $some_width, $some_height );
+lib\MyApp\Model\WxContainer.pm:138: my $home_bmp = Wx::Bitmap->new($img);
+lib\MyApp\Model\WxContainer.pm:140: my $home_static_bmp = Wx::StaticBitmap->new(
+lib\MyApp\Model\WxContainer.pm:141:  $self, -1,
+lib\MyApp\Model\WxContainer.pm:144:  Wx::Size->new($img->GetWidth, $img->GetHeight),
+lib\MyApp\Model\WxContainer.pm:156: my $svc = $container->resolve( service => $service_name_as_indicated_below );
+lib\MyApp\Model\WxContainer.pm:180: my $small              = $container->resolve( service => '/fonts/para_text_1' );
+lib\MyApp\Model\WxContainer.pm:181: my $medium_bold        = $container->resolve( service => '/fonts/bold_para_text_2' );
+lib\MyApp\Model\WxContainer.pm:182: my $small_code         = $container->resolve( service => '/fonts/modern_text_1' );
+lib\MyApp\Model\WxContainer.pm:183: my $large_bold_code    = $container->resolve( service => '/fonts/bold_modern_text_3' );
+lib\MyApp\Model\WxContainer.pm:188: my $large_header = $container->resolve( service => '/fonts/header_1' );
+lib\MyApp\Model\WxContainer.pm:189: my $tiny_header  = $container->resolve( service => '/fonts/header_7' );
+lib\MyApp\Model\WxContainer.pm:193: my $font = $container->resolve( service => '/fonts/CHOSEN_FONT' );
+lib\MyApp\Model\WxContainer.pm:194: my $window = Wx::SomeControl->new( ... );
+lib\MyApp\Model\WxContainer.pm:195: $window->SetFont( $font );
+lib\MyApp\Model\WxContainer.pm:212:images/, and sub-containers and services will be created for those new 
+lib\MyApp\Model\WxContainer.pm:219: my $smile = $container->resolve(service => '/assets/images/emotes/smile.png');
+lib\MyApp\Model\WxContainer.pm:228: ### NOT Fine - the additional 'happy' subdirectory will not work.
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:21:        my $pos = $args{'position'} // Wx::Point->new(10,10);
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:25:            wxTheApp->main_frame,
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:26:            -1,
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:39:        my $v = $self->build_sizer($self, wxVERTICAL, 'Main Sizer');
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:44:        my $v = $self->build_sizer($self, wxHORIZONTAL, 'Page Sizer');
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:49:        return Wx::Point->new(10, 10);
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:63:        my $style = $self->GetWindowStyleFlag;
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:66:        $self->SetWindowStyle($style);
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:71:        my $style = $self->GetWindowStyleFlag;
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:74:        $self->SetWindowStyle($style);
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:91:        $self->page_sizer->Add(
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:92:            $self->main_sizer,
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:97:        $self->SetSizer($self->page_sizer);
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:98:        $self->Layout;
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:111:MyApp::Roles::Platform::Dialog::NonScrolled - A non-scrolled dialog with margins.
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:116:window.  This role wraps the entire Dialog with some margin-creating sizers.
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:133:  $self->SetTitle( $self->title );
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:134:  $self->SetSize( $self->size );
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:138:  $self->main_sizer->Add( $self->button, 0, 0, 0 );
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:142:  $self->init_screen();
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:147: sub _build_size  { return Wx::Size->new($some_width, $some_height) }
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:150: # dialog-wide left margin.  This happens automatically, so your extending
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:154: my $object = EXTENDING_CLASS->new();
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:156: # Optional - make your dialog non-resizable (default is resizable):
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:157: $object->make_non_resizable;
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:159: # Whoops - crap I didn't mean to do that...
+lib\MyApp\Roles\Platform\Dialog\NonScrolled.pm:160: $object->make_resizable;
+lib\MyApp\Roles\Platform.pm:28:        my $name        = shift || Data::GUID->new()->as_string();
+lib\MyApp\Roles\Platform.pm:34:        if( $self->sizer_debug or $force_box ) {
+lib\MyApp\Roles\Platform.pm:35:            my $box = Wx::StaticBox->new($parent, -1, $name, $pos, $size);
+lib\MyApp\Roles\Platform.pm:36:            $box->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+lib\MyApp\Roles\Platform.pm:37:            $sizer = Wx::StaticBoxSizer->new($box, $direction);
+lib\MyApp\Roles\Platform.pm:40:            $sizer = Wx::BoxSizer->new($direction);
+lib\MyApp\Roles\Platform.pm:55:MyApp::Roles::Platform - Role for building a platform (frame, dialog, 
+lib\MyApp\Roles\Platform.pm:73:CAUTION - While the static boxes displayed by setting sizer_debug to true are 
+lib\MyApp\Roles\Platform.pm:87:invisible sizer when $self->sizer_debug is off, and a visible box with the 
+lib\MyApp\Roles\Platform.pm:88:sizer's name when $self->sizer_debug is on.
+lib\MyApp\Roles\Platform.pm:90: $sizer = $self->build_sizer( $self->parent, wxHORIZONTAL, 'My Sizer Name' );
+lib\MyApp\Roles\Platform.pm:95: $sizer = $self->build_sizer(
+lib\MyApp\Roles\Platform.pm:96:  $self->parent,
+lib\MyApp\Roles\Platform.pm:100:  Wx::Position->new(...),
+lib\MyApp\Roles\Platform.pm:101:  Wx::Size->new(...),
+lib\MyApp.pm:32:            For non-GUI elements only (database connections, paths, etc).  See 
+lib\MyApp.pm:71:            For GUI elements only (images, fonts, etc).  See bb for non-GUI 
+lib\MyApp.pm:83:        $self->o_creat_database_log();
+lib\MyApp.pm:85:        $self->SetTopWindow( $self->main_frame );
+lib\MyApp.pm:88:        my $logger = $self->resolve( service => '/Log/logger' );
+lib\MyApp.pm:89:        $logger->debug( 'Starting ' . $self->GetAppName() );
+lib\MyApp.pm:91:        $self->main_frame->Show(1);
+lib\MyApp.pm:92:        $self->_set_events();
+lib\MyApp.pm:97:        return MyApp::Model::Container->new( name => 'plain container' );
+lib\MyApp.pm:101:        my $file = $self->root_dir . '/var/log.sqlite';
+lib\MyApp.pm:106:        my $frame = MyApp::GUI::MainFrame->new();
+lib\MyApp.pm:117:        ###     $self->timer->Start( $milliseconds, wxTIMER_ONE_SHOT );
+lib\MyApp.pm:119:        ###     $self->timer->Start( $milliseconds, wxTIMER_CONTINUOUS );
+lib\MyApp.pm:124:        my $t = Wx::Timer->new();
+lib\MyApp.pm:125:        $t->SetOwner( $self );
+lib\MyApp.pm:130:        return MyApp::Model::WxContainer->new( name => 'wx container' );
+lib\MyApp.pm:134:        EVT_TIMER( $self, $self->timer->GetId,  sub{$self->OnTimer(@_)} );
+lib\MyApp.pm:135:        EVT_CLOSE( $self,                       sub{$self->OnClose(@_)} );
+lib\MyApp.pm:143:        #Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame->frame );
+lib\MyApp.pm:144:        Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame );
+lib\MyApp.pm:150:        my $title   = shift || $self->GetAppName();
+lib\MyApp.pm:154:                        #$self->main_frame->frame );
+lib\MyApp.pm:155:                        $self->main_frame );
+lib\MyApp.pm:161:        my $title   = shift || $self->GetAppName;
+lib\MyApp.pm:206:                                    #$self->main_frame->frame );
+lib\MyApp.pm:207:                                    $self->main_frame);
+lib\MyApp.pm:213:        unless( -e $self->db_log_file ) {
+lib\MyApp.pm:214:            my $log_schema = $self->resolve( service => '/DatabaseLog/schema' );
+lib\MyApp.pm:215:            $log_schema->deploy;
+lib\MyApp.pm:223:        my $logger = $self->resolve( service => '/Log/logger' );
+lib\MyApp.pm:224:        $logger->component($self->GetAppName);
+lib\MyApp.pm:227:        my $now   = DateTime->now();
+lib\MyApp.pm:228:        my $dur   = DateTime::Duration->new(days => $self->logs_expire);
+lib\MyApp.pm:229:        my $limit = $now->subtract_duration( $dur );
+lib\MyApp.pm:230:        $logger->debug('Pruning old log entries');
+lib\MyApp.pm:231:        $logger->prune_bydate( $limit );
+lib\MyApp.pm:232:        $logger->debug('Closing application');
+lib\MyApp.pm:241:        $self->SetExitOnFrameDelete(1);
+lib\MyApp.pm:245:        $self->SetAppName( "MyApp" );
+lib\MyApp.pm:246:        $self->SetClassName( "MyApp" );
+lib\MyApp.pm:248:        $self->SetVendorName( "Jonathan D. Barton" );
+lib\MyApp.pm:258:    __PACKAGE__->meta->make_immutable;
+lib\MyApp.pm:271:        $self->main_frame->status_bar->bar_reset;
+lib\MyApp.pm:272:        $self->Yield; 
+lib\MyApp.pm:274:        $SIG{ALRM} = undef;     ##no critic qw(RequireLocalizedPunctuationVars) - PC thinks $SIG there is a scalar - whoops
+lib\MyApp.pm:281:        $self->main_frame->status_bar->gauge->Pulse;        ## no critic qw(ProhibitLongChainsOfMethodCalls)
+lib\MyApp.pm:282:        $self->Yield; 
+lib\MyApp.pm:284:        $SIG{ALRM} = sub {  ##no critic qw(RequireLocalizedPunctuationVars) - PC thinks $SIG there is a scalar - whoops
+lib\MyApp.pm:285:            $self->main_frame->status_bar->gauge->Pulse;    ## no critic qw(ProhibitLongChainsOfMethodCalls)
+lib\MyApp.pm:286:            $self->Yield; 

@@ -3,47 +3,60 @@
 use v5.14;
 use warnings;
 
-use File::Slurp;
-use HTML::Strip;
-use HTML::TreeBuilder::XPath;
-
 use FindBin;
 use lib $FindBin::Bin . '/../lib';
 use MyApp::Model::SearchIndex::Help;
 
-
-
 my $help = MyApp::Model::SearchIndex::Help->new();
 
-$help->add_field('filename');
-$help->add_field('title');     # default, but included to avoid confusion
-$help->add_field('content');   # default, but included to avoid confusion
-$help->add_field('summary');
 
-my @help_files = grep{ /\.html?$/ }$help->html_dir->children();
+my $cnt = fully_reindex( $help );
+say "$cnt documents were indexed.";
 
-my $docs = [];
-my $kandi = HTML::Strip->new();
-foreach my $file( @help_files ) {
+### For testing that your re-indexing worked; use if desired
+#search_test($help, 'nonsense');
 
-    my $html_content = read_file($file);
-    $help->xparse($html_content);
+sub fully_reindex {#{{{
+    my $help = shift;
 
-    my $title       = $help->xpath->findvalue("/html/body/h1")  || 'No Title';
-    my $summary     = $help->get_doc_summary()                  || 'No Summary';
-    my $raw_content = $kandi->parse($html_content);
+    my @help_files = grep{ /\.html?$/ }$help->html_dir->children();
 
-    $kandi->eof;
-    $help->xpath_reset;
+    my $docs = [];
+    foreach my $file( @help_files ) {
 
-    push @{$docs}, {
-        content     => $raw_content,
-        filename    => $file,
-        summary     => $summary,
-        title       => $title,
-    };
-}
-    
-$help->replace_docs( $docs );
-say @$docs . " documents were indexed.";
+        my $html_content = $help->slurp($file);
+        $help->xparse($html_content);
+
+        my $title       = $help->get_doc_title          || 'No Title';
+        my $summary     = $help->get_doc_summary()      || 'No Summary';
+        my $raw_content = $help->strip($html_content);
+        $help->reset();
+
+
+        push @{$docs}, {
+            content     => $raw_content,
+            filename    => $file,
+            summary     => $summary,
+            title       => $title,
+        };
+    }
+        
+    $help->replace_docs( $docs );
+    return scalar @$docs;
+}#}}}
+sub search_test {#{{{
+    my $help    = shift;
+    my $query   = shift;
+
+    my $hits = $help->searcher->hits( query => $query );
+    while( my $h = $hits->next ) {
+        say "Filename: $h->{'filename'}";
+        say "Title: $h->{'title'}";
+        say "Summary: $h->{'summary'}";
+        say "Contents: $h->{'content'}";
+        say '---------------';
+    }
+
+
+}#}}}
 

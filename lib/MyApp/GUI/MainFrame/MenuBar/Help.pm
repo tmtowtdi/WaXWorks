@@ -6,7 +6,7 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
     use Wx::Event qw(EVT_MENU);
     with 'MyApp::Roles::Platform';
 
-    #use MyApp::GUI::Dialog::About;
+    use MyApp::GUI::Dialog::About;
     use MyApp::GUI::Dialog::Help;
 
     use MooseX::NonMoose::InsideOut;
@@ -20,7 +20,7 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
     }#}}}
     sub BUILD {
         my $self = shift;
-        #$self->Append( $self->itm_about );
+        $self->Append( $self->itm_about );
         $self->Append( $self->itm_help );
 
         $self->_set_events;
@@ -58,11 +58,7 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
         my $self  = shift;
         my $frame = shift;  # Wx::Frame
         my $event = shift;  # Wx::CommandEvent
-        my $d = MyApp::GUI::Dialog::About->new(
-            app         => $self->app,
-            ancestor    => $self,
-            parent      => undef,
-        );
+        my $d = MyApp::GUI::Dialog::About->new( app => wxTheApp );
         $d->show();
         return 1;
     }#}}}
