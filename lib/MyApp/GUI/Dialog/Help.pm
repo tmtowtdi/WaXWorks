@@ -517,7 +517,15 @@ package MyApp::GUI::Dialog::Help {
             return;
         }
 
-        ### Search results do not get recorded in history.
+        unless( $self->help_idx->searcher ) {
+            wxTheApp->poperr(
+                "The help documentation has not been indexed yet, so searching is not possible.\n"
+                . "Close this help window and run bin/update_help.pl.\n\n"
+                . "Then re-open the help window and search will work.",
+                "Search Index Empty"
+            );
+            return;
+        }
 
         my $hits = $self->help_idx->searcher->hits( query => $term );
         my $vars = {

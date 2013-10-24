@@ -469,7 +469,7 @@ MyApp::GUI::Dialog::LogViewer - Dialog for browsing log entries
 
 =head1 SYNOPSIS
 
- $pos     = Wx::Position->new( $some_x, $some_y );
+ $pos     = Wx::Point->new( $some_x, $some_y );
  $l_view  = MyApp::GUI::Dialog::LogViewer->new( position => $pos );
  $l_view->Show(1);
 

@@ -1,0 +1,10 @@
+
+=head1 SYNOPSIS
+
+Right now, this exists as a placeholder.  Mainly a target for the link in the 
+MyApp.pm's POD, which demonstrates linking to a .pod file rather than a 
+module.
+
+This should end up containing tutorial-y stuff, while the modules' POD 
+sections should contain reference-y stuff.
+

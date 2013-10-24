@@ -76,3 +76,11 @@ package MyApp::GUI::MainFrame {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame - NEEDS DOCUMENTATION
+
+

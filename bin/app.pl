@@ -16,7 +16,5 @@ use lib $FindBin::Bin . '/../lib';
 use MyApp;
 
 my $app = MyApp->new();
-
-
 $app->MainLoop();
 

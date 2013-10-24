@@ -39,9 +39,12 @@ package MyApp::Model::SearchIndex {
     );
     has 'searcher' => (
         is          => 'ro',
-        isa         => 'Lucy::Search::IndexSearcher',
-        lazy        => 1,
-        default     => sub{ Lucy::Search::IndexSearcher->new(index => $_[0]->index_directory) },
+        isa         => 'Maybe[Lucy::Search::IndexSearcher]',
+        lazy_build  => 1,
+        documentation => q{
+            Until the search index is built (with bin/update_help.pl or similar), this 
+            will be undef.
+        }
     );
     has 'schema' => (
         is          => 'ro',
@@ -70,6 +73,13 @@ package MyApp::Model::SearchIndex {
     sub _build_schema {#{{{
         my $self = shift;
         return Lucy::Plan::Schema->new();
+    }#}}}
+    sub _build_searcher {#{{{
+        my $self = shift;
+
+        my $s = try   { Lucy::Search::IndexSearcher->new(index => $self->index_directory) }
+                catch { return undef };
+        return $s;
     }#}}}
     sub _set_schema_fields {#{{{
         my $self = shift;
@@ -184,10 +194,16 @@ The index now contains three documents.
 
 The index now contains only one document.
 
- $hits = $idx->searcher->hits( query => 'brand new' );
- while( my $h = $hits->next ) {
-    say $h->{'summary'};    # 'This is a...',
-    say $h->{'content'};    # 'This is a brand new document content to overwrite the previous.',
+ if( $idx->searcher ) {
+  $hits = $idx->searcher->hits( query => 'brand new' );
+  while( my $h = $hits->next ) {
+   say $h->{'summary'};    # 'This is a...',
+   say $h->{'content'};    # 'This is a brand new document content to overwrite the previous.',
+  }
+ }
+ else {
+  say "The index does not contain any data yet so it cannot be searched.";
+  say "Update your index, then try again.";
  }
 
 =head1 DESCRIPTION
@@ -401,4 +417,27 @@ any already-existing documents>
 =back
 
 See also L</add_docs>
+
+=head2 searcher
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * none
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * Either a L<Lucy::Search::IndexSearcher> object or C<undef> if the index 
+has not been created yet.
+
+=back
+
+=back
 

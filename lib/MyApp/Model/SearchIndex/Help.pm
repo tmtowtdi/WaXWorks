@@ -64,10 +64,10 @@ package MyApp::Model::SearchIndex::Help {
         ### So we're solving that by instantiating our own Bread::Board here 
         ### so we can dig the location of the index out of it.
 
-        my $bb = MyApp::Model::Container->new(name => 'update help');
-        return {
-            index_directory => $bb->resolve(service => '/Directory/doc/html_idx')
-        }
+        my $bb  = MyApp::Model::Container->new(name => 'update help');
+        my $idx = $bb->resolve(service => '/Directory/doc/html_idx');
+
+        return { index_directory => $idx }
     };#}}}
     sub BUILD {
         my $self = shift;
@@ -188,14 +188,13 @@ Add the document to the existing index...
 
 =head1 DESCRIPTION
 
-MyApp::Model::SearchableIndex::Help extends L<MyApp::Model::SearchableIndex> 
+MyApp::Model::SearchIndex::Help extends L<MyApp::Model::SearchIndex> 
 with the awareness of dealing specifically with the HTML help documents used 
 in this app.
 
 =head1 SCHEMA
 
-MyApp::Model::SearchableIndex::Help creates the following fields in the 
-index's schema:
+Creates the following fields in the index's schema:
 
 =over 4
 
@@ -211,7 +210,7 @@ index's schema:
 
 =head1 METHODS
 
-These are in addition to what's provided by L<MyApp::Model::SearchableIndex>.
+These are in addition to what's provided by L<MyApp::Model::SearchIndex>.
 
 =head2 CONSTRUCTOR - new
 
@@ -229,7 +228,7 @@ These are in addition to what's provided by L<MyApp::Model::SearchableIndex>.
 
 =over 8
 
-=item * MyApp::Model::SearchableIndex::Help object
+=item * MyApp::Model::SearchIndex object
 
 =back
 

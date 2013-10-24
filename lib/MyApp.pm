@@ -34,10 +34,18 @@ package MyApp {
             wxbb for GUI elements.
         }
     );
-    has 'icon_bundle' => (
+    has 'icon_image' => (
         is          => 'ro',
-        isa         => 'Wx::IconBundle',
-        lazy_build  => 1,
+        isa         => 'Str',
+        #default     => 'camel_blue_grid_256.png',
+        #default     => 'folder_256.png',
+        #default     => 'onion_512.png',
+        default     => 'shiny_camel_512.png',
+        documentation => q{
+            Name of an image in assets.zip:/images/icons/.
+            Any image size should work, but it will be rescaled to 32x32, so the 
+            original should be square.
+        }
     );
     has 'logs_expire' => (
         is          => 'ro',
@@ -80,8 +88,8 @@ package MyApp {
         ### Make sure that the logging database has been deployed
         $self->o_creat_database_log();
 
-        ### Set the application Icon
-        $self->main_frame->SetIcons( $self->icon_bundle );
+        ### Set the application icon
+        $self->main_frame->SetIcon( $self->get_app_icon() );
 
         ### Set the main frame as the app top window
         $self->SetTopWindow( $self->main_frame );
@@ -98,23 +106,6 @@ package MyApp {
     sub _build_bb {#{{{
         my $self = shift;
         return MyApp::Model::Container->new( name => 'plain container' );
-    }#}}}
-    sub _build_icon_bundle {#{{{
-        my $self = shift;
-
-    ### CHECK
-        ### Testing with the frai icon bundle:
-        ###     - When the only file in the bundle was either the _16 or the 
-        ###     _32, all icons appeared to work properly.  None of the other 
-        ###     sizes seemed to have any effect at all, and I didn't notice a 
-        ###     difference between using the _16 and the _32.
-
-        my $bundle  = Wx::IconBundle->new();
-        my $ico_dir = io $self->resolve(service => q{/Directory/icon_bundle});
-        my @images  = grep{ /\.(png|gif|jpg)$/ } $ico_dir->all();
-        map{ $bundle->AddIcon( Wx::Icon->new($_, wxBITMAP_TYPE_ANY) ) }@images;
-
-        return $bundle;
     }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
@@ -171,54 +162,20 @@ package MyApp {
         return;
     }#}}}
     sub popconf {#{{{
-        my $self    = shift;
-        my $message = shift || 'Everything is fine';
-        my $title   = shift || wxTheApp->GetAppName;
+        my $self        = shift;
+        my $question    = shift;
+        my $title       = shift || wxTheApp->GetAppName;
 
-=pod
+        unless( $question ) {
+            wxTheApp->poperr(
+                "popconf() called without being passed a question; this makes no sense!"
+            );
+            return;
+        }
 
-The rv from this will be either wxYES or wxNO.  BOTH ARE POSITIVE INTEGERS.
-
-So don't do this:
-
- ### BAD AND WRONG AND EVIL
-
- if( popconf("Are you really sure", "Really?") ) {
-  ### Do Eeet
- }
- else {
-  ### User said 'no', so don't really do eeet.
-
-  ### 
-  ### GONNNNNG!  THAT IS WRONG!
-  ### 
- }
-
-That code will never hit the else block, even if the user choses 'No', since the 
-'No' response is true.  This could be A Bad Thing.
-
-
-Instead, you need something like this...
-
- ### GOOD AND CORRECT AND PURE
- if( wxYES == popconf("Are you really sure", "Really really?") ) {
-  ### Do Eeet
- }
- else {
-  ### User said 'no', so don't really do eeet.
- }
-
-...or often, more simply, this...
-
- return if wxNO == popconf("Are you really sure", "Really really?");
- ### do $stuff confident that the user did not say no.
-
-=cut
-
-        my $resp = Wx::MessageBox($message,
+        my $resp = Wx::MessageBox($question,
                                     $title,
                                     wxYES_NO|wxYES_DEFAULT|wxICON_QUESTION|wxSTAY_ON_TOP,
-                                    #$self->main_frame->frame );
                                     $self->main_frame);
         return $resp;
     }#}}}
@@ -230,6 +187,17 @@ Instead, you need something like this...
             $log_schema->deploy;
         }
         return 1;
+    }#}}}
+    sub get_app_icon {#{{{
+        my $self = shift;
+
+        my $image = $self->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
+        $image->Rescale(32,32);
+        my $bmp = Wx::Bitmap->new($image);
+
+        my $icon = Wx::Icon->new();
+        $icon->CopyFromBitmap($bmp);
+        return $icon;
     }#}}}
 
     sub OnExit {#{{{
@@ -277,32 +245,91 @@ Instead, you need something like this...
 
 __END__
 
-These make no sense unless a throbber exists, and I haven't added one yet, but
-most likely will, so leaving the code here for now.
+=head1 NAME
 
-    sub endthrob {#{{{
-        my $self = shift;
+MyApp - wxperl Template Application with some built-in helpers.
 
-        $self->main_frame->status_bar->bar_reset;
-        $self->Yield; 
-        local %SIG = ();
-        $SIG{ALRM} = undef;     ##no critic qw(RequireLocalizedPunctuationVars) - PC thinks $SIG there is a scalar - whoops
-        alarm 0;
-        return;
-    }#}}}
-    sub throb {#{{{
-        my $self = shift;
+=head1 SYNOPSIS
 
-        $self->main_frame->status_bar->gauge->Pulse;        ## no critic qw(ProhibitLongChainsOfMethodCalls)
-        $self->Yield; 
-        local %SIG = ();
-        $SIG{ALRM} = sub {  ##no critic qw(RequireLocalizedPunctuationVars) - PC thinks $SIG there is a scalar - whoops
-            $self->main_frame->status_bar->gauge->Pulse;    ## no critic qw(ProhibitLongChainsOfMethodCalls)
-            $self->Yield; 
-            alarm 1;
-        };
-        alarm 1;
-        return;
-    }#}}}
+ use MyApp;
+ my $app = MyApp->new();
+ $app->MainLoop();
 
- vim: syntax=perl
+=head1 DESCRIPTION
+
+Meant as a starting point for creating new wxperl applications, MyApp provides 
+structure, as well as some tools that will be helpful in developing a new app.
+
+=head1 DOCUMENTATION MAP
+
+=over 2
+
+=item * L<MyApp::GettingStarted.pod>
+
+=item * L<MyApp::GUI::MainFrame>
+
+=item * L<MyApp::GUI::Dialog::About>
+
+=item * L<MyApp::GUI::Dialog::Help>
+
+=item * L<MyApp::GUI::Dialog::LogViewer>
+
+=item * L<MyApp::GUI::Dialog::PodViewer>
+
+=back
+
+=head1 METHODS
+
+=head2 popconf
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * scalar - yes/no question to ask the user (required)
+
+=item * scalar - title of the popup window (optional; defaults to the App 
+Name).
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * integer - either wxYES or wxNO
+
+=back
+
+=item * USAGE
+
+ if( wxYES == popconf("Are you really sure", "Really really?") ) {
+  # Do Eeet
+ }
+ else {
+  # User said 'no', so don't really do eeet.
+ }
+
+...or often, more simply...
+
+ return if wxNO == popconf("Are you really sure", "Really really?");
+ # do $stuff confident that the user did not say no.
+
+The two possible return values, wxYES and wxNO, are I<both positive integers>, 
+so don't do this:
+
+ if( popconf("Are you really sure", "Really really?") ) {
+  # Do Eeet
+ }
+ else {
+  # User said 'no', so don't really do eeet.
+    ### GONNNNNG!  THAT IS WRONG! ###
+ }
+
+That code will never hit the else block, even if the user choses 'No', since 
+the 'No' response is true.  This is very likely to be A Bad Thing.
+
+=back
+

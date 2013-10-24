@@ -14,7 +14,7 @@ my $cnt = fully_reindex( $help );
 say "$cnt documents were indexed.";
 
 ### For testing that your re-indexing worked; use if desired
-#search_test($help, 'nonsense');
+#search_test($help, 'this will be passed as a search string; edit as you wish');
 
 sub fully_reindex {#{{{
     my $help = shift;
