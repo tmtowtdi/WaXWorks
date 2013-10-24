@@ -7,6 +7,7 @@ package MyApp {
     use DateTime;
     use DateTime::Duration;
     use FindBin;
+    use IO::All;
     use Moose;
     use Wx qw(:everything);
     use Wx::Event qw(EVT_CLOSE EVT_TIMER);
@@ -21,7 +22,7 @@ package MyApp {
     our $VERSION = '0.1';
 
     has 'bb' => (
-        is          => 'rw',
+        is          => 'ro',
         isa         => 'MyApp::Model::Container',
         lazy_build  => 1,
         handles => {
@@ -33,16 +34,13 @@ package MyApp {
             wxbb for GUI elements.
         }
     );
-    has 'db_log_file' => (
-        is          => 'rw',
-        isa         => 'Str',
+    has 'icon_bundle' => (
+        is          => 'ro',
+        isa         => 'Wx::IconBundle',
         lazy_build  => 1,
-        documentation => q{
-            SQLite file containing app logs
-        }
     );
     has 'logs_expire' => (
-        is          => 'rw',
+        is          => 'ro',
         isa         => 'Int',
         default     => 7,
         documentation => q{
@@ -51,17 +49,17 @@ package MyApp {
         }
     );
     has 'main_frame' => (
-        is          => 'rw',
+        is          => 'ro',
         isa         => 'MyApp::GUI::MainFrame',
         lazy_build  => 1,
     );
     has 'timer' => (
-        is          => 'rw',
+        is          => 'ro',
         isa         => 'Wx::Timer',
         lazy_build  => 1,
     );
     has 'wxbb' => (
-        is          => 'rw',
+        is          => 'ro',
         isa         => 'MyApp::Model::WxContainer',
         lazy_build  => 1,
         handles => {
@@ -82,6 +80,10 @@ package MyApp {
         ### Make sure that the logging database has been deployed
         $self->o_creat_database_log();
 
+        ### Set the application Icon
+        $self->main_frame->SetIcons( $self->icon_bundle );
+
+        ### Set the main frame as the app top window
         $self->SetTopWindow( $self->main_frame );
 
         ### Log the fact that we've started.
@@ -97,10 +99,22 @@ package MyApp {
         my $self = shift;
         return MyApp::Model::Container->new( name => 'plain container' );
     }#}}}
-    sub _build_db_log_file {#{{{
+    sub _build_icon_bundle {#{{{
         my $self = shift;
-        my $file = $self->root_dir . '/var/log.sqlite';
-        return $file;
+
+    ### CHECK
+        ### Testing with the frai icon bundle:
+        ###     - When the only file in the bundle was either the _16 or the 
+        ###     _32, all icons appeared to work properly.  None of the other 
+        ###     sizes seemed to have any effect at all, and I didn't notice a 
+        ###     difference between using the _16 and the _32.
+
+        my $bundle  = Wx::IconBundle->new();
+        my $ico_dir = io $self->resolve(service => q{/Directory/icon_bundle});
+        my @images  = grep{ /\.(png|gif|jpg)$/ } $ico_dir->all();
+        map{ $bundle->AddIcon( Wx::Icon->new($_, wxBITMAP_TYPE_ANY) ) }@images;
+
+        return $bundle;
     }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
@@ -211,7 +225,7 @@ Instead, you need something like this...
     sub o_creat_database_log {#{{{
         my $self = shift;
 
-        unless( -e $self->db_log_file ) {
+        unless( -e $self->resolve(service => '/DatabaseLog/db_file') ) {
             my $log_schema = $self->resolve( service => '/DatabaseLog/schema' );
             $log_schema->deploy;
         }

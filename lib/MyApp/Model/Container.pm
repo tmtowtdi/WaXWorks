@@ -126,10 +126,12 @@ package MyApp::Model::Container {
                 );#}}}
             };#}}}
             container 'Directory' => as {#{{{
+                service 'icon_bundle'   => join q{/}, $self->root_dir, qw(var icons current);
+
                 container 'doc' => as {
                     service 'html'      => join q{/}, $self->root_dir, qw(var doc html);
                     service 'html_idx'  => join q{/}, $self->root_dir, qw(var doc html idx);
-                }
+                };
             };#}}}
             container 'Log' => as {#{{{
                 service 'log_tz'        => $self->log_tz;
@@ -184,7 +186,7 @@ package MyApp::Model::Container {
     }
     sub _build_db_log_file {#{{{
         my $self = shift;
-        return $self->root_dir . '/var/log.sqlite';
+        return $self->root_dir . '/var/db/log.sqlite';
     }#}}}
     sub _build_local_tz {#{{{
         my $self = shift;
