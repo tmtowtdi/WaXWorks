@@ -1,8 +1,11 @@
 WaXWorks
 ========
 
-WxPerl Application Framework
+WxPerl Application Toolkit
 
-"Framework" may not be the correct term here.  WaXWorks is meant to end up as template 
-code to make it easier to start a new wxperl application.
+* Resource Sources
+** Icons
+*** onion_512.png
+**** http://linkboss.deviantart.com/art/Faenza-alt-Perl-file-icon-244179306
+**** GPL
 
