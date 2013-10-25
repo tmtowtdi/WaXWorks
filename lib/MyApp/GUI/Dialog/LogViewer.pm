@@ -468,6 +468,7 @@ package MyApp::GUI::Dialog::LogViewer {
         $self->set_page(1);
         $self->set_count( $rs->count );
         $self->show_page();
+        $self->resize_list_headers;
 
         return 1;
     }#}}}

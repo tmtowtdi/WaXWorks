@@ -1,10 +1,106 @@
 
 =head1 SYNOPSIS
 
-Right now, this exists as a placeholder.  Mainly a target for the link in the 
-MyApp.pm's POD, which demonstrates linking to a .pod file rather than a 
-module.
+This little app is meant to be both a template for creating new wxperl 
+applications (clone it to a new directory and immediately start adding code as 
+needed) and a tutorial (clone it to a new directory and immediately start 
+breaking things to learn how they work).
 
-This should end up containing tutorial-y stuff, while the modules' POD 
-sections should contain reference-y stuff.
+Either way, you'll want to have L<the wxWidgets 
+documentation|http://docs.wxwidgets.org/stable/wx_contents.html> open while 
+you're working.
+
+=head1 APP LAYOUT
+
+=head2 Bread Board Containers
+
+L<MyApp::Model::Container>
+
+L<MyApp::Model::WxContainer>
+
+Bread::Board provides a single point of access to various application 
+resources.  So, to figure out where the app's database file is stored:
+
+ $file = wxTheApp->resolve( service => 'DatabaseLog/db_file' );
+
+If you wanted to move that file somewhere else, you'd tell your main 
+Bread::Board module the location of that file, and all in-app resolutions of 
+that service will be re-pointed.
+
+There are two separate Bread::Board containers available.  One holds the bulk 
+of the application's settings, and is available to your app via resolve().  
+The other holds Wx-specific settings, and is available to your app via 
+wxresolve().  Having two separate containers allows you to create non-GUI 
+helper scripts (bin/update_help.pl is an example of this; it re-indexes your 
+Help documents and does not start a GUI).  These non-GUI scripts can make use 
+of the regular container's non-Wx-related settings.
+
+=head2 Database
+
+The application stores its logs and any other data in an SQLite database that 
+is not part of the original distribution.  Starting the app for the first time 
+will create that database for you.
+
+=head2 Logging
+
+L<MyApp::Model::DBILogger>
+
+Loggers are available as a Bread::Board service to any part of the application 
+with:
+
+ my $logger = wxTheApp->resolve( service => '/Log/logger' );
+
+Once you've got a logger, you can set the component (optional), which is 
+simply a tag included with subsequent log entries to help identify which part 
+of your program created the entries:
+
+ $logger->component( "SubroutineBeingWorkedOnRightNow");
+
+Log entries can now be created using any of several logging levels:
+
+ $logger->info("Something just happened");
+ $logger->warning("Something potentially bad just happened").
+
+=head1 HELPERS
+
+Pre-made elements that can be used as-is for their functionality (eg Log 
+Viewer, Pod Viewer) or as examples ("How do I make my app make a sound?").
+
+=head2 About
+
+L<MyApp::GUI::Dialog::About>
+
+=head2 Help
+
+L<MyApp::GUI::Dialog::Help>
+
+=head2 Log Viewer
+
+L<MyApp::GUI::Dialog::LogViewer>
+
+=head2 Main Frame
+
+L<MyApp::GUI::MainFrame>
+
+=head2 Menu Bar
+
+L<MyApp::GUI::MainFrame::MenuBar>
+
+=head2 Pod Viewer
+
+L<MyApp::GUI::Dialog::PodViewer>
+
+=head2 Splash Image
+
+The splash image that displays upon application startup is purposely not part 
+of the application.  The app may take several seconds to initialize, and we 
+want the splash image to show up immediately.
+
+So display of that image is handled in a C<BEGIN> block in the main 
+C<bin/app.pl> program.
+
+By default, the image being displayed is in C<var/img/splash.png>.  To display 
+a different .png image, simply overwrite the existing C<splash.png> with your 
+new image.
+
 
