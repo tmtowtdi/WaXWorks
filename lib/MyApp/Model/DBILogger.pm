@@ -207,14 +207,27 @@ There's no need to mangle this yourself.
 This is to make it easier to eyeball the Logs table and see which entries are 
 from which run of the program.
 
-=cut
+=head1 LOG LEVELS
 
-CREATE TABLE "Logs" (
-    "id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL, 
-    "run" INTEGER,
-    "level" VARCHAR,
-    "component" VARCHAR, 
-    "datetime" DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP, 
-    "message" TEXT
-)
+=over 8
+
+=item debug
+
+=item info
+
+=item notice
+
+=item warning
+
+=item error
+
+=item critical
+
+=item alert
+
+=item emergency
+
+=back
+
+=cut
 

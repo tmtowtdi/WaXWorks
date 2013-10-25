@@ -43,17 +43,12 @@ package MyApp::GUI::Dialog::LogViewer {
         default => 'Log Viewer',
     );
     ###############
-    has 'ttl_record_count' => (
-        is      => 'ro',
-        isa     => 'Int',
-        default => 0,
-        traits  => ['Number'],
-        handles => {
-            set_count => 'set',
-        },
+    has 'colours' => (
+        is          => 'ro',
+        isa         => 'HashRef',
+        lazy_build  => 1,
         documentation => q{
-            The total number of records in the current query.  Changes 
-            per-component, so each time a new radio button is chosen.
+            AMERICANS notice the 'u' in 'colours' for consistency with the rest of Wx.
         }
     );
     has 'page' => (
@@ -95,6 +90,19 @@ package MyApp::GUI::Dialog::LogViewer {
         default => 'All Records',
         documentation => q{
             Used as the first label in the Components choice.
+        }
+    );
+    has 'ttl_record_count' => (
+        is      => 'ro',
+        isa     => 'Int',
+        default => 0,
+        traits  => ['Number'],
+        handles => {
+            set_count => 'set',
+        },
+        documentation => q{
+            The total number of records in the current query.  Changes 
+            per-component, so each time a new radio button is chosen.
         }
     );
     ###############
@@ -195,6 +203,48 @@ package MyApp::GUI::Dialog::LogViewer {
         #$v->SetSize( $v->GetBestSize );
         return $v;
     }#}}}
+    sub _build_colours {#{{{
+        my $self = shift;
+
+        return {
+            default => { ### lgray
+                even => Wx::Colour->new("#D8D8D8"),
+                odd  => Wx::Colour->new("#F2F2F2"),
+            },
+            debug => { ### lblue
+                even => Wx::Colour->new("#CED8F6"),
+                odd  => Wx::Colour->new("#E0E6F8"),
+            },
+            info => { ### lgray (same as default)
+                even => Wx::Colour->new("#D8D8D8"),
+                odd  => Wx::Colour->new("#F2F2F2"),
+            },
+            notice => { ### yellow
+                even => Wx::Colour->new("#F3F781"),
+                odd  => Wx::Colour->new("#F5F6CE"),
+            },
+            warning => { ### lorange
+                even => Wx::Colour->new("#F7D358"),
+                odd  => Wx::Colour->new("#F3E2A9"),
+            },
+            error => { ### dorange
+                even => Wx::Colour->new("#FAAC58"),
+                odd  => Wx::Colour->new("#F5D0A9"),
+            },
+            critical => { ### lred
+                even => Wx::Colour->new("#F3642E"),
+                odd  => Wx::Colour->new("#FAAC58"),
+            },
+            alert => { ### dred
+                even => Wx::Colour->new("#FA5858"),
+                odd  => Wx::Colour->new("#F5A9A9"),
+            },
+            emergency => { ### dred (same as alert)
+                even => Wx::Colour->new("#FA5858"),
+                odd  => Wx::Colour->new("#F5A9A9"),
+            },
+        }
+    }#}}}
     sub _build_components {#{{{
         my $self = shift;
 
@@ -270,8 +320,9 @@ package MyApp::GUI::Dialog::LogViewer {
         );
         $v->InsertColumn(0, 'Date');
         $v->InsertColumn(1, 'Run');
-        $v->InsertColumn(2, 'Component');
-        $v->InsertColumn(3, 'Message');
+        $v->InsertColumn(2, 'Level');
+        $v->InsertColumn(3, 'Component');
+        $v->InsertColumn(4, 'Message');
         $v->Arrange(wxLIST_ALIGN_TOP);
         wxTheApp->Yield;
 
@@ -336,12 +387,12 @@ package MyApp::GUI::Dialog::LogViewer {
     }#}}}
     sub resize_list_headers {#{{{
         my $self = shift;
-        ### The first three columns' sizes remain static; resize the Message 
+        ### The first four columns' sizes remain static; resize the Message 
         ### column only.
         my $subtract = 0;
-        $subtract += $self->list_log->GetColumnWidth($_) for( 0..2 ); 
+        $subtract += $self->list_log->GetColumnWidth($_) for( 0..3 ); 
         my $msg_width = $self->list_log->GetClientSize->width - $subtract;
-        $self->list_log->SetColumnWidth(3, $msg_width);
+        $self->list_log->SetColumnWidth(4, $msg_width);
         return 1;
     }#}}}
     sub show_page {#{{{
@@ -358,15 +409,22 @@ package MyApp::GUI::Dialog::LogViewer {
         while(my $r = $slice->next) {
             $self->list_log->InsertStringItem($row, $r->datetime->dmy . q{ } . $r->datetime->hms);
             $self->list_log->SetItem($row, 1, $r->run);
-            $self->list_log->SetItem($row, 2, $r->component);
-            $self->list_log->SetItem($row, 3, $r->message);
+            $self->list_log->SetItem($row, 2, $r->level);
+            $self->list_log->SetItem($row, 3, $r->component);
+            $self->list_log->SetItem($row, 4, $r->message);
+            
+            my $which  = ($row % 2) ? 'odd' : 'even';
+            my $colour = $self->colours->{$r->level}{$which} // $self->colours->{'default'}{$which};
+
+            $self->list_log->SetItemBackgroundColour( $row, $colour );
             $row++;
             wxTheApp->Yield;
         }
         $self->list_log->SetColumnWidth(0, wxLIST_AUTOSIZE);
         $self->list_log->SetColumnWidth(1, wxLIST_AUTOSIZE_USEHEADER);
         $self->list_log->SetColumnWidth(2, wxLIST_AUTOSIZE_USEHEADER);
-        $self->list_log->SetColumnWidth(3, wxLIST_AUTOSIZE);
+        $self->list_log->SetColumnWidth(3, wxLIST_AUTOSIZE_USEHEADER);
+        $self->list_log->SetColumnWidth(4, wxLIST_AUTOSIZE);
 
         $self->update_pagination();
     }#}}}
@@ -391,10 +449,7 @@ package MyApp::GUI::Dialog::LogViewer {
         my $event   = shift;    # Wx::CommandEvent
 
         my $component = $self->choice_component->GetString( $self->choice_component->GetSelection );
-
-        my $search_hr = ( $component eq $self->str_show_all ) 
-            ? {}
-            : { component => $component };
+        my $search_hr = ( $component eq $self->str_show_all ) ? {} : { component => $component };
 
         my $rs = $self->schema->resultset('Logs')->search(
             $search_hr,

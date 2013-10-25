@@ -97,7 +97,7 @@ package MyApp {
         ### Log the fact that we've started.
         my $logger = $self->resolve( service => '/Log/logger' );
         $logger->component(wxTheApp->GetAppName);
-        $logger->debug( 'Starting ' . wxTheApp->GetAppName() );
+        $logger->info( 'Starting ' . wxTheApp->GetAppName() );
 
         $self->main_frame->Show(1);
         $self->_set_events();
@@ -220,7 +220,7 @@ package MyApp {
         my $limit = $now->subtract_duration( $dur );
         $logger->debug('Pruning old log entries');
         $logger->prune_bydate( $limit );
-        $logger->debug('Closing application');
+        $logger->info('Closing application');
 
         return 1;
     }#}}}
