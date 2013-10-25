@@ -1,0 +1,10 @@
+
+### This file exists solely so its containing directory (var/db/) will get 
+### checked into and out of git.
+###
+### This directory is where the databases live, but I do not want the 
+### databases themselves checked in to git; the app will create them if they 
+### do not already exist.
+###
+### Git does not allow committing empty directories.  Hence, this file.
+
