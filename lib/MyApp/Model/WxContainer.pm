@@ -57,25 +57,7 @@ package MyApp::Model::WxContainer {
                                             $self->get_member_contents($zip, $image_member)
                                         );
                                         return $img;
-
-                                        #my $zfh = Archive::Zip::MemberRead->new(
-                                        #    $zip,
-                                        #    $image_member->fileName,
-                                        #);
-                                        #my $binary;
-                                        #while(1) {
-                                        #    my $buffer = q{};
-                                        #    my $read = $zfh->read($buffer, 1024);
-                                        #    $binary .= $buffer;
-                                        #    last unless $read;
-                                        #}
-                                        #open my $sfh, '<', \$binary or croak "Unable to open stream: $ERRNO";
-                                        #my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
-                                        #close $sfh or croak "Unable to close stream: $ERRNO";
-                                        #return(wantarray) ? ($img, $binary) : $img;
                                     }
-
-
                                 );
                             }
                         }
@@ -253,12 +235,15 @@ Whatever font you go with:
 
 =head2 THE ASSETS FILE
 
-Assets are meant to be contained in a single .zip file, which lives in 
-var/assets.zip.  The idea is that all media assets can be contained within 
-this one file, though it currently only contains images.
+Most image assets can be included in and produced directly from a zip file.  
+However, other assets (eg sounds, splash screen image) require that they be 
+created from a regular (.wav) file rather than streamed from an zip file.
 
-If other asset types are needed, a new container, sibling to the 'images' 
-container, will need to be added.
+Since all assets can't be created, by the app, directly from a zip file, you 
+may be better off, from a consistency standpoint, in shipping all of your 
+assets in a zip file if desired, but then extracting those assets to regular 
+files upon installation of your app (the exact mechanics of that are up to 
+you).
 
 =head3 IMAGES
 
