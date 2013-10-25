@@ -1,9 +1,0 @@
-
-=head1 NAME
-
-Test.pod - testing raw pod file in pod viewer.
-
-=head1 SYNOPSIS
-
-blah
-

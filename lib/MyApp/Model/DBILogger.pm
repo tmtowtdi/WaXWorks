@@ -100,12 +100,12 @@ sub Log::Dispatch::time_zone {#{{{
 
 __END__
 
+CHECK
 
 All of the docu below is left over from the original and needs a good fixifying.
 
 Some of it's probably useful (which is why it remains), but it's wildly 
 innaccurate as it stands right now.
-
 
 
 

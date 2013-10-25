@@ -266,6 +266,8 @@ structure, as well as some tools that will be helpful in developing a new app.
 
 =item * L<MyApp::GettingStarted.pod>
 
+=item * L<MyApp::TBD.pod>
+
 =item * L<MyApp::GUI::MainFrame>
 
 =item * L<MyApp::GUI::Dialog::About>
