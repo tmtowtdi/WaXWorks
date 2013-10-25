@@ -13,6 +13,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
 
     has 'itm_logview'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_podview'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_testsound' => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
         return;
@@ -22,6 +23,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
 
         $self->Append( $self->itm_logview   );
         $self->Append( $self->itm_podview   );
+        $self->Append( $self->itm_testsound   );
 
         $self->_set_events;
         return $self;
@@ -47,10 +49,21 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
             undef   # if defined, this is a sub-menu
         );
     }#}}}
+    sub _build_itm_testsound {#{{{
+        my $self = shift;
+        return Wx::MenuItem->new(
+            $self, -1,
+            '&Test Sound',
+            'Test Sound',
+            wxITEM_NORMAL,
+            undef   # if defined, this is a sub-menu
+        );
+    }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_logview, sub{$self->OnLogViewer(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_podview, sub{$self->OnPodViewer(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_logview,      sub{$self->OnLogViewer(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_podview,      sub{$self->OnPodViewer(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
         return 1;
     }#}}}
 
@@ -73,6 +86,19 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
                                 position => $dialog_pos,
                                 size => Wx::Size->new(700, 600),
                             );
+        return 1;
+    }#}}}
+    sub OnTestSound {#{{{
+        my $self = shift;
+
+        my $file = wxTheApp->get_wav( 'two_tones_up.wav' );
+        my $sound = Wx::Sound->new($file);
+        unless( $sound->IsOk ) {
+            wxTheApp->poperr("Sound is not OK");
+            return;
+        }
+        $sound->Play();
+
         return 1;
     }#}}}
 

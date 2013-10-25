@@ -126,7 +126,7 @@ package MyApp::Model::Container {
                 );#}}}
             };#}}}
             container 'Directory' => as {#{{{
-                service 'icon_bundle'   => join q{/}, $self->root_dir, qw(var icons current);
+                service 'wav'   => join q{/}, $self->root_dir, qw(var wav);
 
                 container 'doc' => as {
                     service 'html'      => join q{/}, $self->root_dir, qw(var doc html);

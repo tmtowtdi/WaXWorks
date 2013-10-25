@@ -47,27 +47,35 @@ package MyApp::Model::WxContainer {
                         container "$dir" => as {
                             foreach my $image_member(@{ $img_subdirs{$dir} }) {
                                 $image_member->fileName =~ m{images/$dir/(.+)$};
-                                my $image_filename = $1; # just the image name, eg 'beryl.png'
+                                my $image_filename = $1; # just the image name
 
                                 service "$image_filename" => (
                                     block => sub {
                                         my $s = shift;
-                                        my $zfh = Archive::Zip::MemberRead->new(
-                                            $zip,
-                                            $image_member->fileName,
+
+                                        my $img = $self->image_from_contents(
+                                            $self->get_member_contents($zip, $image_member)
                                         );
-                                        my $binary;
-                                        while(1) {
-                                            my $buffer = q{};
-                                            my $read = $zfh->read($buffer, 1024);
-                                            $binary .= $buffer;
-                                            last unless $read;
-                                        }
-                                        open my $sfh, '<', \$binary or croak "Unable to open stream: $ERRNO";
-                                        my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
-                                        close $sfh or croak "Unable to close stream: $ERRNO";
-                                        return(wantarray) ? ($img, $binary) : $img;
+                                        return $img;
+
+                                        #my $zfh = Archive::Zip::MemberRead->new(
+                                        #    $zip,
+                                        #    $image_member->fileName,
+                                        #);
+                                        #my $binary;
+                                        #while(1) {
+                                        #    my $buffer = q{};
+                                        #    my $read = $zfh->read($buffer, 1024);
+                                        #    $binary .= $buffer;
+                                        #    last unless $read;
+                                        #}
+                                        #open my $sfh, '<', \$binary or croak "Unable to open stream: $ERRNO";
+                                        #my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
+                                        #close $sfh or croak "Unable to close stream: $ERRNO";
+                                        #return(wantarray) ? ($img, $binary) : $img;
                                     }
+
+
                                 );
                             }
                         }
@@ -113,6 +121,53 @@ package MyApp::Model::WxContainer {
         my $self = shift;
         return join q{/}, $self->root_dir, 'var/assets.zip';
     }#}}}
+
+    sub get_member_contents {#{{{
+        my $self    = shift;
+        my $zip     = shift;
+        my $member  = shift;
+
+        ### Reads the contents of $member from $zip; returns the member's 
+        ### contents, whatever they may be.
+
+        my $zfh = Archive::Zip::MemberRead->new( $zip, $member->fileName );
+        my $member_contents;
+        while(1) {
+            my $buffer = q{};
+            my $read = $zfh->read($buffer, 1024);
+            $member_contents .= $buffer;
+            last unless $read;
+        }
+
+        return $member_contents;
+    }#}}}
+    sub image_from_contents {#{{{
+        my $self        = shift;
+        my $contents    = shift;
+
+        ### Returns a Wx::Image created from a member (read by 
+        ### L</get_member_contents>), presuming that member was an image file.
+
+        open my $sfh, '<', \$contents or croak "Unable to open stream: $ERRNO";
+        my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
+        close $sfh or croak "Unable to close stream: $ERRNO";
+        return $img;
+    }#}}}
+    sub sound_from_contents {#{{{
+        my $self        = shift;
+        my $contents    = shift;
+
+        ### Returns a Wx::Sound created from a member (read by 
+        ### L</get_member_contents>), presuming that member was a wav file.
+
+# This was just copied from image_from_contents() and does not work yet.
+
+        open my $sfh, '<', \$contents or croak "Unable to open stream: $ERRNO";
+        my $img = Wx::Image->new($sfh, wxBITMAP_TYPE_ANY);
+        close $sfh or croak "Unable to close stream: $ERRNO";
+        return $img;
+    }#}}}
+
 
     no Moose;
     __PACKAGE__->meta->make_immutable; 

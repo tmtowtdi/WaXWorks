@@ -142,6 +142,25 @@ package MyApp {
         return 1;
     }#}}}
 
+    sub get_app_icon {#{{{
+        my $self = shift;
+
+        my $image = $self->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
+        $image->Rescale(32,32);
+        my $bmp = Wx::Bitmap->new($image);
+
+        my $icon = Wx::Icon->new();
+        $icon->CopyFromBitmap($bmp);
+        return $icon;
+    }#}}}
+    sub get_wav {#{{{
+        my $self = shift;
+        my $file = shift;
+
+        my $path = join '/', (wxTheApp->resolve( service => '/Directory/wav'), $file);
+        return unless -e $path;
+        return $path;
+    }#}}}
     sub poperr {#{{{
         my $self    = shift;
         my $message = shift || 'Unknown error occurred';
@@ -187,17 +206,6 @@ package MyApp {
             $log_schema->deploy;
         }
         return 1;
-    }#}}}
-    sub get_app_icon {#{{{
-        my $self = shift;
-
-        my $image = $self->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
-        $image->Rescale(32,32);
-        my $bmp = Wx::Bitmap->new($image);
-
-        my $icon = Wx::Icon->new();
-        $icon->CopyFromBitmap($bmp);
-        return $icon;
     }#}}}
 
     sub OnExit {#{{{
