@@ -10,10 +10,16 @@ package MyApp::GUI::MainFrame {
     extends 'Wx::Frame';
 
     use MyApp::GUI::MainFrame::MenuBar;
+    use MyApp::GUI::MainFrame::StatusBar;
 
     has 'menu_bar' => (
         is          => 'rw',
         isa         => 'MyApp::GUI::MainFrame::MenuBar',
+        lazy_build  => 1,
+    );
+    has 'status_bar' => (
+        is          => 'rw',
+        isa         => 'MyApp::GUI::MainFrame::StatusBar',
         lazy_build  => 1,
     );
 
@@ -55,7 +61,8 @@ package MyApp::GUI::MainFrame {
         ### MenuBar.
         wxTheApp->SetTopWindow($self);
 
-        $self->SetMenuBar($self->menu_bar);
+        $self->SetMenuBar( $self->menu_bar );
+        $self->SetStatusBar( $self->status_bar );
 
         $self->_set_events;
         $self->Show(1);
@@ -67,9 +74,14 @@ package MyApp::GUI::MainFrame {
         my $mb = MyApp::GUI::MainFrame::MenuBar->new();
         return $mb;
     }#}}}
-    sub _set_events {
+    sub _build_status_bar {#{{{
         my $self = shift;
-    }
+        my $sb = MyApp::GUI::MainFrame::StatusBar->new( frame => $self, caption => wxTheApp->GetAppName );
+        return $sb;
+    }#}}}
+    sub _set_events {#{{{
+        my $self = shift;
+    }#}}}
 
     no Moose;
     __PACKAGE__->meta->make_immutable;

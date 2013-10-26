@@ -95,7 +95,7 @@ package MyApp {
         $self->SetTopWindow( $self->main_frame );
 
         ### Log the fact that we've started.
-        my $logger = $self->resolve( service => '/Log/logger' );
+        my $logger = wxTheApp->resolve( service => '/Log/logger' );
         $logger->component(wxTheApp->GetAppName);
         $logger->info( 'Starting ' . wxTheApp->GetAppName() );
 
@@ -145,7 +145,7 @@ package MyApp {
     sub get_app_icon {#{{{
         my $self = shift;
 
-        my $image = $self->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
+        my $image = wxTheApp->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
         $image->Rescale(32,32);
         my $bmp = Wx::Bitmap->new($image);
 
@@ -160,6 +160,15 @@ package MyApp {
         my $path = join '/', (wxTheApp->resolve( service => '/Directory/wav'), $file);
         return unless -e $path;
         return $path;
+    }#}}}
+    sub o_creat_database_log {#{{{
+        my $self = shift;
+
+        unless( -e wxTheApp->resolve(service => '/DatabaseLog/db_file') ) {
+            my $log_schema = wxTheApp->resolve( service => '/DatabaseLog/schema' );
+            $log_schema->deploy;
+        }
+        return 1;
     }#}}}
     sub poperr {#{{{
         my $self    = shift;
@@ -198,20 +207,21 @@ package MyApp {
                                     $self->main_frame);
         return $resp;
     }#}}}
-    sub o_creat_database_log {#{{{
+    sub throb_end {#{{{
         my $self = shift;
-
-        unless( -e $self->resolve(service => '/DatabaseLog/db_file') ) {
-            my $log_schema = $self->resolve( service => '/DatabaseLog/schema' );
-            $log_schema->deploy;
-        }
-        return 1;
+        $self->main_frame->status_bar->gauge->timer->Stop();
+        $self->main_frame->status_bar->reset();
+    }#}}}
+    sub throb_start {#{{{
+        my $self    = shift;
+        my $pause   = shift || 100;   # milliseconds
+        $self->main_frame->status_bar->gauge->timer->Start( $pause, wxTIMER_CONTINUOUS );
     }#}}}
 
     sub OnExit {#{{{
         my $self = shift;
 
-        my $logger = $self->resolve( service => '/Log/logger' );
+        my $logger = wxTheApp->resolve( service => '/Log/logger' );
         $logger->component(wxTheApp->GetAppName);
 
         ### Prune old log entries
