@@ -1,7 +1,6 @@
-WaXWorks
-========
+# WaXWorks
 
-WxPerl Application Toolkit
+## WxPerl Application Toolkit
 
 * Resource Sources
   * Icons
@@ -20,5 +19,7 @@ WxPerl Application Toolkit
   * Sounds
     * http://home.comcast.net/~jdeshon2/joewav.html
 
+## Status
 
+Status bar / gauge looks good, but explodes on shutdown (`pure virtual method called`)
 
