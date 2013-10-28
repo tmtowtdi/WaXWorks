@@ -174,7 +174,6 @@ package MyApp {
         my $self    = shift;
         my $message = shift || 'Unknown error occurred';
         my $title   = shift || 'Error!';
-        #Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame->frame );
         Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame );
         return;
     }#}}}
@@ -185,7 +184,6 @@ package MyApp {
         Wx::MessageBox($message,
                         $title,
                         wxOK | wxICON_INFORMATION,
-                        #$self->main_frame->frame );
                         $self->main_frame );
         return;
     }#}}}
@@ -209,13 +207,15 @@ package MyApp {
     }#}}}
     sub throb_end {#{{{
         my $self = shift;
-        $self->main_frame->status_bar->gauge->timer->Stop();
-        $self->main_frame->status_bar->reset();
+        $self->main_frame->status_bar->gauge->stop();
+        $self->main_frame->status_bar->gauge->reset();
+        return 1;
     }#}}}
     sub throb_start {#{{{
         my $self    = shift;
-        my $pause   = shift || 100;   # milliseconds
-        $self->main_frame->status_bar->gauge->timer->Start( $pause, wxTIMER_CONTINUOUS );
+        my $pause   = shift || 50;   # milliseconds
+        $self->main_frame->status_bar->gauge->start( $pause, wxTIMER_CONTINUOUS );
+        return 1;
     }#}}}
 
     sub OnExit {#{{{
@@ -325,7 +325,7 @@ Name).
 
 =item * USAGE
 
- if( wxYES == popconf("Are you really sure", "Really really?") ) {
+ if( wxYES == wxTheApp->popconf("Are you really sure", "Really really?") ) {
   # Do Eeet
  }
  else {
@@ -334,13 +334,13 @@ Name).
 
 ...or often, more simply...
 
- return if wxNO == popconf("Are you really sure", "Really really?");
+ return if wxNO == wxTheApp->popconf("Are you really sure", "Really really?");
  # do $stuff confident that the user did not say no.
 
 The two possible return values, wxYES and wxNO, are I<both positive integers>, 
 so don't do this:
 
- if( popconf("Are you really sure", "Really really?") ) {
+ if( wxTheApp->popconf("Are you really sure", "Really really?") ) {
   # Do Eeet
  }
  else {
@@ -350,6 +350,69 @@ so don't do this:
 
 That code will never hit the else block, even if the user choses 'No', since 
 the 'No' response is true.  This is very likely to be A Bad Thing.
+
+=back
+
+=head2 throb_end
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * none
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=item * USAGE
+
+ wxTheApp->throb_end();
+
+Stops the indeterminate throbber gauge, and resets it (clears its status).  
+Does nothing if the throbber was not running.
+
+See L</throb_start>.
+
+=back
+
+=head2 throb_start
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * Optional scalar - milliseconds to pause between pulses.  Defaults to 
+50.
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=item * USAGE
+
+ wxTheApp->throb_start();
+
+Starts pulsing the throbber gauge in the main frame's status bar.  This will 
+continue until L</throb_end> is called.
+
+Indicates that the program is doing something.
 
 =back
 

@@ -8,18 +8,30 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
 
-    has 'itm_prefs'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_copy'      => (is => 'rw', isa => 'Wx::MenuItem', lazy_build => 1);
+    has 'itm_paste'     => (is => 'rw', isa => 'Wx::MenuItem', lazy_build => 1);
+    has 'itm_prefs'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
         return; # Wx::Menu->new() takes no arguments
     }#}}}
     sub BUILD {
         my $self = shift;
+        $self->Append( $self->itm_copy );
+        $self->Append( $self->itm_paste );
         $self->Append( $self->itm_prefs );
         $self->_set_events;
         return $self;
     }
 
+    sub _build_itm_copy {#{{{
+        my $self = shift;
+        return Wx::MenuItem->new( $self, wxID_COPY );
+    }#}}}
+    sub _build_itm_paste {#{{{
+        my $self = shift;
+        return Wx::MenuItem->new( $self, wxID_PASTE );
+    }#}}}
     sub _build_itm_prefs {#{{{
         my $self = shift;
         return Wx::MenuItem->new(
@@ -61,3 +73,32 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::MenuBar::Edit - Edit menu
+
+=head1 SYNOPSIS
+
+Assuming C<$self> is a Wx::MenuBar:
+
+ $edit_menu = MyApp::GUI::MainFrame::MenuBar::Edit->new();
+ $self->Append( $edit_menu, "&Edit" );
+
+=head1 COMPONENTS
+
+=over 4
+
+=item * Copy (stock)
+
+=item * Paste (stock)
+
+=item * Preferences
+
+Opens what should eventually be a Preferences dialog, but which is currently 
+just an empty dialog.
+
+=back
+

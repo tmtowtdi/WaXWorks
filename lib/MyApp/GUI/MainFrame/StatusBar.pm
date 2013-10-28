@@ -1,43 +1,5 @@
 use v5.14;
 
-=pod
-
-When the whole app shuts down this gets a resize event, which calls reset(), 
-which destroys the gauge.
-
-That's resulting in :
-    pure virtual method called
-    terminate called without an active exception
-
-    This application has requested the Runtime to terminate it in an unusual 
-    way.
-    Please contact the application's support team for more information.
-
-...and MyApp::OnExit() then does not get called.
-
-
-
-- OnResize
-    - calls reset()
-        - which destroys the gauge
-
-
-We need that to happen on a normal resize, or the entire status bar ends up 
-all fucked up after the resize.
-
-Also, MyApp::throb_end() is calling reset() as well.  Once the throbber starts 
-moving the gauge, there doesn't appear to be any way of clearing it other than 
-destroying it and re-creating it.  After it stops, it maintains its last 
-position, even if we SetValue(0).
-
-What we need is some way of determining if a given OnResize event is being 
-triggered by the app closing down; I'm not sure yet how to do that.
-
-
-=cut
-
-
-
 package MyApp::GUI::MainFrame::StatusBar {
     use Moose;
     use Wx qw(:everything);
@@ -52,7 +14,6 @@ package MyApp::GUI::MainFrame::StatusBar {
         is          => 'rw', 
         isa         => 'Wx::Frame',
         required    => 1,
-        weak_ref    => 1,
     );
     ##########
     has 'caption' => (
@@ -61,17 +22,25 @@ package MyApp::GUI::MainFrame::StatusBar {
         lazy        => 1,
         default     => q{},
     );
+    has 'caption_field' => (
+        is          => 'rw', 
+        isa         => 'Int',
+        default     => 0,
+        documentation => q{
+            The field where the caption goes, starting at 0
+        }
+    );
     has 'field_count' => (
         is          => 'rw', 
         isa         => 'Int',
         lazy        => 1,
-        default     => q{2},
+        default     => q{3},
     );
     has 'field_widths' => (
         is          => 'rw', 
         isa         => 'ArrayRef[Int]',
         lazy        => 1,
-        default     => sub{ [-1, 100] },
+        default     => sub{ [-1, 100, 100] },
         documentation => q{
             Must contain exactly $self->field_count elements.
             Negatives are proportions (variable width), positives are pixel counts (fixed widths).
@@ -82,6 +51,14 @@ package MyApp::GUI::MainFrame::StatusBar {
         isa         => 'MyApp::GUI::MainFrame::StatusBar::Gauge',
         lazy_build  => 1,
     );
+    has 'gauge_field' => (
+        is          => 'rw', 
+        isa         => 'Int',
+        default     => 2,
+        documentation => q{
+            The field where the gauge goes, starting at 0
+        }
+    );
 
     sub FOREIGNBUILDARGS {#{{{
         my $self = shift;
@@ -91,35 +68,11 @@ package MyApp::GUI::MainFrame::StatusBar {
     }#}}}
     sub BUILD {
         my $self = shift;
-
-        $self->init();
-
-        $self->_set_events();
+        $self->_init();
         return $self;
     }
 
-    sub _build_gauge {#{{{
-        my $self = shift;
-
-        my $rect = $self->GetFieldRect(1);
-        my $pos  = Wx::Point->new( $rect->x,       $rect->y );
-        my $size = Wx::Size->new ( $rect->width,   $rect->height );
-
-        my $g = MyApp::GUI::MainFrame::StatusBar::Gauge->new(
-            parent      => $self,
-            position    => $pos,
-            size        => $size,
-        );
-        return $g;
-
-    }#}}}
-    sub _set_events {#{{{
-        my $self = shift;
-        EVT_SIZE(   $self,  sub{$self->OnResize(@_)}    );
-        return 1;
-    }#}}}
-
-    sub init {#{{{
+    sub _init {#{{{
         my $self = shift;
 
         $self->SetFieldsCount( $self->field_count );
@@ -129,43 +82,124 @@ package MyApp::GUI::MainFrame::StatusBar {
 
         return 1;
     }#}}}
-    sub reset {#{{{
+    sub _build_gauge {#{{{
         my $self = shift;
 
-        $self->gauge->Destroy();    # init() will re-create it.
-        $self->clear_gauge();
-        $self->init();
+        my $rect = $self->GetFieldRect( $self->gauge_field );
+        my $pos  = Wx::Point->new( $rect->x,       $rect->y );
+        my $size = Wx::Size->new ( $rect->width,   $rect->height );
 
-        return 1;
+        my $g = MyApp::GUI::MainFrame::StatusBar::Gauge->new(
+            parent      => $self,
+            position    => $pos,
+            size        => $size,
+        );
+        return $g;
     }#}}}
-    sub change_caption {#{{{
-        my $self        = shift;
-        my $new_text    = shift;
 
-        my $old_text = $self->GetStatusText(0);
-        $self->caption($new_text);
-        $self->SetStatusText($new_text, 0);
+    sub change_caption {#{{{
+        my $self    = shift;
+        my $text    = shift || q{};
+        
+        my $old_text = $self->GetStatusText( $self->caption_field );
+        $self->SetStatusText( $text, $self->caption_field );
         return $old_text;
     }#}}}
+    sub resize {#{{{
+        my $self = shift;
 
-    sub OnResize {#{{{
-        my $self        = shift;
-        my $status_bar  = shift;
-        my $event       = shift;
+        $self->gauge->Destroy();    # _init() will re-create it.
+        $self->clear_gauge();
+        $self->_init();
 
-#my $logger = wxTheApp->resolve( service => '/Log/logger' );
-#$logger->component('statusbar');
-#$logger->debug('resize');
-
-        if( wxTheApp->has_main_frame ) {
-#$logger->debug('resize - with main frame');
-            $self->reset();
-        }
         return 1;
     }#}}}
+
 
     no Moose;
     __PACKAGE__->meta->make_immutable;
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::StatusBar - Status bar displayed at the bottom of the 
+main frame.
+
+=head1 SYNOPSIS
+
+Assuming $self is a Wx::Frame onto which you want to add a status bar:
+
+ # Create the status bar
+ $status_bar = MyApp::GUI::MainFrame::StatusBar->new(
+  frame => $self, caption => "Some String"
+ );
+
+ # Add it to the current frame
+ $self->SetStatusBar( $status_bar );
+
+ # Define which field of the bar will display helpstrings, which come from
+ # mousing over menu items.  Zero-based.
+ $self->SetStatusBarPane(1);
+
+To make sure that the status bar continues to display properly when the user 
+resizes its parent frame, add this to that parent frame's EVT_SIZE handler:
+
+ $status_bar->resize();
+
+=head1 METHODS
+
+=head2 change_caption
+
+Changes the text displayed in the main caption field.  By default, this is the 
+first field.  The caption field can be cleared by sending an empty string, or 
+simply by sending no argument at all.
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * semi-optional scalar - the text to display.
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * scalar - the previously-set caption.
+
+=back
+
+=back
+
+=head2 resize
+
+Resizes the status bar and its components.  This should be called as part of 
+the parent frame's C<EVT_SIZE> event handler.
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * none
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=back
+

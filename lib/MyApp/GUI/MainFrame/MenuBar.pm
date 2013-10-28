@@ -13,7 +13,6 @@ package MyApp::GUI::MainFrame::MenuBar {
     use MyApp::GUI::MainFrame::MenuBar::Tools;
     use MyApp::GUI::MainFrame::MenuBar::Help;
 
-
     has 'menu_file'     => (is => 'rw', isa => 'MyApp::GUI::MainFrame::MenuBar::File',   lazy_build => 1);
     has 'menu_edit'     => (is => 'rw', isa => 'MyApp::GUI::MainFrame::MenuBar::Edit',   lazy_build => 1);
     has 'menu_tools'    => (is => 'rw', isa => 'MyApp::GUI::MainFrame::MenuBar::Tools',  lazy_build => 1);
@@ -63,9 +62,42 @@ package MyApp::GUI::MainFrame::MenuBar {
         my $self = shift;
         return MyApp::GUI::MainFrame::MenuBar::Tools->new();
     }#}}}
+    sub _set_events {#{{{
+        my $self = shift;
+        return 1;
+    }#}}}
 
     no Moose;
     __PACKAGE__->meta->make_immutable;
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::MenuBar - Text-based menu bar at the top of the main 
+frame
+
+=head1 SYNOPSIS
+
+Assuming C<$self> is a Wx::Frame: 
+
+ $menu_bar = MyApp::GUI::MainFrame::MenuBar->new();
+ $self->SetMenuBar( $menu_bar );
+
+=head1 COMPONENTS
+
+=over 4
+
+=item * L<MyApp::GUI::MainFrame::MenuBar::File>
+
+=item * L<MyApp::GUI::MainFrame::MenuBar::Edit>
+
+=item * L<MyApp::GUI::MainFrame::MenuBar::Tools>
+
+=item * L<MyApp::GUI::MainFrame::MenuBar::Help>
+
+=back
+

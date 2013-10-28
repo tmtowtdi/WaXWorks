@@ -82,3 +82,9 @@ Browse your own application's POD as you work.
 
 Extends L<Wx::Perl::PodBrowser> and L<Wx::Perl::PodRichText>.
 
+=head1 NAMING PROBLEM!!!!
+
+This is listed under the Dialog namespace but the Pod Viewer is actually a 
+frame, not a dialog.
+
+

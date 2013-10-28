@@ -77,6 +77,10 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     }#}}}
     sub _build_itm_testsound {#{{{
         my $self = shift;
+
+        ### Works on Windows, but not Ubuntu.  At least not with my setup; 
+        ### could be a re-install will fix.
+
         return Wx::MenuItem->new(
             $self, -1,
             '&Test Sound',
@@ -145,3 +149,45 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::MenuBar::Tools - Tools menu
+
+=head1 SYNOPSIS
+
+Assuming C<$self> is a Wx::MenuBar:
+
+ $tools_menu = MyApp::GUI::MainFrame::MenuBar::Tools->new();
+ $self->Append( $tools_menu, "&Tools" );
+
+=head1 COMPONENTS
+
+=over 4
+
+=item * Log Viewer
+
+Opens a L<MyApp::GUI::Dialog::LogViewer> dialog.
+
+=item * Pod Viewer
+
+Opens a L<MyApp::GUI::Dialog::PodViewer> frame.
+
+=item * Test Sound
+
+Plays a short test sound.  Works on Windows, not on (my, at least) Ubuntu.
+
+=item * Start Throbber
+
+Starts the throbber gauge in the status bar.  Does nothing if it's already 
+been started.
+
+=item * End Throbber
+
+Stops the throbber gauge in the status bar.  Does nothing if the throbber is 
+not currently throbbing.  Throb.
+
+=back
+

@@ -23,13 +23,7 @@ package MyApp::GUI::MainFrame::MenuBar::File {
 
     sub _build_itm_exit {#{{{
         my $self = shift;
-        return Wx::MenuItem->new(
-            $self, -1,
-            '&Exit',
-            'Exit',
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
+        return Wx::MenuItem->new( $self, wxID_EXIT );
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
@@ -50,3 +44,25 @@ package MyApp::GUI::MainFrame::MenuBar::File {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::MenuBar::File - File menu
+
+=head1 SYNOPSIS
+
+Assuming C<$self> is a Wx::MenuBar:
+
+ $file_menu = MyApp::GUI::MainFrame::MenuBar::File->new();
+ $self->Append( $file_menu, "&File" );
+
+=head1 COMPONENTS
+
+=over 4
+
+=item * Quit (stock)
+
+=back
+

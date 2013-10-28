@@ -20,6 +20,7 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
     }#}}}
     sub BUILD {
         my $self = shift;
+
         $self->Append( $self->itm_about );
         $self->Append( $self->itm_help );
 
@@ -29,23 +30,11 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
 
     sub _build_itm_about {#{{{
         my $self = shift;
-        return Wx::MenuItem->new(
-            $self, -1,
-            '&About',
-            'Show about dialog',
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
+        return Wx::MenuItem->new( $self, wxID_ABOUT );
     }#}}}
     sub _build_itm_help {#{{{
         my $self = shift;
-        return Wx::MenuItem->new(
-            $self, -1,
-            '&Help',
-            'Show HTML help',
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
+        return Wx::MenuItem->new( $self, wxID_HELP );
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
@@ -73,3 +62,30 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MyApp::GUI::MainFrame::MenuBar::Help - Help menu
+
+=head1 SYNOPSIS
+
+Assuming C<$self> is a Wx::MenuBar:
+
+ $help_menu = MyApp::GUI::MainFrame::MenuBar::Help->new();
+ $self->Append( $help_menu, "&Help" );
+
+=head1 COMPONENTS
+
+=over 4
+
+=item * About (stock)
+
+Opens a L<MyApp::GUI::Dialog::About> pseudo-dialog.
+
+=item * Help (stock)
+
+Opens a L<MyApp::GUI::Dialog::Help> dialog.
+
+=back
