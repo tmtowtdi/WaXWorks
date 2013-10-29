@@ -308,9 +308,9 @@ structure, as well as some tools that will be helpful in developing a new app.
 
 =over 8
 
-=item * scalar - yes/no question to ask the user (required)
+=item 1) scalar - yes/no question to ask the user (required)
 
-=item * scalar - title of the popup window (optional; defaults to the App 
+=item 2) scalar - title of the popup window (optional; defaults to the App 
 Name).
 
 =back
