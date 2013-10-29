@@ -25,11 +25,11 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     sub BUILD {
         my $self = shift;
 
-        $self->Append( $self->itm_logview   );
-        $self->Append( $self->itm_podview   );
-        $self->Append( $self->itm_testsound   );
+        $self->Append( $self->itm_logview       );
+        $self->Append( $self->itm_podview       );
+        $self->Append( $self->itm_testsound     );
         $self->Append( $self->itm_start_throb   );
-        $self->Append( $self->itm_end_throb   );
+        $self->Append( $self->itm_end_throb     );
 
         $self->_set_events;
         return $self;
@@ -37,13 +37,14 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
 
     sub _build_itm_logview {#{{{
         my $self = shift;
-        return Wx::MenuItem->new(
+        my $lv = Wx::MenuItem->new(
             $self, -1,
             '&Log Viewer',
-            'Log Viewer',
+            "Open the Log Viewer",
             wxITEM_NORMAL,
             undef   # if defined, this is a sub-menu
         );
+        return $lv;
     }#}}}
     sub _build_itm_podview {#{{{
         my $self = shift;

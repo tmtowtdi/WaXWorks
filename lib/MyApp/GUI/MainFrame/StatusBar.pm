@@ -40,7 +40,7 @@ package MyApp::GUI::MainFrame::StatusBar {
         is          => 'rw', 
         isa         => 'ArrayRef[Int]',
         lazy        => 1,
-        default     => sub{ [-1, 100, 100] },
+        default     => sub{ [-1, 200, 100] },
         documentation => q{
             Must contain exactly $self->field_count elements.
             Negatives are proportions (variable width), positives are pixel counts (fixed widths).
