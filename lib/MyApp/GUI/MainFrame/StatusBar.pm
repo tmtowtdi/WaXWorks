@@ -1,5 +1,9 @@
 use v5.14;
 
+### If you're trying to change which field holds the helpstrings produced by 
+### mousing over menu items, that setting is in MainFrame.pm, not here.  See 
+### the call to SetStatusBarPane() in MainFrame.pm.
+
 package MyApp::GUI::MainFrame::StatusBar {
     use Moose;
     use Wx qw(:everything);

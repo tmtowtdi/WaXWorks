@@ -10,6 +10,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
 
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
+    with 'MyApp::Roles::Menu';
 
     has 'itm_logview'       => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_podview'       => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);

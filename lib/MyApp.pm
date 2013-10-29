@@ -142,6 +142,13 @@ package MyApp {
         return 1;
     }#}}}
 
+    sub dos2unix {#{{{
+        my $self    = shift;
+        my $content = shift;
+
+        $content =~ s/0x100x12/0x10/g;
+        return $content;
+    }#}}}
     sub get_app_icon {#{{{
         my $self = shift;
 
@@ -175,17 +182,14 @@ package MyApp {
         my $message = shift || 'Unknown error occurred';
         my $title   = shift || 'Error!';
         Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame );
-        return;
+        return 1;
     }#}}}
     sub popmsg {#{{{
         my $self    = shift;
         my $message = shift || 'Everything is fine';
         my $title   = shift || wxTheApp->GetAppName();
-        Wx::MessageBox($message,
-                        $title,
-                        wxOK | wxICON_INFORMATION,
-                        $self->main_frame );
-        return;
+        Wx::MessageBox($message, $title, wxOK | wxICON_INFORMATION, $self->main_frame );
+        return 1;
     }#}}}
     sub popconf {#{{{
         my $self        = shift;
@@ -196,7 +200,7 @@ package MyApp {
             wxTheApp->poperr(
                 "popconf() called without being passed a question; this makes no sense!"
             );
-            return;
+            return 0;
         }
 
         my $resp = Wx::MessageBox($question,
@@ -216,6 +220,16 @@ package MyApp {
         my $pause   = shift || 50;   # milliseconds
         $self->main_frame->status_bar->gauge->start( $pause, wxTIMER_CONTINUOUS );
         return 1;
+    }#}}}
+    sub unix2dos {#{{{
+        my $self    = shift;
+        my $content = shift;
+
+        ### Don't muck with it if it's already using DOS line endings.
+        return $content if $content =~ /0x100x12/;
+
+        $content =~ s/0x10/0x100x12/g;
+        return $content;
     }#}}}
 
     sub OnExit {#{{{
@@ -288,19 +302,13 @@ structure, as well as some tools that will be helpful in developing a new app.
 
 =item * L<MyApp::GUI::MainFrame>
 
-=item * L<MyApp::GUI::Dialog::About>
-
-=item * L<MyApp::GUI::Dialog::Help>
-
-=item * L<MyApp::GUI::Dialog::LogViewer>
-
-=item * L<MyApp::GUI::Dialog::PodViewer>
-
 =back
 
 =head1 METHODS
 
 =head2 popconf
+
+Displays a yes/no question dialog and returns the user's response.
 
 =over 4
 
@@ -308,9 +316,9 @@ structure, as well as some tools that will be helpful in developing a new app.
 
 =over 8
 
-=item 1) scalar - yes/no question to ask the user (required)
+=item * scalar - yes/no question to ask the user (required)
 
-=item 2) scalar - title of the popup window (optional; defaults to the App 
+=item * scalar - title of the popup window (optional; defaults to the App 
 Name).
 
 =back
@@ -321,6 +329,10 @@ Name).
 
 =item * integer - either wxYES or wxNO
 
+If popconf() is called but no question is passed to it, L</poperr> will be 
+called, letting you know that you really need to ask a question.  In that 
+case, popconf's return value will be false.
+
 =back
 
 =item * USAGE
@@ -329,16 +341,10 @@ Name).
   # Do Eeet
  }
  else {
-  # User said 'no', so don't really do eeet.
+  # User did not say 'yes', so don't really do eeet.
  }
 
-...or often, more simply...
-
- return if wxNO == wxTheApp->popconf("Are you really sure", "Really really?");
- # do $stuff confident that the user did not say no.
-
-The two possible return values, wxYES and wxNO, are I<both positive integers>, 
-so don't do this:
+wxYES and wxNO are I<both positive integers>, so don't do this:
 
  if( wxTheApp->popconf("Are you really sure", "Really really?") ) {
   # Do Eeet
@@ -350,6 +356,75 @@ so don't do this:
 
 That code will never hit the else block, even if the user choses 'No', since 
 the 'No' response is true.  This is very likely to be A Bad Thing.
+
+=back
+
+=head2 poperr
+
+Displays an error message popup to the user.
+
+ wxTheApp->poperr( "You did something wrong here.", "Whoopsie" );
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * optional scalar - error message
+
+This is technically optional, and will default to "Unknown error occurred".  
+However, that's not terribly helpful, so sending a meaningful error message is 
+strongly recommended.
+
+=item * optional scalar - dialog title
+
+Defaults to simply "Error!", which is usually fine.
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=back
+
+=head2 popmsg
+
+Similar to L</poperr>.  The only differences between the two are the icon that 
+gets displayed in the popup, and the default dialog title.
+
+ wxTheApp->popmsg( "Some dogs are brown.", "This is a Title" );
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * optional scalar - Message to display
+
+Like with L</poperr>, calling this without sending a specific message doesn't 
+make much sense.  But if you do, the displayed message will defaulit to "Everything 
+is fine".
+
+=item * optional scalar - Dialog title
+
+Defaults to wxTheApp->GetAppName()
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
 
 =back
 
@@ -416,3 +491,35 @@ Indicates that the program is doing something.
 
 =back
 
+=head2 unix2dos, dos2unix
+
+Multiline text controls use Unix-style (C<0x10>) line terminators, regardless 
+of the current OS.
+
+On Windows, if you're saving a TextCtrl's contents to a file, or pulling a 
+file's contents into a TextCtrl, you'll want to use these to change the line 
+endings as appropriate.
+
+Note that both L</save_file> and L</open_file> are managing line-ending 
+conversions, so you don't need to perform your own conversions if you're using 
+those.
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * scalar - string to be dos-ified (unix2dos) or unix-ified (dos2unix)
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * scalar - the dos-ified (unix2dos) or unix-ified (dos2unix) string.
+
+=back
+
+=back

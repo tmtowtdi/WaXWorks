@@ -11,9 +11,19 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
 
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
+    with 'MyApp::Roles::Menu';
 
-    has 'itm_about' => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
-    has 'itm_help'  => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_about' => (
+        is          => 'rw',
+        isa         => 'Wx::MenuItem',
+        default     => sub{ Wx::MenuItem->new($_[0], wxID_ABOUT) },
+    );
+    has 'itm_help' => (
+        is          => 'rw',
+        isa         => 'Wx::MenuItem',
+        default     => sub{ Wx::MenuItem->new($_[0], wxID_HELP) },
+    );
+
 
     sub FOREIGNBUILDARGS {#{{{
         return; 
@@ -28,14 +38,6 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
         return $self;
     }
 
-    sub _build_itm_about {#{{{
-        my $self = shift;
-        return Wx::MenuItem->new( $self, wxID_ABOUT );
-    }#}}}
-    sub _build_itm_help {#{{{
-        my $self = shift;
-        return Wx::MenuItem->new( $self, wxID_HELP );
-    }#}}}
     sub _set_events {#{{{
         my $self = shift;
         EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)}    );

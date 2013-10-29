@@ -3,7 +3,6 @@ use v5.14;
 package MyApp::Roles::Platform {
     use Data::GUID;
     use Moose::Role;
-    use Try::Tiny;
     use Wx qw(:everything);
 
     has 'sizer_debug' => (
