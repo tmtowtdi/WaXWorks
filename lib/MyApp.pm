@@ -37,9 +37,6 @@ package MyApp {
     has 'icon_image' => (
         is          => 'ro',
         isa         => 'Str',
-        #default     => 'camel_blue_grid_256.png',
-        #default     => 'folder_256.png',
-        #default     => 'onion_512.png',
         default     => 'shiny_camel_512.png',
         documentation => q{
             Name of an image in assets.zip:/images/icons/.
