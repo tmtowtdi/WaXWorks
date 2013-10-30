@@ -208,7 +208,7 @@ package MyApp::GUI::MainFrame {
 
     sub do_copy {#{{{
         my $self = shift;
-        $self->txt_test->Cut() if $self->txt_test->CanCut;
+        $self->txt_test->Copy() if $self->txt_test->CanCopy;
         return 1;
     }#}}}
     sub do_cut {#{{{
