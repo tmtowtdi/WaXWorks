@@ -40,8 +40,8 @@ package MyApp::GUI::MainFrame::MenuBar::Help {
 
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)}    );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_help->GetId,    sub{$self->OnHelp(@_)}     );
+        EVT_MENU( $self->parent,  $self->itm_about->GetId,   sub{$self->OnAbout(@_)}    );
+        EVT_MENU( $self->parent,  $self->itm_help->GetId,    sub{$self->OnHelp(@_)}     );
         return 1;
     }#}}}
 
@@ -69,7 +69,7 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::MainFrame::MenuBar::Help - Help menu
+MyApp::GUI::MainFrame::MenuBar::Help - Help menu; implements L<MyApp::GUI::Roles::Menu>
 
 =head1 SYNOPSIS
 

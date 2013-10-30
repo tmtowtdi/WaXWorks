@@ -4,6 +4,12 @@ package MyApp::Roles::Menu {
     use Moose::Role;
     use Wx qw(:everything);
 
+    has 'parent' => (
+        is          => 'rw',
+        isa         => 'Wx::Window',
+        required    => 1,
+    );
+
     sub FOREIGNBUILDARGS {#{{{
         return;
     }#}}}
@@ -29,6 +35,23 @@ __END__
 MyApp::Roles::Menu - Menu role
 
 =head1 SYNOPSIS
+
+Assume C<$self> is a MenuBar onto which we want to append the Menu:
+
+ my $menu_item = MyMenuItemClass->new( parent => $self->parent );
+ $self->Append( $menu_item, 'My Label' );
+
+=head1 PROVIDED ATTRIBUTES
+
+=head2 required - parent
+
+Menu and MenuBar controls do not have true parents.  However, Menu items are 
+often meant to affect a certain dialog or frame.  
+
+When creating a Menu implementing this role, you must pass along the frame or 
+dialog on which the menu is being placed, as its parent.
+
+This parent is simply passed from the MenuBar to each Menu item.
 
 =head1 PROVIDED METHODS
 
@@ -62,4 +85,8 @@ So if you need a separator, simply call sep() to get a brand new one.
 =back
 
 =back
+
+=head1 SEE ALSO
+
+L<MyApp::Roles::MenuBar>
 

@@ -51,8 +51,8 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_logview,      sub{$self->OnLogViewer(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_podview,      sub{$self->OnPodViewer(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_logview,      sub{$self->OnLogViewer(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_podview,      sub{$self->OnPodViewer(@_)} );
         return 1;
     }#}}}
 
@@ -60,7 +60,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
         my $self = shift;
 
         ### Determine starting point of LogViewer window
-        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
+        my $frame_pos   = wxTheApp->get_new_window_position( $self->parent );
         my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
         my $log_viewer  = MyApp::GUI::Dialog::LogViewer->new( position => $dialog_pos );
         return 1;
@@ -69,7 +69,7 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
         my $self = shift;
 
         ### Determine starting point of PodViewer window
-        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
+        my $frame_pos   = wxTheApp->get_new_window_position( $self->parent );
         my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
         my $pod_viewer  = MyApp::GUI::Frame::PodViewer->new(
                                 position => $dialog_pos,
@@ -88,7 +88,7 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::MainFrame::MenuBar::Tools - Tools menu
+MyApp::GUI::MainFrame::MenuBar::Tools - Tools menu; implements L<MyApp::GUI::Roles::Menu>
 
 =head1 SYNOPSIS
 

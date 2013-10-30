@@ -1,5 +1,5 @@
 
-package MyApp::GUI::MainFrame::MenuBar::Edit {
+package MyApp::GUI::Frame::Notepad::MenuBar::Edit {
     use v5.14;
     use Moose;
     use Wx qw(:everything);
@@ -11,6 +11,21 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     extends 'Wx::Menu';
     with 'MyApp::Roles::Menu';
 
+    has 'itm_copy' => (
+        is          => 'rw',
+        isa         => 'Wx::MenuItem',
+        default     => sub{ Wx::MenuItem->new($_[0], wxID_COPY) },
+    );
+    has 'itm_cut' => (
+        is          => 'rw',
+        isa         => 'Wx::MenuItem',
+        default     => sub{ Wx::MenuItem->new($_[0], wxID_CUT) },
+    );
+    has 'itm_paste' => (
+        is          => 'rw',
+        isa         => 'Wx::MenuItem',
+        default     => sub{ Wx::MenuItem->new($_[0], wxID_PASTE) },
+    );
     has 'itm_prefs' => (
         is          => 'rw',
         isa         => 'Wx::MenuItem',
@@ -29,6 +44,9 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     }#}}}
     sub BUILD {
         my $self = shift;
+        $self->Append( $self->itm_cut   );
+        $self->Append( $self->itm_copy  );
+        $self->Append( $self->itm_paste );
         $self->Append( $self->itm_prefs );
         $self->_set_events;
         return $self;
@@ -46,21 +64,30 @@ package MyApp::GUI::MainFrame::MenuBar::Edit {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
+        EVT_MENU( $self->parent,  $self->itm_copy,  sub{$self->OnCopy(@_)}     );
+        EVT_MENU( $self->parent,  $self->itm_cut,   sub{$self->OnCut(@_)}      );
+        EVT_MENU( $self->parent,  $self->itm_paste, sub{$self->OnPaste(@_)}    );
         EVT_MENU( $self->parent,  $self->itm_prefs, sub{$self->OnPrefs(@_)}    );
         return 1;
     }#}}}
 
-    sub OnPrefs {#{{{
+    ### For cut/copy/paste, and anything else that directly affects a window 
+    ### owned by somebody else (in this case, the main_frame), don't code the 
+    ### action here; delegate to the owning frame and let it figure out what 
+    ### should happen.
+    sub OnCopy {#{{{
         my $self = shift;
-
-        ### Determine starting point of Prefs window
-        my $frame_pos   = $self->parent->GetPosition();
-        my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
-
-        my $dialog = MyApp::GUI::Dialog::Preferences->new(
-            position => $dialog_pos,
-        );
-
+        $self->parent->do_copy();
+        return 1;
+    }#}}}
+    sub OnCut {#{{{
+        my $self = shift;
+        $self->parent->do_cut();
+        return 1;
+    }#}}}
+    sub OnPaste {#{{{
+        my $self = shift;
+        $self->parent->do_paste();
         return 1;
     }#}}}
 
@@ -74,13 +101,13 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::MainFrame::MenuBar::Edit - Edit menu; implements L<MyApp::GUI::Roles::Menu>
+MyApp::GUI::Frame::Notepad::MenuBar::Edit - Edit menu; implements L<MyApp::GUI::Roles::Menu>
 
 =head1 SYNOPSIS
 
 Assuming C<$self> is a Wx::MenuBar:
 
- $edit_menu = MyApp::GUI::MainFrame::MenuBar::Edit->new();
+ $edit_menu = MyApp::GUI::Frame::Notepad::MenuBar::Edit->new();
  $self->Append( $edit_menu, "&Edit" );
 
 =head1 COMPONENTS

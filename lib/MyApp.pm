@@ -1,5 +1,6 @@
 use v5.14;
 
+### CHECK
 ### POD is missing a lot of methods - fix that.
 
 package MyApp {
@@ -87,7 +88,7 @@ package MyApp {
         ### Make sure that the logging database has been deployed
         $self->o_creat_database_log();
 
-        ### Set the application icon
+        ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );
 
         ### Set the main frame as the app top window

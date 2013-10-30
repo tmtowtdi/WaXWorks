@@ -27,17 +27,6 @@ package MyApp::GUI::MainFrame {
             edge.
         }
     );
-    has 'file_path' => (
-        is          => 'rw',
-        isa         => 'Str',
-        clearer     => 'clear_file_path',
-        documentation => q{
-            Where the current file is being saved.  Populated by do_open() and 
-            do_saveas().  If do_save() is called while this attribute is still 
-            undef, do_saveas() will be called to figure out where the file 
-            should end up.
-        }
-    );
     has 'initial_centered' => (
         is          => 'ro',
         isa         => 'Bool',
@@ -64,21 +53,6 @@ package MyApp::GUI::MainFrame {
         lazy_build  => 1,
     );
     #############
-    has 'file_open' => (
-        is          => 'rw',
-        isa         => 'Wx::FileDialog',
-        lazy_build  => 1,
-    );
-    has 'file_saveas' => (
-        is          => 'rw',
-        isa         => 'Wx::FileDialog',
-        lazy_build  => 1,
-    );
-    has 'txt_test' => (
-        is          => 'rw',
-        isa         => 'Wx::TextCtrl',
-        lazy_build  => 1,
-    );
     has 'szr_main' => (
         is          => 'rw',
         isa         => 'Wx::Sizer',
@@ -144,7 +118,7 @@ package MyApp::GUI::MainFrame {
 
     sub _build_menu_bar {#{{{
         my $self = shift;
-        my $mb = MyApp::GUI::MainFrame::MenuBar->new();
+        my $mb = MyApp::GUI::MainFrame::MenuBar->new( parent => $self );
         return $mb;
     }#}}}
     sub _build_status_bar {#{{{

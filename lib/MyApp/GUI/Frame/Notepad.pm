@@ -12,15 +12,8 @@ package MyApp::GUI::Frame::Notepad {
     extends 'Wx::Frame';
     with 'MyApp::Roles::Platform';
 
-
-    ### CHECK
-    ### FIX THESE - need to be in their own namespace.
-    ### To do that reasonably, we need Roles for both.
-    ###
-    ### Also, remember that the MenuBar items are going to be pointing at the 
-    ### MainFrame; repoint those to here.
-    use MyApp::GUI::MainFrame::MenuBar;
-    use MyApp::GUI::MainFrame::StatusBar;
+    use MyApp::GUI::Frame::Notepad::MenuBar;
+    use MyApp::GUI::Frame::Notepad::StatusBar;
 
     has 'border_size' => (
         is      => 'ro', 
@@ -32,6 +25,17 @@ package MyApp::GUI::Frame::Notepad {
             This isn't "automatic" - any windows that touch the edge of the frame 
             need to set a border of this size between themselves and the frame 
             edge.
+        }
+    );
+    has 'file_path' => (
+        is          => 'rw',
+        isa         => 'Str',
+        clearer     => 'clear_file_path',
+        documentation => q{
+            Where the current file is being saved.  Populated by do_open() and 
+            do_saveas().  If do_save() is called while this attribute is still 
+            undef, do_saveas() will be called to figure out where the file 
+            should end up.
         }
     );
     has 'initial_centered' => (
@@ -51,15 +55,30 @@ package MyApp::GUI::Frame::Notepad {
     );
     has 'menu_bar' => (
         is          => 'rw',
-        isa         => 'MyApp::GUI::MainFrame::MenuBar',
+        isa         => 'MyApp::GUI::Frame::Notepad::MenuBar',
         lazy_build  => 1,
     );
     has 'status_bar' => (
         is          => 'rw',
-        isa         => 'MyApp::GUI::MainFrame::StatusBar',
+        isa         => 'MyApp::GUI::Frame::Notepad::StatusBar',
         lazy_build  => 1,
     );
     #############
+    has 'file_open' => (
+        is          => 'rw',
+        isa         => 'Wx::FileDialog',
+        lazy_build  => 1,
+    );
+    has 'file_saveas' => (
+        is          => 'rw',
+        isa         => 'Wx::FileDialog',
+        lazy_build  => 1,
+    );
+    has 'txt_notearea' => (
+        is          => 'rw',
+        isa         => 'Wx::TextCtrl',
+        lazy_build  => 1,
+    );
     has 'szr_main' => (
         is          => 'rw',
         isa         => 'Wx::Sizer',
@@ -70,11 +89,13 @@ package MyApp::GUI::Frame::Notepad {
         my $self = shift;
         my %args = @_;
 
+        my $pos = $args{'position'} // wxDefaultPosition;
+
         return(
             undef,
             -1,
             wxTheApp->GetAppName() . " - Notepad",      # Window title
-            wxDefaultPosition,
+            $pos,
             wxDefaultSize,
             wxDEFAULT_FRAME_STYLE,
             "Notepad",                                  # Window name
@@ -85,7 +106,9 @@ package MyApp::GUI::Frame::Notepad {
 
         $self->Show(0);
         $self->SetSize( Wx::Size->new($self->initial_width, $self->initial_height) );
-        $self->Centre( wxBOTH ) if $self->initial_centered;
+
+        ### Set the frame icon
+        $self->SetIcon( wxTheApp->get_app_icon() );
 
         ### Add the textual menu bar to the top
         $self->SetMenuBar( $self->menu_bar );
@@ -135,12 +158,12 @@ package MyApp::GUI::Frame::Notepad {
     }#}}}
     sub _build_menu_bar {#{{{
         my $self = shift;
-        my $mb = MyApp::GUI::MainFrame::MenuBar->new();
+        my $mb = MyApp::GUI::Frame::Notepad::MenuBar->new( parent => $self );
         return $mb;
     }#}}}
     sub _build_status_bar {#{{{
         my $self = shift;
-        my $sb = MyApp::GUI::MainFrame::StatusBar->new( frame => $self, caption => wxTheApp->GetAppName );
+        my $sb = MyApp::GUI::Frame::Notepad::StatusBar->new( frame => $self, caption => "Notepad" );
         return $sb;
     }#}}}
     sub _build_szr_main {#{{{
@@ -189,6 +212,11 @@ package MyApp::GUI::Frame::Notepad {
 
         $self->file_open->ShowModal();
         $self->file_path( $self->file_open->GetPath() );
+
+        local %SIG = ();
+        $SIG{'ALRM'} = sub{ $self->status_bar->gauge->timer->Stop };
+        alarm 2;
+        $self->status_bar->gauge->timer->Start( 50, wxTIMER_CONTINUOUS );
 
         my $contents = $self->open_file( $self->file_path );
         $self->txt_notearea->SetValue( $contents );
@@ -258,6 +286,18 @@ package MyApp::GUI::Frame::Notepad {
         print $out $content;
         close $out;
 
+        return 1;
+    }#}}}
+    sub throb_end {#{{{
+        my $self = shift;
+        $self->status_bar->gauge->stop();
+        $self->status_bar->gauge->reset();
+        return 1;
+    }#}}}
+    sub throb_start {#{{{
+        my $self    = shift;
+        my $pause   = shift || 50;   # milliseconds
+        $self->status_bar->gauge->start( $pause, wxTIMER_CONTINUOUS );
         return 1;
     }#}}}
 

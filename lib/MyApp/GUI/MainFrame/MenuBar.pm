@@ -7,6 +7,7 @@ package MyApp::GUI::MainFrame::MenuBar {
 
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::MenuBar';
+    with 'MyApp::Roles::MenuBar';
 
     use MyApp::GUI::MainFrame::MenuBar::File;
     use MyApp::GUI::MainFrame::MenuBar::Edit;
@@ -51,23 +52,23 @@ package MyApp::GUI::MainFrame::MenuBar {
     }
     sub _build_menu_file {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::File->new();
+        return MyApp::GUI::MainFrame::MenuBar::File->new( parent => $self->parent );
     }#}}}
     sub _build_menu_edit {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Edit->new();
+        return MyApp::GUI::MainFrame::MenuBar::Edit->new( parent => $self->parent );
     }#}}}
     sub _build_menu_eg {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Examples->new();
+        return MyApp::GUI::MainFrame::MenuBar::Examples->new( parent => $self->parent );
     }#}}}
     sub _build_menu_help {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Help->new();
+        return MyApp::GUI::MainFrame::MenuBar::Help->new( parent => $self->parent );
     }#}}}
     sub _build_menu_tools {#{{{
         my $self = shift;
-        return MyApp::GUI::MainFrame::MenuBar::Tools->new();
+        return MyApp::GUI::MainFrame::MenuBar::Tools->new( parent => $self->parent );
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
@@ -84,8 +85,7 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::MainFrame::MenuBar - Text-based menu bar at the top of the main 
-frame
+MyApp::GUI::MainFrame::MenuBar - MenuBar for the main frame; implements L<MyApp::GUI::Roles::MenuBar>
 
 =head1 SYNOPSIS
 

@@ -55,11 +55,11 @@ package MyApp::GUI::Dialog::About {
     sub BUILD {
         my $self = shift;
 
-        $self->info->SetName( $self->app->GetAppName );
-        $self->info->SetVersion( "$MyApp::VERSION - wxPerl $Wx::VERSION" );
-        $self->info->SetCopyright( $self->copyright );
-        $self->info->SetDescription( $self->description );
-        $self->info->SetLicense( $self->license );
+        $self->info->SetName        ( $self->app->GetAppName                    );
+        $self->info->SetVersion     ( "$MyApp::VERSION - wxPerl $Wx::VERSION"   );
+        $self->info->SetCopyright   ( $self->copyright                          );
+        $self->info->SetDescription ( $self->description                        );
+        $self->info->SetLicense     ( $self->license                            );
 
         for my $a( @{$self->artists} ) {
             $self->info->AddArtist($a);

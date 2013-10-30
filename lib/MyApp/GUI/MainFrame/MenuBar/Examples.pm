@@ -78,10 +78,10 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_end_throb,    sub{$self->OnEndThrob(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_notepad,      sub{$self->OnNotepad(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_start_throb,  sub{$self->OnStartThrob(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_end_throb,    sub{$self->OnEndThrob(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_notepad,      sub{$self->OnNotepad(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_start_throb,  sub{$self->OnStartThrob(@_)} );
+        EVT_MENU( $self->parent,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
         return 1;
     }#}}}
 
@@ -91,8 +91,8 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
         return 1;
     }#}}}
     sub OnNotepad {#{{{
-        my $self = shift;
-        my $notepad = MyApp::GUI::Frame::Notepad->new();
+        my $self    = shift;
+        my $notepad = MyApp::GUI::Frame::Notepad->new( position => wxTheApp->get_new_window_position( $self->parent ) );
         return 1;
     }#}}}
     sub OnStartThrob {#{{{
@@ -124,7 +124,7 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::MainFrame::MenuBar::Tools - Tools menu
+MyApp::GUI::MainFrame::MenuBar::Tools - Tools menu; implements L<MyApp::GUI::Roles::Menu>
 
 =head1 SYNOPSIS
 
