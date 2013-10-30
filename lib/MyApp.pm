@@ -86,7 +86,7 @@ package MyApp {
         my $self = shift;
 
         ### Make sure that the logging database has been deployed
-        $self->o_creat_database_log();
+        $self->_o_creat_database_log();
 
         ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );
@@ -135,6 +135,15 @@ package MyApp {
         my $self = shift;
         return MyApp::Model::WxContainer->new( name => 'wx container' );
     }#}}}
+    sub _o_creat_database_log {#{{{
+        my $self = shift;
+
+        unless( -e wxTheApp->resolve(service => '/DatabaseLog/db_file') ) {
+            my $log_schema = wxTheApp->resolve( service => '/DatabaseLog/schema' );
+            $log_schema->deploy;
+        }
+        return 1;
+    }#}}}
     sub _set_events {#{{{
         my $self = shift;
         EVT_TIMER( $self, $self->timer->GetId,  sub{$self->OnTimer(@_)} );
@@ -166,35 +175,29 @@ package MyApp {
         my $orig_pos = $reference_window->GetPosition();
         return Wx::Point->new( $orig_pos->x + 30, $orig_pos->y + 30 );
     }#}}}
-    sub get_wav {#{{{
+    sub get_sound {#{{{
         my $self = shift;
         my $file = shift;
 
         my $path = join '/', (wxTheApp->resolve( service => '/Directory/wav'), $file);
-        return unless -e $path;
-        return $path;
-    }#}}}
-    sub o_creat_database_log {#{{{
-        my $self = shift;
-
-        unless( -e wxTheApp->resolve(service => '/DatabaseLog/db_file') ) {
-            my $log_schema = wxTheApp->resolve( service => '/DatabaseLog/schema' );
-            $log_schema->deploy;
+        unless( -e $path ) {
+            wxTheApp->poperr("Unable to find sound file '$path'.");
+            return;
         }
-        return 1;
+
+        my $sound = Wx::Sound->new($path);
+        unless( $sound->IsOk ) {
+            wxTheApp->poperr("'$path' appears not to be a sound file.");
+            return;
+        }
+
+        return $sound;
     }#}}}
     sub poperr {#{{{
         my $self    = shift;
         my $message = shift || 'Unknown error occurred';
         my $title   = shift || 'Error!';
         Wx::MessageBox($message, $title, wxICON_EXCLAMATION, $self->main_frame );
-        return 1;
-    }#}}}
-    sub popmsg {#{{{
-        my $self    = shift;
-        my $message = shift || 'Everything is fine';
-        my $title   = shift || wxTheApp->GetAppName();
-        Wx::MessageBox($message, $title, wxOK | wxICON_INFORMATION, $self->main_frame );
         return 1;
     }#}}}
     sub popconf {#{{{
@@ -215,16 +218,30 @@ package MyApp {
                                     $self->main_frame);
         return $resp;
     }#}}}
+    sub popmsg {#{{{
+        my $self    = shift;
+        my $message = shift || 'Everything is fine';
+        my $title   = shift || wxTheApp->GetAppName();
+        Wx::MessageBox($message, $title, wxOK | wxICON_INFORMATION, $self->main_frame );
+        return 1;
+    }#}}}
+
+### CHECK
+### The throb code should be moved into the StatusBar role.
     sub throb_end {#{{{
-        my $self = shift;
-        $self->main_frame->status_bar->gauge->stop();
-        $self->main_frame->status_bar->gauge->reset();
+        my $self    = shift;
+        my $sb      = shift || $self->main_frame->status_bar;
+        $sb->gauge->stop();
+        $sb->init();
+        $sb->GetParent->SendSizeEvent();
+
         return 1;
     }#}}}
     sub throb_start {#{{{
         my $self    = shift;
+        my $sb      = shift || $self->main_frame->status_bar;
         my $pause   = shift || 50;   # milliseconds
-        $self->main_frame->status_bar->gauge->start( $pause, wxTIMER_CONTINUOUS );
+        $sb->gauge->start( $pause, wxTIMER_CONTINUOUS );
         return 1;
     }#}}}
     sub unix2dos {#{{{
@@ -312,6 +329,34 @@ structure, as well as some tools that will be helpful in developing a new app.
 
 =head1 METHODS
 
+=head2 get_app_icon
+
+Returns the Wx::Icon being used by the application.  When creating a new 
+frame, it will default to using the OS's default "unassigned" icon.  To 
+replace that with the main icon:
+
+ $some_frame->SetIcon( wxTheApp->get_app_icon() );
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * none
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * Wx::Icon
+
+=back
+
+=back
+
 =head2 get_new_window_position 
 
 Returns a Wx::Point to be used as a new dialog's or frame's starting position, 
@@ -340,7 +385,7 @@ below the starting point of the referenced window.
 
 =over 8
 
-=item * optional Wx::Window - defaults to C<wxTheApp-E<gt>ĜetTopWindow>
+=item * optional Wx::Window - defaults to C<wxTheApp-E<gt>GetTopWindow>
 
 =back
 
@@ -352,7 +397,36 @@ below the starting point of the referenced window.
 
 =back
 
-=item * USAGE
+=back
+
+=head2 get_sound
+
+Transforms the requested wav file resource into a Wx::Sound and returns that.
+
+ $sound = wxTheApp->get_sound( 'two_tones_up.wav' );
+ $sound->Play();
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * B<required> - filename of wav file.  Must exist in the directory 
+resolved by the application's '/Directory/wav' service.  See 
+L<MyApp::Model::Container>.
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * SUCCESS - Wx::Sound
+
+=item * FAILURE - Produces L</poperr> and returns undef.
+
+=back
 
 =back
 
@@ -366,10 +440,9 @@ Displays a yes/no question dialog and returns the user's response.
 
 =over 8
 
-=item * scalar - yes/no question to ask the user (required)
+=item * B<required> scalar - yes/no question to ask the user
 
-=item * scalar - title of the popup window (optional; defaults to the App 
-Name).
+=item * optional scalar - title of the popup window; defaults to the app name.
 
 =back
 
@@ -550,9 +623,9 @@ On Windows, if you're saving a TextCtrl's contents to a file, or pulling a
 file's contents into a TextCtrl, you'll want to use these to change the line 
 endings as appropriate.
 
-Note that both L</save_file> and L</open_file> are managing line-ending 
-conversions, so you don't need to perform your own conversions if you're using 
-those.
+Note that both L</save_file> and L</open_file> in the Notepad example frame's 
+menubar are managing line-ending conversions, so you don't need to perform 
+your own conversions if you're using those.
 
 =over 4
 

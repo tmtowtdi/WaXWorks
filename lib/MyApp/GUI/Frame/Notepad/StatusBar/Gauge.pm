@@ -2,85 +2,9 @@ use v5.14;
 
 package MyApp::GUI::Frame::Notepad::StatusBar::Gauge {
     use Moose;
-    use Wx qw(:everything);
-    use Wx::Event qw(EVT_TIMER);
-
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Gauge';
-
-    has 'range' => (
-        is          => 'rw', 
-        isa         => 'Int',
-        trigger     => \&_set_range,
-    );
-    has 'timer' => (
-        is          => 'rw', 
-        isa         => 'Wx::Timer',
-        lazy        => 1,
-        default     => sub{ Wx::Timer->new },
-        handles => {
-            start => 'Start',
-            stop  => 'Stop',
-        }
-    );
-
-
-    sub FOREIGNBUILDARGS {#{{{
-        my $self = shift;
-        my %args = @_;
-
-        my $rect  = $args{'parent'}->GetFieldRect(1);
-        my $range = $args{'range'} || 100;
-
-        return (
-            $args{'parent'},
-            -1,
-            $range,
-            $args{'position'}   // wxDefaultPosition,
-            $args{'size'}       // wxDefaultSize,
-            wxGA_HORIZONTAL
-        );
-    }#}}}
-    sub BUILD {
-        my $self = shift;
-
-        $self->timer->SetOwner( $self );
-        $self->range(100);
-
-        $self->_set_events();
-        return $self;
-    }
-    sub _set_events {#{{{
-        my $self = shift;
-        EVT_TIMER(   $self,  $self->timer->GetId,   sub{$self->OnTimer(@_)}     );
-        return 1;
-    }#}}}
-    sub _set_range {#{{{
-        my $self  = shift;
-        my $range = shift;
-        my $prev_range = $self->GetRange();
-        $self->SetRange( $range );
-        $self->{'range'} = $range;
-        return $prev_range;
-    }#}}}
-
-    sub reset {#{{{
-        my $self = shift;
-
-        ### Just stopping leaves the gauge indicator wherever it left off (at 
-        ### least under Windows XP).  reset() clears the indicator. 
-
-        my $old_range = $self->range( 0 );
-        $self->SetValue(0);
-        $self->range( $old_range );
-    }#}}}
-
-    sub OnTimer {#{{{
-        my $self = shift;
-        $self->Pulse();
-        wxTheApp->Yield;
-    }#}}}
-
+    with 'MyApp::Roles::StatusBarGauge';
     no Moose;
     __PACKAGE__->meta->make_immutable;
 }

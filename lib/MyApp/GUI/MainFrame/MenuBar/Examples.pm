@@ -103,12 +103,7 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     sub OnTestSound {#{{{
         my $self = shift;
 
-        my $file = wxTheApp->get_wav( 'two_tones_up.wav' );
-        my $sound = Wx::Sound->new($file);
-        unless( $sound->IsOk ) {
-            wxTheApp->poperr("Sound is not OK");
-            return;
-        }
+        my $sound = wxTheApp->get_sound( 'two_tones_up.wav' );
         $sound->Play();
 
         return 1;

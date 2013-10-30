@@ -33,6 +33,7 @@ package MyApp::GUI::Frame::PodViewer {
         my $self = shift;
 
         $self->Show(0);
+        $self->SetTitle('POD Viewer');
 
         $self->SetIcon( wxTheApp->get_app_icon() );
         $self->SetSize( $self->size );

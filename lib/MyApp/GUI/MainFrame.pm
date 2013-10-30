@@ -149,9 +149,8 @@ package MyApp::GUI::MainFrame {
         my $frame   = shift;
         my $event   = shift;
 
-        $self->status_bar->resize();
+        $self->status_bar->init();
         $self->szr_main->SetMinSize( $self->GetClientSize->width, -1 ); 
-
         $self->Layout;
 
         return 1;

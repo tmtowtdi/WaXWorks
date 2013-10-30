@@ -2,7 +2,8 @@
 
 ## WxPerl Application Toolkit
 
-* Resource Sources
+* Resource Sources and Licenses (this information needs to be moved somewhere less 
+  stupid).
   * Icons
     * camel_blue_grid_256.png
       * http://www.iconarchive.com/show/fs-icons-by-franksouza183/Mimetypes-text-x-perl-icon.html
@@ -18,4 +19,8 @@
       * Freeware
   * Sounds
     * http://home.comcast.net/~jdeshon2/joewav.html
+
+## Status
+
+Code and documentation that needs to be fixed is marked with the string "### CHECK".
 

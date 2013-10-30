@@ -47,7 +47,6 @@ package MyApp::GUI::Frame::Notepad::MenuBar::File {
 
         $self->Append( $self->itm_exit );
 
-
         $self->_set_events;
         return $self;
     }
@@ -79,15 +78,14 @@ package MyApp::GUI::Frame::Notepad::MenuBar::File {
         my $self  = shift;
         my $frame = shift;
         my $event = shift;
-
-        $self->parent->main_frame->do_open();
+        $self->parent->do_open();
         return 1;
     }#}}}
     sub OnNew {#{{{
         my $self  = shift;
         my $frame = shift;
         my $event = shift;
-        $self->parent->main_frame->do_new();
+        $self->parent->do_new();
         return 1;
     }#}}}
     sub OnQuit {#{{{
@@ -102,7 +100,7 @@ package MyApp::GUI::Frame::Notepad::MenuBar::File {
         my $frame = shift;
         my $event = shift;
         ### Delegate
-        $self->parent->main_frame->do_save();
+        $self->parent->do_save();
         return 1;
     }#}}}
     sub OnSaveAs {#{{{
@@ -110,7 +108,7 @@ package MyApp::GUI::Frame::Notepad::MenuBar::File {
         my $frame = shift;
         my $event = shift;
         ### Delegate
-        $self->parent->main_frame->do_saveas();
+        $self->parent->do_saveas();
         return 1;
     }#}}}
 
