@@ -20,7 +20,13 @@
   * Sounds
     * http://home.comcast.net/~jdeshon2/joewav.html
 
+## Things that need fixifying
+
+Code and documentation that needs to be fixed is marked with the string "CHECK".  ack for that and fix the issues.
+
 ## Status
 
-Code and documentation that needs to be fixed is marked with the string "### CHECK".
+Project is young, and needs the typical additions, refactorings, etc.  But what's there should run:
 
+    $ perl bin/app.pl
+    
