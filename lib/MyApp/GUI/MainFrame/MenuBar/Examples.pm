@@ -1,7 +1,5 @@
 use v5.14;
 
-### fix the pod
-
 package MyApp::GUI::MainFrame::MenuBar::Examples {
     use Moose;
     use Wx qw(:everything);
@@ -117,14 +115,6 @@ Assuming C<$self> is a Wx::MenuBar:
 =head1 COMPONENTS
 
 =over 4
-
-=item * Log Viewer
-
-Opens a L<MyApp::GUI::Dialog::LogViewer> dialog.
-
-=item * Pod Viewer
-
-Opens a L<MyApp::GUI::Dialog::PodViewer> frame.
 
 =item * Test Sound
 

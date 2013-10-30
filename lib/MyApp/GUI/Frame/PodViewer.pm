@@ -1,6 +1,6 @@
 use v5.14;
 
-package MyApp::GUI::Dialog::PodViewer {
+package MyApp::GUI::Frame::PodViewer {
     use Moose;
     use Wx qw(:everything);
     use Wx::Event qw( EVT_CLOSE );
@@ -37,7 +37,6 @@ package MyApp::GUI::Dialog::PodViewer {
         $self->SetIcon( wxTheApp->get_app_icon() );
         $self->SetSize( $self->size );
         $self->goto_pod( module => 'MyApp' );
-        #$self->goto_pod( filename => join '/', (wxTheApp->root_dir, 'lib/Test.pod') );
 
         $self->Show(1);
         return $self;
@@ -67,13 +66,13 @@ __END__
 
 =head1 NAME
 
-MyApp::GUI::Dialog::PodViewer - Frame for browsing application POD
+MyApp::GUI::Frame::PodViewer - Frame for browsing application POD
 
 =head1 SYNOPSIS
 
  $pos     = Wx::Point->new( $some_x, $some_y );
  $size    = Wx::Size->new ( $width, $height );
- $p_view  = MyApp::GUI::Dialog::PodViewer->new( position => $pos, size => $size );
+ $p_view  = MyApp::GUI::Frame::PodViewer->new( position => $pos, size => $size );
  $p_view->Show(1);
 
 =head1 DESCRIPTION
@@ -81,10 +80,4 @@ MyApp::GUI::Dialog::PodViewer - Frame for browsing application POD
 Browse your own application's POD as you work.
 
 Extends L<Wx::Perl::PodBrowser> and L<Wx::Perl::PodRichText>.
-
-=head1 NAMING PROBLEM!!!!
-
-This is listed under the Dialog namespace but the Pod Viewer is actually a 
-frame, not a dialog.
-
 

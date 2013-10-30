@@ -104,6 +104,8 @@ Assuming C<$self> is a Wx::Frame:
 
 =item * L<MyApp::GUI::MainFrame::MenuBar::Tools>
 
+=item * L<MyApp::GUI::MainFrame::MenuBar::Examples>
+
 =item * L<MyApp::GUI::MainFrame::MenuBar::Help>
 
 =back
