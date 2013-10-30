@@ -1,24 +1,19 @@
 use v5.14;
 
-package MyApp::GUI::MainFrame::MenuBar::Tools {
+### fix the pod
+
+package MyApp::GUI::MainFrame::MenuBar::Examples {
     use Moose;
     use Wx qw(:everything);
     use Wx::Event qw(EVT_MENU);
-
-    use MyApp::GUI::Dialog::LogViewer;
-    use MyApp::GUI::Dialog::PodViewer;
 
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
     with 'MyApp::Roles::Menu';
 
-    has 'itm_logview'       => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
-    has 'itm_podview'       => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_testsound'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_start_throb'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_end_throb'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
-
-
 
     sub FOREIGNBUILDARGS {#{{{
         return;
@@ -26,37 +21,14 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     sub BUILD {
         my $self = shift;
 
-        $self->Append( $self->itm_logview       );
-        $self->Append( $self->itm_podview       );
-        #$self->Append( $self->itm_testsound     );
-        #$self->Append( $self->itm_start_throb   );
-        #$self->Append( $self->itm_end_throb     );
+        $self->Append( $self->itm_testsound     );
+        $self->Append( $self->itm_start_throb   );
+        $self->Append( $self->itm_end_throb     );
 
         $self->_set_events;
         return $self;
     }
 
-    sub _build_itm_logview {#{{{
-        my $self = shift;
-        my $lv = Wx::MenuItem->new(
-            $self, -1,
-            '&Log Viewer',
-            "Open the Log Viewer",
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
-        return $lv;
-    }#}}}
-    sub _build_itm_podview {#{{{
-        my $self = shift;
-        return Wx::MenuItem->new(
-            $self, -1,
-            '&Pod Viewer',
-            'Pod Viewer',
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
-    }#}}}
     sub _build_itm_start_throb {#{{{
         my $self = shift;
         return Wx::MenuItem->new(
@@ -93,35 +65,12 @@ package MyApp::GUI::MainFrame::MenuBar::Tools {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_logview,      sub{$self->OnLogViewer(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_podview,      sub{$self->OnPodViewer(@_)} );
         EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
         EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_start_throb,  sub{$self->OnStartThrob(@_)} );
         EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_end_throb,    sub{$self->OnEndThrob(@_)} );
         return 1;
     }#}}}
 
-    sub OnLogViewer {#{{{
-        my $self = shift;
-
-        ### Determine starting point of LogViewer window
-        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
-        my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
-        my $log_viewer  = MyApp::GUI::Dialog::LogViewer->new( position => $dialog_pos );
-        return 1;
-    }#}}}
-    sub OnPodViewer {#{{{
-        my $self = shift;
-
-        ### Determine starting point of PodViewer window
-        my $frame_pos   = wxTheApp->GetTopWindow->GetPosition();
-        my $dialog_pos  = Wx::Point->new( $frame_pos->x + 30, $frame_pos->y + 30 );
-        my $pod_viewer  = MyApp::GUI::Dialog::PodViewer->new(
-                                position => $dialog_pos,
-                                size => Wx::Size->new(700, 600),
-                            );
-        return 1;
-    }#}}}
     sub OnTestSound {#{{{
         my $self = shift;
 
