@@ -1,5 +1,7 @@
 use v5.14;
 
+### POD is missing a lot of methods - fix that.
+
 package MyApp {
     use warnings;
 
@@ -157,6 +159,12 @@ package MyApp {
         $icon->CopyFromBitmap($bmp);
         return $icon;
     }#}}}
+    sub get_new_window_position {#{{{
+        my $self                = shift;
+        my $reference_window    = shift || wxTheApp->GetTopWindow;
+        my $orig_pos = $reference_window->GetPosition();
+        return Wx::Point->new( $orig_pos->x + 30, $orig_pos->y + 30 );
+    }#}}}
     sub get_wav {#{{{
         my $self = shift;
         my $file = shift;
@@ -302,6 +310,50 @@ structure, as well as some tools that will be helpful in developing a new app.
 =back
 
 =head1 METHODS
+
+=head2 get_new_window_position 
+
+Returns a Wx::Point to be used as a new dialog's or frame's starting position, 
+relative to another window.  Maintains visual consistency so the user knows 
+where their new window will pop up.
+
+ # Relative to the main frame
+ my $point = wxTheApp->get_new_window_position();
+
+or
+
+ # Relative to $some_other_frame
+ my $point = wxTheApp->get_new_window_position( $some_other_frame );
+
+ # Let's get meta!
+ my $new_frame = New::Frame::Class->new(
+    starting_position => $point,
+ );
+
+By default, the point returned will be 30 pixels to the right and 30 pixels 
+below the starting point of the referenced window.
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * optional Wx::Window - defaults to C<wxTheApp-E<gt>ĜetTopWindow>
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * Wx::Point
+
+=back
+
+=item * USAGE
+
+=back
 
 =head2 popconf
 

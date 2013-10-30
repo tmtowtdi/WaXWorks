@@ -5,13 +5,16 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     use Wx qw(:everything);
     use Wx::Event qw(EVT_MENU);
 
+    use MyApp::GUI::Frame::Notepad;
+
     use MooseX::NonMoose::InsideOut;
     extends 'Wx::Menu';
     with 'MyApp::Roles::Menu';
 
-    has 'itm_testsound'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
-    has 'itm_start_throb'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
     has 'itm_end_throb'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_notepad'       => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_start_throb'   => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
+    has 'itm_testsound'     => (is => 'rw', isa => 'Wx::MenuItem',  lazy_build => 1);
 
     sub FOREIGNBUILDARGS {#{{{
         return;
@@ -19,6 +22,7 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     sub BUILD {
         my $self = shift;
 
+        $self->Append( $self->itm_notepad       );
         $self->Append( $self->itm_testsound     );
         $self->Append( $self->itm_start_throb   );
         $self->Append( $self->itm_end_throb     );
@@ -47,6 +51,17 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
             undef   # if defined, this is a sub-menu
         );
     }#}}}
+    sub _build_itm_notepad {#{{{
+        my $self = shift;
+
+        return Wx::MenuItem->new(
+            $self, -1,
+            '&Notepad',
+            'Start Notepad Clone',
+            wxITEM_NORMAL,
+            undef   # if defined, this is a sub-menu
+        );
+    }#}}}
     sub _build_itm_testsound {#{{{
         my $self = shift;
 
@@ -63,12 +78,28 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
-        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_start_throb,  sub{$self->OnStartThrob(@_)} );
         EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_end_throb,    sub{$self->OnEndThrob(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_notepad,      sub{$self->OnNotepad(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_start_throb,  sub{$self->OnStartThrob(@_)} );
+        EVT_MENU( wxTheApp->GetTopWindow,  $self->itm_testsound,    sub{$self->OnTestSound(@_)} );
         return 1;
     }#}}}
 
+    sub OnEndThrob {#{{{
+        my $self = shift;
+        wxTheApp->throb_end();
+        return 1;
+    }#}}}
+    sub OnNotepad {#{{{
+        my $self = shift;
+        my $notepad = MyApp::GUI::Frame::Notepad->new();
+        return 1;
+    }#}}}
+    sub OnStartThrob {#{{{
+        my $self = shift;
+        wxTheApp->throb_start();
+        return 1;
+    }#}}}
     sub OnTestSound {#{{{
         my $self = shift;
 
@@ -80,16 +111,6 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
         }
         $sound->Play();
 
-        return 1;
-    }#}}}
-    sub OnStartThrob {#{{{
-        my $self = shift;
-        wxTheApp->throb_start();
-        return 1;
-    }#}}}
-    sub OnEndThrob {#{{{
-        my $self = shift;
-        wxTheApp->throb_end();
         return 1;
     }#}}}
 
