@@ -202,13 +202,14 @@ package MyApp::GUI::Frame::Notepad {
                 #'Comic Sans MS',
                 #'DejaVu Serif Condensed',
                 #'Purisa, Oblique',
-                #'Unifont, Medium',
-                'Verdana',                  # etc
+                'Unifont, Medium',
+                #'Verdana',                  # etc - pick one.
 
-                wxFONTENCODING_UTF8,
+                #wxFONTENCODING_UNICODE,    # works on Ubuntu, not on Windows.
             )
         );
-        $v->SetValue("Foobar.\n\nBaz blarg lorem ipsum.");
+        $v->SetValue("\nFoobar.\n\nBaz blarg lorem ipsum.\n\n");
+        #$v->SetValue("☃");                  # Unicode snowman.  CHECK works on Ubuntu?  (not on Windows)
 
        return $v;
     }#}}}

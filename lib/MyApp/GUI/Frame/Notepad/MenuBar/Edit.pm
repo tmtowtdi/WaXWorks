@@ -26,18 +26,6 @@ package MyApp::GUI::Frame::Notepad::MenuBar::Edit {
         isa         => 'Wx::MenuItem',
         default     => sub{ Wx::MenuItem->new($_[0], wxID_PASTE) },
     );
-    has 'itm_prefs' => (
-        is          => 'rw',
-        isa         => 'Wx::MenuItem',
-        lazy_build  => 1,
-        documentation => q{
-            Yes, there does exist a wxID_PREFERENCES, but its accelerator key is 
-            "P", which we already have assigned to "Paste", and it doesn't have 
-            a keyboard shortcut.
-            So instead of using the stock Preferences menu item ID, we're 
-            building our own.
-        }
-    );
 
     sub FOREIGNBUILDARGS {#{{{
         return; # Wx::Menu->new() takes no arguments
@@ -47,27 +35,15 @@ package MyApp::GUI::Frame::Notepad::MenuBar::Edit {
         $self->Append( $self->itm_cut   );
         $self->Append( $self->itm_copy  );
         $self->Append( $self->itm_paste );
-        $self->Append( $self->itm_prefs );
         $self->_set_events;
         return $self;
     }
 
-    sub _build_itm_prefs {#{{{
-        my $self = shift;
-        return Wx::MenuItem->new(
-            $self, -1,
-            "P&references\tCtrl-R",
-            'Update Application Preferences',
-            wxITEM_NORMAL,
-            undef   # if defined, this is a sub-menu
-        );
-    }#}}}
     sub _set_events {#{{{
         my $self = shift;
         EVT_MENU( $self->parent,  $self->itm_copy,  sub{$self->OnCopy(@_)}     );
         EVT_MENU( $self->parent,  $self->itm_cut,   sub{$self->OnCut(@_)}      );
         EVT_MENU( $self->parent,  $self->itm_paste, sub{$self->OnPaste(@_)}    );
-        EVT_MENU( $self->parent,  $self->itm_prefs, sub{$self->OnPrefs(@_)}    );
         return 1;
     }#}}}
 
