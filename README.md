@@ -22,7 +22,7 @@
 
 ## Things that need fixifying
 
-Code and documentation that needs to be fixed is marked with the string "CHECK".  ack for that and fix the issues.
+Code and documentation that need to be fixed are marked with the string "CHECK".  ack for that and fix the issues.
 
 ## Status
 
