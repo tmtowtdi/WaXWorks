@@ -146,8 +146,8 @@ package MyApp {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_TIMER( $self, $self->timer->GetId,  sub{$self->OnTimer(@_)} );
-        EVT_CLOSE( $self,                       sub{$self->OnClose(@_)} );
+        EVT_CLOSE(      $self,                       sub{$self->OnClose(@_)}    );
+        EVT_TIMER(      $self, $self->timer->GetId,  sub{$self->OnTimer(@_)}    );
         return 1;
     }#}}}
 

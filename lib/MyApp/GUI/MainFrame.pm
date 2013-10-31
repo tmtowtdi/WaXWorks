@@ -133,8 +133,8 @@ package MyApp::GUI::MainFrame {
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
-        EVT_SIZE(   $self,  sub{$self->OnResize(@_)}    );
-        EVT_CLOSE(  $self,  sub{$self->OnClose(@_)}    );
+        EVT_CLOSE(      $self,  sub{$self->OnClose(@_)}     );
+        EVT_SIZE(       $self,  sub{$self->OnResize(@_)}    );
     }#}}}
 
     sub OnClose {#{{{

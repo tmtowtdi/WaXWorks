@@ -191,6 +191,24 @@ package MyApp::GUI::Frame::Notepad {
             |wxTE_NOHIDESEL
             |wxTE_RICH
         );
+        $v->SetOwnFont( # Set just my font, not also the fonts of all my children
+            Wx::Font->new(
+                14,                         # point size
+                wxFONTFAMILY_ROMAN,
+                wxFONTSTYLE_NORMAL,
+                wxFONTWEIGHT_NORMAL,
+                0,                          # true for underline; windows and motif 2.x only
+
+                #'Comic Sans MS',
+                #'DejaVu Serif Condensed',
+                #'Purisa, Oblique',
+                #'Unifont, Medium',
+                'Verdana',                  # etc
+
+                wxFONTENCODING_UTF8,
+            )
+        );
+        $v->SetValue("Foobar.\n\nBaz blarg lorem ipsum.");
 
        return $v;
     }#}}}
