@@ -57,9 +57,6 @@ package MyApp::GUI::Dialog::Help {
         is          => 'rw',
         isa         => 'MyApp::Model::SearchIndex::Help',  
         default     => sub{ MyApp::Model::SearchIndex::Help->new() },
-        handles => {
-            html_dir => 'html_dir',
-        }
     );
     has 'history' => (
         is          => 'rw',
@@ -254,9 +251,9 @@ package MyApp::GUI::Dialog::Help {
         my $self = shift;
         my $tt = Template->new(
             ABSOLUTE        => 1,
-            INCLUDE_PATH    => $self->html_dir,
+            INCLUDE_PATH    => wxTheApp->dirs->html,
             INTERPOLATE     => 1,
-            OUTPUT_PATH     => $self->html_dir,
+            OUTPUT_PATH     => wxTheApp->dirs->html,
             WRAPPER         => 'tmpl/wrapper',
         );
         return $tt;
@@ -265,7 +262,7 @@ package MyApp::GUI::Dialog::Help {
         my $self = shift;
         return {
             dir_sep     => File::Util->SL,
-            html_dir    => File::Spec->rel2abs($self->html_dir),
+            html_dir    => wxTheApp->dirs->html,
         };
     }#}}}
     sub _build_txt_search {#{{{
@@ -306,7 +303,7 @@ package MyApp::GUI::Dialog::Help {
         my $self    = shift;
         my $kandi   = HTML::Strip->new();
         my $docs    = {};
-        my $dir     = wxTheApp->resolve(service => '/Directory/doc/html');
+        my $dir     = wxTheApp->dirs->html;
         foreach my $f(glob("\"$dir\"/*.html")) {
             my $html = read_file($f);
 
@@ -360,9 +357,9 @@ package MyApp::GUI::Dialog::Help {
         my $file = shift || return;
 
         ### If $file is already a FQ path, link directly to it.  Otherwise, 
-        ### prepend it with our html_dir.
-        my $dir  = quotemeta $self->html_dir;
-        my $fqfn = ( $file =~ m/^$dir/ ) ? $file : join q{/}, ($self->html_dir, $file);
+        ### prepend it with our html dir.
+        my $dir  = quotemeta wxTheApp->dirs->html;
+        my $fqfn = ( $file =~ m/^$dir/ ) ? $file : join q{/}, (wxTheApp->dirs->html, $file);
         unless(-e $fqfn) {
             wxTheApp->poperr("$fqfn: No such file or directory");
             return;
@@ -577,9 +574,8 @@ and re-open the help browser; it's not necessary to restart the entire app.
 
 =head1 CREATING AND EDITING HELP FILES
 
-Help files live in the directory pointed to by the C</Directory/doc/html> 
-service provided by L<MyApp::Model::Container>.  These files are actually 
-templates
+Help files live in the directory pointed to by MyApp::Model::Dirs::html().
+These files are actually templates.
 
 The help files are actually L<Template::Toolkit> templates, and their content 
 is surrounded by a wrapper template.  This wrapper template lives in a 

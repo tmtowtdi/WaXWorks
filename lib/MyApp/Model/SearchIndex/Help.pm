@@ -10,20 +10,13 @@ package MyApp::Model::SearchIndex::Help {
     use Try::Tiny;
     extends 'MyApp::Model::SearchIndex';
 
-    has 'bb'  => (
+    use MyApp::Model::Dirs;
+
+    has 'dirs' => (
         is          => 'ro',
-        isa         => 'MyApp::Model::Container',  
+        isa         => 'MyApp::Model::Dirs',
         lazy        => 1,
-        default     => sub{ MyApp::Model::Container->new(name => 'update help') },
-        handles => {
-            resolve => 'resolve',
-        }
-    );
-    has 'html_dir'  => (
-        is          => 'ro',
-        isa         => 'Path::Class::Dir',  
-        lazy        => 1,
-        default     => sub{ Path::Class::dir( $_[0]->resolve(service => '/Directory/doc/html') ) },
+        default     => sub { return MyApp::Model::Dirs->new() },
     );
     has 'kandi'  => (
         is          => 'ro',
@@ -49,25 +42,8 @@ package MyApp::Model::SearchIndex::Help {
         my $orig    = shift;
         my $class   = shift;
 
-        ### There's a minor chicken-and-egg issue here.
-        ###
-        ### This module specifically relates to app help documentation, so it 
-        ### shouldn't have to be passed the location of that docu, especially 
-        ### since it's being defined elsewhere (our main Bread::Board 
-        ### container).
-        ###
-        ### However, since this is a model, we can't get at that container via 
-        ### wxTheApp, and since we're currently in BUILDARGS, we also can't 
-        ### yet get at the container that will eventually become one of our 
-        ### own attributes.
-        ###
-        ### So we're solving that by instantiating our own Bread::Board here 
-        ### so we can dig the location of the index out of it.
-
-        my $bb  = MyApp::Model::Container->new(name => 'update help');
-        my $idx = $bb->resolve(service => '/Directory/doc/html_idx');
-
-        return { index_directory => $idx }
+        my $dirs = MyApp::Model::Dirs->new();
+        return { index_directory => $dirs->html_idx };
     };#}}}
     sub BUILD {
         my $self = shift;

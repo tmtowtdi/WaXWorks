@@ -9,7 +9,6 @@ use MyApp::Model::SearchIndex::Help;
 
 my $help = MyApp::Model::SearchIndex::Help->new();
 
-
 my $cnt = fully_reindex( $help );
 say "$cnt documents were indexed.";
 
@@ -19,7 +18,7 @@ say "$cnt documents were indexed.";
 sub fully_reindex {#{{{
     my $help = shift;
 
-    my @help_files = grep{ /\.html?$/ }$help->html_dir->children();
+    my @help_files = grep{ /\.html?$/ }$help->dirs->html->children();
 
     my $docs = [];
     foreach my $file( @help_files ) {

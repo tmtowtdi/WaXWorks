@@ -103,8 +103,11 @@ package MyApp::GUI::MainFrame::MenuBar::Examples {
     sub OnTestSound {#{{{
         my $self = shift;
 
-        my $sound = wxTheApp->get_sound( 'two_tones_up.wav' );
-        $sound->Play();
+        ### Best I can tell, this is known not to work under wx 2.8 and 
+        ### ubuntu.  wx 3.0 should be available in january 2014, so keeping 
+        ### hopes up.
+        my $sound = wxTheApp->get_sound( 'two_tones_up.wav' ) or return;
+        $sound->Play( wxSOUND_SYNC );
 
         return 1;
     }#}}}

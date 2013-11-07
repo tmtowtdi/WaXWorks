@@ -3,6 +3,15 @@ use v5.14;
 ### CHECK
 ### POD is missing a lot of methods - fix that.
 
+
+### I need to get off Bread::Board altogether.  I love the idea of it, but 
+### it's breaking in mysterious and undocumented ways.  I may come back to it 
+### some day, but it's just not mature enough yet to be something I want to 
+### depend on.
+###
+### Rip it out completely and replace it with something else.
+
+
 package MyApp {
     use warnings;
 
@@ -12,6 +21,8 @@ package MyApp {
     use FindBin;
     use IO::All;
     use Moose;
+    use Path::Class qw();
+    use Try::Tiny;
     use Wx qw(:everything);
     use Wx::Event qw(EVT_CLOSE EVT_TIMER);
 
@@ -19,6 +30,7 @@ package MyApp {
     extends 'Wx::App';
 
     use MyApp::Model::Container;
+    use MyApp::Model::Dirs;
     use MyApp::Model::WxContainer;
     use MyApp::GUI::MainFrame;
 
@@ -79,6 +91,14 @@ package MyApp {
         }
     );
 
+    has 'dirs' => (
+        is          => 'ro',
+        isa         => 'MyApp::Model::Dirs',
+        lazy        => 1,
+        default     => sub { return MyApp::Model::Dirs->new() },
+    );
+
+
     sub FOREIGNBUILDARGS {#{{{
         return ();
     }#}}}
@@ -91,11 +111,12 @@ package MyApp {
         ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );
 
+        my $logger = wxTheApp->resolve(service => 'Log/logger');
+
         ### Set the main frame as the app top window
         $self->SetTopWindow( $self->main_frame );
 
         ### Log the fact that we've started.
-        my $logger = wxTheApp->resolve( service => '/Log/logger' );
         $logger->component(wxTheApp->GetAppName);
         $logger->info( 'Starting ' . wxTheApp->GetAppName() );
 
@@ -179,18 +200,20 @@ package MyApp {
         my $self = shift;
         my $file = shift;
 
-        my $path = join '/', (wxTheApp->resolve( service => '/Directory/wav'), $file);
-        unless( -e $path ) {
-            wxTheApp->poperr("Unable to find sound file '$path'.");
+        my $path = $self->dirs->wav->file( $file );
+        unless( $path->stat ) {
+            wxTheApp->poperr("'$file' does not exist - cannot play sound.");
             return;
-        }
+        };
 
         my $sound = Wx::Sound->new($path);
         unless( $sound->IsOk ) {
-            wxTheApp->poperr("'$path' appears not to be a sound file.");
+            wxTheApp->poperr("'$path' exists but appears not to be a sound file.");
             return;
         }
 
+        ### Ubuntu will get to here (if fed a valid wav file).  But it won't 
+        ### play it - afaict this is a wx 2.8/wxperl/ubuntu known problem.
         return $sound;
     }#}}}
     sub poperr {#{{{
@@ -258,7 +281,7 @@ package MyApp {
     sub OnExit {#{{{
         my $self = shift;
 
-        my $logger = wxTheApp->resolve( service => '/Log/logger' );
+        my $logger = wxTheApp->resolve(service => 'Log/logger');
         $logger->component(wxTheApp->GetAppName);
 
         ### Prune old log entries
@@ -413,8 +436,9 @@ Transforms the requested wav file resource into a Wx::Sound and returns that.
 =over 8
 
 =item * B<required> - filename of wav file.  Must exist in the directory 
-resolved by the application's '/Directory/wav' service.  See 
-L<MyApp::Model::Container>.
+indicated by
+
+ $self->dirs->wav
 
 =back
 
