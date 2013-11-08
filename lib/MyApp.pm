@@ -10,6 +10,9 @@ use v5.14;
 ### depend on.
 ###
 ### Rip it out completely and replace it with something else.
+###
+### The main BB container is gone.  WxContainer is still here, but dumping it 
+### should not be a problem at this point.
 
 
 package MyApp {
@@ -94,9 +97,6 @@ package MyApp {
     }#}}}
     sub BUILD {
         my $self = shift;
-
-        ### Make sure that the logging database has been deployed
-        #$self->_o_creat_database_log();
 
         ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );

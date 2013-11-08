@@ -78,6 +78,12 @@ package MyApp::Model::Logger {
         return $o;
     }#}}}
 
+    sub component {#{{{
+        my $self = shift;
+        my $comp = shift;
+        $self->output_dbi->component($comp);
+        return 1;
+    }#}}}
     sub prune_bydate {#{{{
         my $self = shift;
         my $date = shift;

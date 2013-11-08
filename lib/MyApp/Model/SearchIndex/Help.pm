@@ -5,7 +5,6 @@ package MyApp::Model::SearchIndex::Help {
     use HTML::Strip;
     use HTML::TreeBuilder::XPath;
     use Moose;
-    use MyApp::Model::Container;
     use Path::Class;
     use Try::Tiny;
     extends 'MyApp::Model::SearchIndex';
