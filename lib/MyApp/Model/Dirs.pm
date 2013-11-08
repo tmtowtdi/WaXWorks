@@ -11,11 +11,11 @@ package MyApp::Model::Dirs {
         default     => sub { return Path::Class::Dir->new($FindBin::Bin, '..')->absolute->resolve }
     );
 
-    has 'wav' => (
+    has 'data' => (
         is          => 'ro',
         isa         => 'Path::Class::Dir',
         lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var wav/)) }
+        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var db/)) }
     );
 
     has 'html' => (
@@ -30,6 +30,13 @@ package MyApp::Model::Dirs {
         isa         => 'Path::Class::Dir',
         lazy        => 1,
         default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var doc html idx/)) }
+    );
+
+    has 'wav' => (
+        is          => 'ro',
+        isa         => 'Path::Class::Dir',
+        lazy        => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var wav/)) }
     );
 
     no Moose;

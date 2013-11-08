@@ -79,11 +79,6 @@ package MyApp::GUI::Dialog::LogViewer {
             user selects a new radio button.
         }
     );
-    has 'schema' => (
-        is          => 'ro',
-        isa         => 'MyApp::Model::LogsSchema',
-        lazy_build  => 1,
-    );
     has 'str_show_all' => (
         is      => 'ro',
         isa     => 'Str',
@@ -248,7 +243,7 @@ package MyApp::GUI::Dialog::LogViewer {
     sub _build_components {#{{{
         my $self = shift;
 
-        my $rs = $self->schema->resultset('Logs')->search(
+        my $rs = wxTheApp->database->logs_schema->resultset('Logs')->search(
             {},
             {
                 columns => [{ component => {distinct => 'me.component'} }],
@@ -331,10 +326,6 @@ package MyApp::GUI::Dialog::LogViewer {
     sub _build_position {#{{{
         my $self = shift;
         return Wx::Point->new(10, 10);
-    }#}}}
-    sub _build_schema {#{{{
-        my $self = shift;
-        return wxTheApp->resolve(service => '/DatabaseLog/schema');
     }#}}}
     sub _build_size {#{{{
         my $self = shift;
@@ -451,7 +442,7 @@ package MyApp::GUI::Dialog::LogViewer {
         my $component = $self->choice_component->GetString( $self->choice_component->GetSelection );
         my $search_hr = ( $component eq $self->str_show_all ) ? {} : { component => $component };
 
-        my $rs = $self->schema->resultset('Logs')->search(
+        my $rs = wxTheApp->database->logs_schema->resultset('Logs')->search(
             $search_hr,
             {
                 order_by => [

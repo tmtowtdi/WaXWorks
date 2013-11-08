@@ -29,25 +29,25 @@ package MyApp {
     use MooseX::NonMoose;
     extends 'Wx::App';
 
-    use MyApp::Model::Container;
+    use MyApp::Model::Database;
     use MyApp::Model::Dirs;
+    use MyApp::Model::Logger;
     use MyApp::Model::WxContainer;
     use MyApp::GUI::MainFrame;
 
     our $VERSION = '0.1';
 
-    has 'bb' => (
+    has 'database' => (
         is          => 'ro',
-        isa         => 'MyApp::Model::Container',
-        lazy_build  => 1,
-        handles => {
-            resolve     => 'resolve',
-            root_dir    => 'root_dir',
-        },
-        documentation => q{
-            For non-GUI elements only (database connections, paths, etc).  See 
-            wxbb for GUI elements.
-        }
+        isa         => 'MyApp::Model::Database',
+        lazy        => 1,
+        default     => sub{ return MyApp::Model::Database->new( data_dir => $_[0]->dirs->data ) },
+    );
+    has 'dirs' => (
+        is          => 'ro',
+        isa         => 'MyApp::Model::Dirs',
+        lazy        => 1,
+        default     => sub{ return MyApp::Model::Dirs->new() },
     );
     has 'icon_image' => (
         is          => 'ro',
@@ -59,14 +59,10 @@ package MyApp {
             original should be square.
         }
     );
-    has 'logs_expire' => (
-        is          => 'ro',
-        isa         => 'Int',
-        default     => 7,
-        documentation => q{
-            Log entries older than this many days will be pruned from the 
-            logging database on app exit.
-        }
+    has 'logger' => (
+        is          => 'rw',
+        isa         => "MyApp::Model::Logger",
+        lazy_build  => 1,
     );
     has 'main_frame' => (
         is          => 'ro',
@@ -91,12 +87,6 @@ package MyApp {
         }
     );
 
-    has 'dirs' => (
-        is          => 'ro',
-        isa         => 'MyApp::Model::Dirs',
-        lazy        => 1,
-        default     => sub { return MyApp::Model::Dirs->new() },
-    );
 
 
     sub FOREIGNBUILDARGS {#{{{
@@ -106,28 +96,22 @@ package MyApp {
         my $self = shift;
 
         ### Make sure that the logging database has been deployed
-        $self->_o_creat_database_log();
+        #$self->_o_creat_database_log();
 
         ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );
-
-        my $logger = wxTheApp->resolve(service => 'Log/logger');
 
         ### Set the main frame as the app top window
         $self->SetTopWindow( $self->main_frame );
 
         ### Log the fact that we've started.
-        $logger->component(wxTheApp->GetAppName);
-        $logger->info( 'Starting ' . wxTheApp->GetAppName() );
+        $self->logger->component( wxTheApp->GetAppName );
+        $self->logger->info( 'Starting ' . wxTheApp->GetAppName() );
 
         $self->main_frame->Show(1);
         $self->_set_events();
         return $self;
     }
-    sub _build_bb {#{{{
-        my $self = shift;
-        return MyApp::Model::Container->new( name => 'plain container' );
-    }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
         my $frame = MyApp::GUI::MainFrame->new();
@@ -136,6 +120,11 @@ package MyApp {
     sub _build_root_dir {#{{{
         my $self = shift;
         return "$FindBin::Bin/..";
+    }#}}}
+    sub _build_logger {#{{{
+        my $self = shift;
+        my $l = MyApp::Model::Logger->new( schema => $self->database->logs_schema );
+        return $l;
     }#}}}
     sub _build_timer {#{{{
         my $self = shift;
@@ -155,15 +144,6 @@ package MyApp {
     sub _build_wxbb {#{{{
         my $self = shift;
         return MyApp::Model::WxContainer->new( name => 'wx container' );
-    }#}}}
-    sub _o_creat_database_log {#{{{
-        my $self = shift;
-
-        unless( -e wxTheApp->resolve(service => '/DatabaseLog/db_file') ) {
-            my $log_schema = wxTheApp->resolve( service => '/DatabaseLog/schema' );
-            $log_schema->deploy;
-        }
-        return 1;
     }#}}}
     sub _set_events {#{{{
         my $self = shift;
@@ -281,16 +261,15 @@ package MyApp {
     sub OnExit {#{{{
         my $self = shift;
 
-        my $logger = wxTheApp->resolve(service => 'Log/logger');
-        $logger->component(wxTheApp->GetAppName);
+        $self->logger->component(wxTheApp->GetAppName);
 
         ### Prune old log entries
         my $now   = DateTime->now();
-        my $dur   = DateTime::Duration->new(days => $self->logs_expire);
+        my $dur   = DateTime::Duration->new(days => $self->logger->logs_expire);
         my $limit = $now->subtract_duration( $dur );
-        $logger->debug('Pruning old log entries');
-        $logger->prune_bydate( $limit );
-        $logger->info('Closing application');
+        $self->logger->debug('Pruning old log entries');
+        $self->logger->prune_bydate( $limit );
+        $self->logger->info('Closing application');
 
         return 1;
     }#}}}
