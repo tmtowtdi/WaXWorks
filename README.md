@@ -25,25 +25,31 @@
 * Code and documentation that need to be fixed are marked with the string "CHECK".  ack 
   for that and fix the issues.
 
-* All attributes that isa either Path::Class::Dir or Path::Class::File need to allow 
-  coercions from Str
-
-* Change all instances of "use v5.10" to "use v5.14" - I'm using block packages, which 
-  requires 5.14.
-
-* I'm not in love with the modules that are determining their own root using FindBin; 
-  something else should be doing that.
-
 * TestSound works on Windows, does nothing (good or bad) on Ubuntu
   * at least it worked at some point; I dicked with things since then so I may have messed 
     it up.  Need more testing.  
+  * Check on this again after the switch to wxwidgets 3.0 is made.
 
 * MenuItem helpstrings are also not showing up on Ubuntu (but they are on 
   windows).
+  * Check on this again after the switch to wxwidgets 3.0 is made.
+
+* wxwidgets 3.0 is out, and I expect wxperl to switch to using it soon.  When that 
+  happens: 
+  * Fix the doc link in lib/MyApp.pm
+  * Test out Wx::Sound (which doesn't work in Ubuntu with 2.8)
+  * Check the menuitem helpstrings.
 
 ## Status
 
 Project is young, and needs the typical additions, refactorings, etc.  But what's there should run:
 
     $ perl bin/app.pl
+
+Items in the Tools menu are meant to either help you out while you're working, or become 
+part of your actual app, or both.
+
+Items in the Examples menu are meant as merely that - examples.  Take from it what you 
+will, and rip out anything you don't need.
+
     

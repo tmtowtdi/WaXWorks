@@ -1,9 +1,8 @@
-use v5.10;
+use v5.14;
 
 package MyApp::Model::Assets::Zipfile {
     use warnings;
     use Archive::Zip qw(:ERROR_CODES);
-    use Path::Class qw();
     use Moose;
     use MyApp::Types;
 

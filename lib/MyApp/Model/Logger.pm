@@ -1,4 +1,4 @@
-use v5.10;
+use v5.14;
 
 package MyApp::Model::Logger {
     use warnings;
@@ -110,8 +110,8 @@ MyApp::Model::Logger - Application-wide logger
 
 =head1 SYNOPSIS
 
- my $db = MyApp::Model::Database->new( E<lt>Path::Class::Dir object indicating SQLite data directoryE<gt>  );
- my $l = MyApp::Model::Logger->new( schema => $db->logs_schema );
+ my $db = MyApp::Model::Database->new( wxTheApp->dirs->data  );
+ my $l  = MyApp::Model::Logger->new( schema => $db->logs_schema );
 
  $l->component("MyTest");
  $l->debug("This is a debug message");

@@ -1,17 +1,15 @@
-use v5.10;
+use v5.14;
 
 package MyApp::Model::Database {
     use warnings;
     use Moose;
-    use Path::Class qw();
 
+    use MyApp::Types;
     use MyApp::Model::LogsSchema;
 
-    ### CHECK
-    ### this should really have a coercion from Str set up.
     has 'data_dir' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
+        isa         => 'PathClassDir',
         required    => 1,
     );
     #######################
@@ -22,9 +20,10 @@ package MyApp::Model::Database {
     );
     has 'db_file' => (
         is          => 'ro',
-        isa         => 'Path::Class::File',
+        isa         => 'PathClassFile',
         lazy        => 1,
-        default     => sub{ return Path::Class::File->new( $_[0]->data_dir->file(qw/log.sqlite/) )->absolute->cleanup },
+        default     => sub{ return $_[0]->data_dir->file( qw/log.sqlite/ ) },
+        writer      => '_update_db_file',
     );
     has 'dsn' => (
         is          => 'ro',
@@ -40,6 +39,11 @@ package MyApp::Model::Database {
 
     sub BUILD {
         my $self = shift;
+
+        ### Clean up the db_file path if it's messy.  But "cleanup", not 
+        ### "resolve" - it may not already exist, in which case we'll deal 
+        ### with it in the next step.
+        $self->_update_db_file( $self->db_file->absolute->cleanup );
 
         ### Make sure that the logging database has been deployed
         $self->_o_creat_database_log();
@@ -77,7 +81,7 @@ MyApp::Model::Database - App-wide database settings
 
 =head1 SYNOPSIS
 
- $d = MyApp::Model::Database->new( data_dir => Path::Class::Dir->new('/directory/containing/sqlite/database/files/') );
+ $d = MyApp::Model::Database->new( data_dir => wxTheApp->dirs->data );
 
  say "We're connected to the SQLite file " . $d->db_file;
  say "Our DSN is " . $d->dsn;

@@ -120,11 +120,12 @@ Use an indeterminate "throbber":
 
 =head1 DESCRIPTION
 
-Getting the gauge to reset after it's finished throbbing is unintuitive.  
+Getting the gauge to reset after it's finished throbbing is unintuitive.  To 
+reset it back to being clear again, you have to actually delete and re-create 
+the gauge.  This is handled by StatusBar::init().
 
-CHECK FINISH THIS THOUGHT
-
-
-
-
+The gauge also needs to be destroyed and re-created each time the frame is 
+resized.  However, the SIZE event that needs to trigger this is the event 
+caught by the Wx::Frame that contains the status bar (that, in turn, contains 
+the gauge).
 

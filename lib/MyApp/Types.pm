@@ -1,6 +1,7 @@
 
 package MyApp::Types {
     use Moose::Util::TypeConstraints;
+    use Path::Class;
 
     class_type 'PathClassDir', { class => 'Path::Class::Dir' };
     coerce 'PathClassDir', 

@@ -12,6 +12,7 @@ package MyApp::Roles::StatusBar {
         isa         => 'Wx::Frame',
         required    => 1,
     );
+    ############
     has 'caption' => (
         is          => 'rw', 
         isa         => 'Str',
@@ -164,7 +165,51 @@ resizes its parent frame, add this to that parent frame's EVT_SIZE handler:
 
 =head1 ATTRIBUTES
 
-CHECK this needs documentation
+Only the first attribute, frame, needs to be supplied by you.  The rest are 
+optional.
+
+=over 4
+
+=item * frame - Wx::Frame (required)
+
+Any StatusBar must be associated with a Wx::Frame.
+
+=item * field_count - integer
+
+The number of fields to display on your status bar.  Defaults to 2.
+
+=item * field_widths - arrayref of integers.
+
+This arrayref must have the same number of elements as specified by your 
+field_count.  These elements define the widths of your fields.
+
+A positive integer indicates an exact pixel width for the field.  A negative 
+integer indicates a proportion value.
+
+Defaults to [-1, 100] (so the second field, where the gauge goes by default, 
+will be 100 pixels, and the first field, where the caption goes by default, 
+will take up the rest of the space).
+
+=item * caption - string
+
+The string to display in the caption field; defaults to the empty string
+
+=item * caption_field
+
+On which of your fields should the caption appear?  Defaults to 0 (the first 
+field).
+
+=item * gauge - Wx::Gauge
+
+The Wx::Gauge control to display.  This will be created for you; you don't 
+have to pass it in.
+
+=item * gauge_field
+
+On which of your fields should the gauge appear?  Defaults to 1 (the second 
+field).
+
+=back
 
 =head1 METHODS
 

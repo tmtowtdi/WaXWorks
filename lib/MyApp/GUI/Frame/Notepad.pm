@@ -1,6 +1,8 @@
 use v5.14;
 
 package MyApp::GUI::Frame::Notepad {
+    use utf8;
+    use open qw(:std :utf8);
     use Data::Dumper::GUI;
     use English qw( -no_match_vars );
     use IO::All;
@@ -202,14 +204,15 @@ package MyApp::GUI::Frame::Notepad {
                 #'Comic Sans MS',
                 #'DejaVu Serif Condensed',
                 #'Purisa, Oblique',
-                'Unifont, Medium',
+                #'Unifont, Medium',
                 #'Verdana',                  # etc - pick one.
 
                 #wxFONTENCODING_UNICODE,    # works on Ubuntu, not on Windows.
             )
         );
-        $v->SetValue("\nFoobar.\n\nBaz blarg lorem ipsum.\n\n");
-        #$v->SetValue("☃");                  # Unicode snowman.  CHECK works on Ubuntu?  (not on Windows)
+        #$v->SetValue("\nFoobar.\n\nBaz blarg lorem ipsum.\n\n");
+        $v->SetValue("☃");                  # Unicode snowman.  CHECK works on Ubuntu  (not sure about Windows - I'd removed 'use utf8' for
+                                            # some stupid reason when I tested previously.   Test again.)
 
        return $v;
     }#}}}

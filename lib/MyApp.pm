@@ -9,10 +9,8 @@ package MyApp {
     use Data::Dumper::GUI;
     use DateTime;
     use DateTime::Duration;
-    use FindBin;
     use IO::All;
     use Moose;
-    use Path::Class qw();
     use Try::Tiny;
     use Wx qw(:everything);
     use Wx::Event qw(EVT_CLOSE EVT_TIMER);
@@ -123,10 +121,6 @@ package MyApp {
         my $self = shift;
         my $frame = MyApp::GUI::MainFrame->new();
         return $frame;
-    }#}}}
-    sub _build_root_dir {#{{{
-        my $self = shift;
-        return "$FindBin::Bin/..";
     }#}}}
     sub _build_logger {#{{{
         my $self = shift;
@@ -323,6 +317,13 @@ structure, as well as some tools that will be helpful in developing a new app.
 =head1 DOCUMENTATION MAP
 
 =over 2
+
+=item * L<wxwidgets documentation|http://docs.wxwidgets.org/2.8/wx_contents.html>
+
+CHECK as I write this I'm still on wxwidgets 2.8, but 3.0 was just released 
+yesterday.  It's not showing up in Synaptic yet, and wxperl is not using it 
+yet.  When all that gets sorted and we do switch over to 3.0, fix the link 
+above to point to the right place.
 
 =item * L<MyApp::GettingStarted.pod>
 
