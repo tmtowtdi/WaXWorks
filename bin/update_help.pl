@@ -7,7 +7,7 @@ use FindBin;
 use lib $FindBin::Bin . '/../lib';
 use MyApp::Model::SearchIndex::Help;
 
-my $help = MyApp::Model::SearchIndex::Help->new();
+my $help = MyApp::Model::SearchIndex::Help->new( root => "$FindBin::Bin/.." );
 
 my $cnt = fully_reindex( $help );
 say "$cnt documents were indexed.";

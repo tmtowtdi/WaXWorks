@@ -5,17 +5,25 @@ package MyApp::Model::SearchIndex::Help {
     use HTML::Strip;
     use HTML::TreeBuilder::XPath;
     use Moose;
+    use MyApp::Types;
     use Path::Class;
     use Try::Tiny;
     extends 'MyApp::Model::SearchIndex';
 
     use MyApp::Model::Dirs;
 
+    has 'root' => (
+        is          => 'ro',
+        isa         => 'PathClassDir',
+        required    => 1,
+        coerce      => 1,
+    );
+    ###############
     has 'dirs' => (
         is          => 'ro',
         isa         => 'MyApp::Model::Dirs',
         lazy        => 1,
-        default     => sub { return MyApp::Model::Dirs->new() },
+        default     => sub { return MyApp::Model::Dirs->new( root => $_[0]->root ) },
     );
     has 'kandi'  => (
         is          => 'ro',
@@ -40,9 +48,13 @@ package MyApp::Model::SearchIndex::Help {
     around 'BUILDARGS' => sub {#{{{
         my $orig    = shift;
         my $class   = shift;
+        my %args    = @_;
 
-        my $dirs = MyApp::Model::Dirs->new();
-        return { index_directory => $dirs->html_idx };
+        my $dirs = MyApp::Model::Dirs->new( root => $args{'root'} );
+        return {
+            dirs => $dirs,
+            root => $args{'root'},
+        };
     };#}}}
     sub BUILD {
         my $self = shift;
@@ -130,7 +142,7 @@ local application help documents.
 
 =head1 SYNOPSIS
 
- $help = MyApp::Model::SearchIndex::Help->new();
+ $help = MyApp::Model::SearchIndex::Help->new( root => '/path/to/app/root' );
 
  ### The HTML help file to parse
  $file = "filename.html";

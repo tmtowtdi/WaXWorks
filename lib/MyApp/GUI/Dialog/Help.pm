@@ -56,7 +56,7 @@ package MyApp::GUI::Dialog::Help {
     has 'help_idx'  => (
         is          => 'rw',
         isa         => 'MyApp::Model::SearchIndex::Help',  
-        default     => sub{ MyApp::Model::SearchIndex::Help->new() },
+        default     => sub{ MyApp::Model::SearchIndex::Help->new( root => wxTheApp->root_dir ) },
     );
     has 'history' => (
         is          => 'rw',
@@ -162,7 +162,8 @@ package MyApp::GUI::Dialog::Help {
     sub _build_bmp_home {#{{{
         my $self = shift;
 
-        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/home.png');
+        #my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/home.png');
+        my $img = wxTheApp->assets->image_from_zip('images/help/home.png');
 
         $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
         my $bmp = Wx::Bitmap->new($img);
@@ -177,7 +178,8 @@ package MyApp::GUI::Dialog::Help {
     }#}}}
     sub _build_bmp_left {#{{{
         my $self = shift;
-        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-left.png');
+        #my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-left.png');
+        my $img = wxTheApp->assets->image_from_zip('images/help/arrow-left.png');
         ### On Ubuntu, there's a margin inside the button.  If the image is 
         ### the same size as the button, that margin obscures part of the 
         ### image.  So the image must be a bit smaller than the button.
@@ -194,7 +196,8 @@ package MyApp::GUI::Dialog::Help {
     }#}}}
     sub _build_bmp_right {#{{{
         my $self = shift;
-        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-right.png');
+        #my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/arrow-right.png');
+        my $img = wxTheApp->assets->image_from_zip('images/help/arrow-right.png');
         $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
         my $bmp = Wx::Bitmap->new($img);
         return Wx::BitmapButton->new(
@@ -207,7 +210,8 @@ package MyApp::GUI::Dialog::Help {
     }#}}}
     sub _build_bmp_search {#{{{
         my $self = shift;
-        my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/search.png');
+        #my $img = wxTheApp->wxbb->resolve( service => '/assets/images/help/search.png');
+        my $img = wxTheApp->assets->image_from_zip('images/help/search.png');
         $img->Rescale($self->nav_img_w - 10, $self->nav_img_h - 10);    # see build_bmp_left
         my $bmp = Wx::Bitmap->new($img);
         my $v = Wx::BitmapButton->new(

@@ -3,18 +3,6 @@ use v5.14;
 ### CHECK
 ### POD is missing a lot of methods - fix that.
 
-
-### I need to get off Bread::Board altogether.  I love the idea of it, but 
-### it's breaking in mysterious and undocumented ways.  I may come back to it 
-### some day, but it's just not mature enough yet to be something I want to 
-### depend on.
-###
-### Rip it out completely and replace it with something else.
-###
-### The main BB container is gone.  WxContainer is still here, but dumping it 
-### should not be a problem at this point.
-
-
 package MyApp {
     use warnings;
 
@@ -32,14 +20,29 @@ package MyApp {
     use MooseX::NonMoose;
     extends 'Wx::App';
 
+    use MyApp::Types;
+    use MyApp::Model::Assets;
     use MyApp::Model::Database;
     use MyApp::Model::Dirs;
+    use MyApp::Model::Fonts;
     use MyApp::Model::Logger;
-    use MyApp::Model::WxContainer;
     use MyApp::GUI::MainFrame;
 
     our $VERSION = '0.1';
 
+    has 'root_dir' => (
+        is          => 'ro',
+        isa         => 'PathClassDir',
+        required    => 1,
+        writer      => '_update_root_dir',
+        coerce      => 1,
+    );
+    ##########
+    has 'assets' => (
+        is          => 'ro',
+        isa         => 'MyApp::Model::Assets',
+        lazy_build  => 1,
+    );
     has 'database' => (
         is          => 'ro',
         isa         => 'MyApp::Model::Database',
@@ -50,7 +53,13 @@ package MyApp {
         is          => 'ro',
         isa         => 'MyApp::Model::Dirs',
         lazy        => 1,
-        default     => sub{ return MyApp::Model::Dirs->new() },
+        default     => sub{ return MyApp::Model::Dirs->new( root => $_[0]->root_dir ) },
+    );
+    has 'fonts' => (
+        is          => 'ro',
+        isa         => 'MyApp::Model::Fonts',
+        lazy        => 1,
+        default     => sub{ return MyApp::Model::Fonts->new() },
     );
     has 'icon_image' => (
         is          => 'ro',
@@ -77,18 +86,6 @@ package MyApp {
         isa         => 'Wx::Timer',
         lazy_build  => 1,
     );
-    has 'wxbb' => (
-        is          => 'ro',
-        isa         => 'MyApp::Model::WxContainer',
-        lazy_build  => 1,
-        handles => {
-            wxresolve => 'resolve',
-        },
-        documentation => q{
-            For GUI elements only (images, fonts, etc).  See bb for non-GUI 
-            elements.
-        }
-    );
 
 
 
@@ -97,6 +94,9 @@ package MyApp {
     }#}}}
     sub BUILD {
         my $self = shift;
+
+        ### Ensure the root_dir exists and clean it up
+        $self->_update_root_dir( $self->root_dir->absolute->resolve );
 
         ### Set the main frame icon
         $self->main_frame->SetIcon( $self->get_app_icon() );
@@ -112,6 +112,13 @@ package MyApp {
         $self->_set_events();
         return $self;
     }
+    sub _build_assets {#{{{
+        my $self = shift;
+        return MyApp::Model::Assets->new(
+            assets_root => $self->dirs->assets,
+            zip_file    => $self->dirs->assets->file( 'assets.zip' ),
+        )
+    }#}}}
     sub _build_main_frame {#{{{
         my $self = shift;
         my $frame = MyApp::GUI::MainFrame->new();
@@ -141,10 +148,6 @@ package MyApp {
         $t->SetOwner( $self );
         return $t;
     }#}}}
-    sub _build_wxbb {#{{{
-        my $self = shift;
-        return MyApp::Model::WxContainer->new( name => 'wx container' );
-    }#}}}
     sub _set_events {#{{{
         my $self = shift;
         EVT_CLOSE(      $self,                       sub{$self->OnClose(@_)}    );
@@ -162,7 +165,7 @@ package MyApp {
     sub get_app_icon {#{{{
         my $self = shift;
 
-        my $image = wxTheApp->wxresolve(service => q{/assets/images/icons/} . $self->icon_image);
+        my $image = $self->assets->image_from_zip( 'images/icons/' . $self->icon_image );
         $image->Rescale(32,32);
         my $bmp = Wx::Bitmap->new($image);
 
@@ -322,8 +325,6 @@ structure, as well as some tools that will be helpful in developing a new app.
 =over 2
 
 =item * L<MyApp::GettingStarted.pod>
-
-=item * L<MyApp::TBD.pod>
 
 =item * L<MyApp::GUI::MainFrame>
 

@@ -3,40 +3,56 @@ use v5.10;
 package MyApp::Model::Dirs {
     use warnings;
     use Moose;
+    use MyApp::Types;
 
     has 'root' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
-        lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($FindBin::Bin, '..')->absolute->resolve }
+        isa         => 'PathClassDir',
+        required    => 1,
+        coerce      => 1,
     );
-
+    #############
+    has 'assets' => (
+        is          => 'ro',
+        isa         => 'PathClassDir',
+        lazy        => 1,
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var/)) }
+    );
     has 'data' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
+        isa         => 'PathClassDir',
         lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var db/)) }
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->assets->subdir(qw/db/)) }
     );
-
     has 'html' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
+        isa         => 'PathClassDir',
         lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var doc html/)) }
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->assets->subdir(qw/doc html/)) }
     );
-
     has 'html_idx' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
+        isa         => 'PathClassDir',
         lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var doc html idx/)) }
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->assets->subdir(qw/doc html idx/)) }
     );
-
+    has 'img' => (
+        is          => 'ro',
+        isa         => 'PathClassDir',
+        lazy        => 1,
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->assets->subdir(qw/img/)) }
+    );
     has 'wav' => (
         is          => 'ro',
-        isa         => 'Path::Class::Dir',
+        isa         => 'PathClassDir',
         lazy        => 1,
-        default     => sub { return Path::Class::Dir->new($_[0]->root->subdir(qw/var wav/)) }
+        coerce      => 1,
+        default     => sub { return Path::Class::Dir->new($_[0]->assets->subdir(qw/wav/)) }
     );
 
     no Moose;
@@ -48,13 +64,15 @@ package MyApp::Model::Dirs {
 
 __END__
 
+CHECK - docu is incomplete
+
 =head1 NAME
 
 MyApp::Model::Dirs - Easy access to application-specific directories
 
 =head1 SYNOPSIS
 
- my $dirs       = MyApp::Model::Dirs->new();
+ my $dirs       = MyApp::Model::Dirs->new( root => '/application/root/directory' );
  my $root       = $dirs->root;
  my $html       = $dirs->html;
  my $html_idx   = $dirs->html_idx;

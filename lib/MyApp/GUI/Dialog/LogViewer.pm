@@ -169,7 +169,7 @@ package MyApp::GUI::Dialog::LogViewer {
             wxDefaultPosition, 
             Wx::Size->new(50, 30)
         );
-        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+        $v->SetFont( wxTheApp->fonts->para_text_1 );
         my $enabled = ($self->ttl_record_count > $self->recs_per_page) ? 1 : 0;
         $v->Enable($enabled);
         return $v;
@@ -181,7 +181,7 @@ package MyApp::GUI::Dialog::LogViewer {
             wxDefaultPosition, 
             Wx::Size->new(50, 30)
         );
-        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+        $v->SetFont( wxTheApp->fonts->para_text_1 );
         $v->Enable(0); # Always start the Prev button disabled.
         return $v;
     }#}}}
@@ -268,7 +268,7 @@ package MyApp::GUI::Dialog::LogViewer {
             wxDefaultPosition, 
             Wx::Size->new(-1, 20)
         );
-        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_2') );
+        $v->SetFont( wxTheApp->fonts->para_text_2 );
         return $v;
     }#}}}
     sub _build_lbl_page {#{{{
@@ -281,7 +281,7 @@ package MyApp::GUI::Dialog::LogViewer {
             wxDefaultPosition, 
             Wx::Size->new(-1, 20)
         );
-        $v->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_2') );
+        $v->SetFont( wxTheApp->fonts->para_text_2 );
         return $v;
     }#}}}
     sub _build_list_log {#{{{

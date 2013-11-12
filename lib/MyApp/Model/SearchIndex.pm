@@ -11,15 +11,12 @@ package MyApp::Model::SearchIndex {
     use Moose::Util::TypeConstraints;
     use Try::Tiny;
 
-    subtype 'pc_from_str', as 'Path::Class::Dir';
-    coerce 'pc_from_str', from 'Str', via{ return Path::Class::dir($_) };
+    use MyApp::Types;
 
-    has 'index_directory' => (
+    has 'dirs' => (
         is          => 'ro',
-        isa         => 'pc_from_str',
-        coerce      => 1,
+        isa         => 'MyApp::Dirs',
         required    => 1,
-        documentation => q{ Must be a directory. },
     );
     has 'fields' => (
         is          => 'ro',
@@ -61,10 +58,10 @@ package MyApp::Model::SearchIndex {
     sub BUILD {
         my $self = shift;
 
-        try { $self->index_directory->resolve }
+        try { $self->dirs->html_idx->resolve }
         catch {
-            try{ $self->index_directory->mkpath }
-            catch{ croak "Index $self->index_directory is not a directory and could not be created." }
+            try{ $self->dirs->html_idx->mkpath }
+            catch{ croak "Index " . $self->dirs->html_idx . " is not a directory and could not be created." }
         };
 
         return $self;
@@ -77,7 +74,7 @@ package MyApp::Model::SearchIndex {
     sub _build_searcher {#{{{
         my $self = shift;
 
-        my $s = try   { Lucy::Search::IndexSearcher->new(index => $self->index_directory) }
+        my $s = try   { Lucy::Search::IndexSearcher->new(index => $self->dirs->html_idx) }
                 catch { return undef };
         return $s;
     }#}}}
@@ -122,7 +119,7 @@ package MyApp::Model::SearchIndex {
         $self->_set_schema_fields unless $self->is_schema_synced;
         my $indexer = Lucy::Index::Indexer->new(
             schema => $self->schema,  
-            index  => $self->index_directory,
+            index  => $self->dirs->html_idx,
             create => 1,
             truncate => 1,
         );
@@ -132,7 +129,7 @@ package MyApp::Model::SearchIndex {
         $self->_set_schema_fields unless $self->is_schema_synced;
         my $indexer = Lucy::Index::Indexer->new(
             schema => $self->schema,  
-            index  => $self->index_directory,
+            index  => $self->dirs->html_idx,
             create => 1,
         );
     }#}}}
@@ -160,10 +157,10 @@ MyApp::Model::SearchIndex - A searchable document index
 
 =head1 SYNOPSIS
 
+ my $dirs = MyApp::Model::Dirs->new( root => '/path/to/app/root' );
+
  ### Directory will be created if it does not already exist.
- $idx = MyApp::Model::SearchIndex->new(
-  index_directory => '/path/to/index/directory'
- ); 
+ $idx = MyApp::Model::SearchIndex->new( dirs => $dirs ); 
 
  $idx->add_field('summary');
  $idx->delete_field('title');
@@ -226,7 +223,10 @@ if you have need of another searchable document index.
 
 =over 12
 
-=item * C<index_directory =E<gt> '/path/to/directory'>
+=item * C<dirs =E<gt> MyApp::Model::Dirs object>
+
+This I<must> contain a directory labeled "html_idx", which will contain the 
+search index.  If the directory does not already exist, it will be created.
 
 =back
 
@@ -241,9 +241,6 @@ if you have need of another searchable document index.
 =back
 
 =back
-
-The C<index_directory> will be created if it does not already exist, and will 
-contain the document index.
 
 =head2 add_docs
 
@@ -340,8 +337,8 @@ Removes a field from the schema
 =back
 
 Returns a L<Lucy::Index::Indexer> object I<pointing to a clean index>.  This 
-means that the document index (pointed to by L</index_directory>) will be 
-I<completely cleared of all of its content>!
+means that the document index will be I<completely cleared of all of its 
+content>!
 
 So only use this when you're about to fully re-create your index.  See 
 L</get_indexer> to non-destructively get an indexer.
@@ -369,7 +366,7 @@ L</get_indexer> to non-destructively get an indexer.
 =back
 
 Returns a L<Lucy::Index::Indexer> object.  Points to the existing 
-L</index_directory> without cleaning it out first.
+C<$self->dirs->html_idx> directory without cleaning it out first.
 
 =head2 list_fields
 

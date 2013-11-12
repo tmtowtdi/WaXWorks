@@ -32,7 +32,7 @@ package MyApp::Roles::Platform {
         my $sizer;
         if( $self->sizer_debug or $force_box ) {
             my $box = Wx::StaticBox->new($parent, -1, $name, $pos, $size);
-            $box->SetFont( wxTheApp->wxresolve(service => '/fonts/para_text_1') );
+            $box->SetFont( wxTheApp->fonts->para_text_1 );
             $sizer = Wx::StaticBoxSizer->new($box, $direction);
         }
         else {

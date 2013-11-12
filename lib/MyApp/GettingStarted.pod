@@ -12,34 +12,29 @@ you're working.
 
 =head1 APP LAYOUT
 
-=head2 Bread Board Containers
+=head2 Assets
 
-L<MyApp::Model::Container>
+Media assets; images, sounds, etc.
 
-L<MyApp::Model::WxContainer>
+L<MyApp::Model::Assets>
 
-Bread::Board provides a single point of access to various application 
-resources.  So, to figure out where the app's database file is stored:
+=head2 Dirs
 
- $file = wxTheApp->resolve( service => 'DatabaseLog/db_file' );
+Directories where your app stores various assets.
 
-If you wanted to move that file somewhere else, you'd tell your main 
-Bread::Board module the location of that file, and all in-app resolutions of 
-that service will be re-pointed.
-
-There are two separate Bread::Board containers available.  One holds the bulk 
-of the application's settings, and is available to your app via resolve().  
-The other holds Wx-specific settings, and is available to your app via 
-wxresolve().  Having two separate containers allows you to create non-GUI 
-helper scripts (bin/update_help.pl is an example of this; it re-indexes your 
-Help documents and does not start a GUI).  These non-GUI scripts can make use 
-of the regular container's non-Wx-related settings.
+L<MyApp::Model::Dirs>
 
 =head2 Database
 
 The application stores its logs and any other data in an SQLite database that 
 is not part of the original distribution.  Starting the app for the first time 
 will create that database for you.
+
+=head2 Fonts
+
+Generalized font names.
+
+L<MyApp::Model::Fonts>
 
 =head2 Logging
 
@@ -48,7 +43,7 @@ L<MyApp::Model::DBILogger>
 Loggers are available as a Bread::Board service to any part of the application 
 with:
 
- my $logger = wxTheApp->resolve( service => '/Log/logger' );
+ my $logger = wxTheApp->logger;
 
 Once you've got a logger, you can set the component (optional), which is 
 simply a tag included with subsequent log entries to help identify which part 

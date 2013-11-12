@@ -10,11 +10,9 @@ BEGIN {
     use Wx::Perl::SplashFast( "$FindBin::Bin/../var/img/splash.png", 50 );
 }
 
-use Time::HiRes qw(gettimeofday tv_interval);
-
 use lib $FindBin::Bin . '/../lib';
 use MyApp;
 
-my $app = MyApp->new();
+my $app = MyApp->new( root_dir => "$FindBin::Bin/.." );
 $app->MainLoop();
 
