@@ -6,7 +6,7 @@ use v5.14;
 package MyApp {
     use warnings;
 
-    use Data::Dumper::GUI;
+    use Data::Dumper;
     use DateTime;
     use DateTime::Duration;
     use IO::All;
@@ -78,6 +78,10 @@ package MyApp {
         is          => 'ro',
         isa         => 'MyApp::GUI::MainFrame',
         lazy_build  => 1,
+        handles => {
+            throb_start => 'throb_start',
+            throb_end   => 'throb_end',
+        },
     );
     has 'timer' => (
         is          => 'ro',
@@ -223,25 +227,6 @@ package MyApp {
         my $message = shift || 'Everything is fine';
         my $title   = shift || wxTheApp->GetAppName();
         Wx::MessageBox($message, $title, wxOK | wxICON_INFORMATION, $self->main_frame );
-        return 1;
-    }#}}}
-
-### CHECK
-### The throb code should be moved into the StatusBar role.
-    sub throb_end {#{{{
-        my $self    = shift;
-        my $sb      = shift || $self->main_frame->status_bar;
-        $sb->gauge->stop();
-        $sb->init();
-        $sb->GetParent->SendSizeEvent();
-
-        return 1;
-    }#}}}
-    sub throb_start {#{{{
-        my $self    = shift;
-        my $sb      = shift || $self->main_frame->status_bar;
-        my $pause   = shift || 50;   # milliseconds
-        $sb->gauge->start( $pause, wxTIMER_CONTINUOUS );
         return 1;
     }#}}}
     sub unix2dos {#{{{
@@ -558,66 +543,11 @@ Defaults to wxTheApp->GetAppName()
 
 =head2 throb_end
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * none
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * true
-
-=back
-
-=item * USAGE
-
- wxTheApp->throb_end();
-
-Stops the indeterminate throbber gauge, and resets it (clears its status).  
-Does nothing if the throbber was not running.
-
-See L</throb_start>.
-
-=back
+Stops throbber.  Handled by L<MyApp::GUI::MainFrame#throb_end>.
 
 =head2 throb_start
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * Optional scalar - milliseconds to pause between pulses.  Defaults to 
-50.
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * true
-
-=back
-
-=item * USAGE
-
- wxTheApp->throb_start();
-
-Starts pulsing the throbber gauge in the main frame's status bar.  This will 
-continue until L</throb_end> is called.
-
-Indicates that the program is doing something.
-
-=back
+Starts throbber.  Handled by L<MyApp::GUI::MainFrame#throb_start>.
 
 =head2 unix2dos, dos2unix
 
@@ -627,10 +557,6 @@ of the current OS.
 On Windows, if you're saving a TextCtrl's contents to a file, or pulling a 
 file's contents into a TextCtrl, you'll want to use these to change the line 
 endings as appropriate.
-
-Note that both L</save_file> and L</open_file> in the Notepad example frame's 
-menubar are managing line-ending conversions, so you don't need to perform 
-your own conversions if you're using those.
 
 =over 4
 

@@ -3,7 +3,7 @@ use v5.14;
 package MyApp::GUI::Frame::Notepad {
     use utf8;
     use open qw(:std :utf8);
-    use Data::Dumper::GUI;
+    use Data::Dumper;
     use English qw( -no_match_vars );
     use IO::All;
     use Moose;
@@ -195,24 +195,22 @@ package MyApp::GUI::Frame::Notepad {
         );
         $v->SetOwnFont( # Set just my font, not also the fonts of all my children
             Wx::Font->new(
-                14,                         # point size
+                24,                         # point size
                 wxFONTFAMILY_ROMAN,
                 wxFONTSTYLE_NORMAL,
                 wxFONTWEIGHT_NORMAL,
                 0,                          # true for underline; windows and motif 2.x only
 
-                #'Comic Sans MS',
-                #'DejaVu Serif Condensed',
-                #'Purisa, Oblique',
-                #'Unifont, Medium',
-                #'Verdana',                  # etc - pick one.
-
-                #wxFONTENCODING_UNICODE,    # works on Ubuntu, not on Windows.
+                ### These all show the snowman correctly.  Several fonts 
+                ### provided arbitrarily as examples.
+                #'Comic Sans MS',           # trololol
+                #'DejaVu Serif Condensed',  # narrow serif, not bad.
+                #'Source Code Pro',         # sans-serif, fixed-width.  Probably not on your system by default.
+                #'Unifont, Medium',         # sans-serif, variable.
+                'Verdana',                 # etc - pick one.
             )
         );
-        #$v->SetValue("\nFoobar.\n\nBaz blarg lorem ipsum.\n\n");
-        $v->SetValue("☃");                  # Unicode snowman.  CHECK works on Ubuntu  (not sure about Windows - I'd removed 'use utf8' for
-                                            # some stupid reason when I tested previously.   Test again.)
+        $v->SetValue("☃");                 # Unicode snowman.
 
        return $v;
     }#}}}

@@ -87,6 +87,21 @@ package MyApp::Roles::StatusBar {
         return $g;
     }#}}}
 
+    sub throb_end {#{{{
+        my $self    = shift;
+        $self->gauge->stop();
+        $self->init();
+        $self->GetParent->SendSizeEvent();
+
+        return 1;
+    }#}}}
+    sub throb_start {#{{{
+        my $self    = shift;
+        my $pause   = shift || 50;   # milliseconds
+        $self->gauge->start( $pause, wxTIMER_CONTINUOUS );
+        return 1;
+    }#}}}
+
     sub init {#{{{
         my $self = shift;
 
@@ -219,13 +234,17 @@ Changes the text displayed in the main caption field.  By default, this is the
 first field.  The caption field can be cleared by sending an empty string, or 
 simply by sending no argument at all.
 
+ $self->change_caption("The call below this one will clear the caption.");
+ $self->change_caption();
+
 =over 4
 
 =item * ARGS
 
 =over 8
 
-=item * semi-optional scalar - the text to display.
+=item * semi-optional scalar - the text to display.  Defaults to the empty 
+string.
 
 =back
 
@@ -262,6 +281,69 @@ C<EVT_SIZE> event handler.
 =item * true
 
 =back
+
+=back
+
+=head2 throb_end
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * none
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=item * USAGE
+
+ $self->throb_end();
+
+Stops the indeterminate throbber gauge, and resets it (clears its status).  
+Does nothing if the throbber was not running.
+
+See L</throb_start>.
+
+=back
+
+=head2 throb_start
+
+=over 4
+
+=item * ARGS
+
+=over 8
+
+=item * Optional scalar - milliseconds to pause between pulses.  Defaults to 
+50.
+
+=back
+
+=item * RETURNS
+
+=over 8
+
+=item * true
+
+=back
+
+=item * USAGE
+
+ $self->throb_start();
+
+Starts pulsing the throbber gauge in the main frame's status bar.  This will 
+continue until L</throb_end> is called.
+
+Indicates that the program is doing something.
 
 =back
 

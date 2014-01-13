@@ -1,7 +1,7 @@
 use v5.14;
 
 package MyApp::GUI::MainFrame {
-    use Data::Dumper::GUI;
+    use Data::Dumper;
     use English qw( -no_match_vars );
     use IO::All;
     use Moose;
@@ -51,6 +51,10 @@ package MyApp::GUI::MainFrame {
         is          => 'rw',
         isa         => 'MyApp::GUI::MainFrame::StatusBar',
         lazy_build  => 1,
+        handles => {
+            throb_start => 'throb_start',
+            throb_end   => 'throb_end',
+        },
     );
     #############
     has 'szr_main' => (
@@ -219,6 +223,16 @@ Starting width of the frame, in pixels.  Defaults to 600.
 =item * C<MyApp::GUI::MainFrame> object
 
 =back
+
+=back
+
+=head2 throb_end
+
+Stops throbber.  Handled by L<MyApp::Roles::StatusBar#throb_end>.
+
+=head2 throb_start
+
+Starts throbber.  Handled by L<MyApp::Roles::StatusBar#throb_start>.
 
 =back
 
