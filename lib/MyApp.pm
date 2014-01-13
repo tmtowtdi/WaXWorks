@@ -1,8 +1,5 @@
 use v5.14;
 
-### CHECK
-### POD is missing a lot of methods - fix that.
-
 package MyApp {
     use warnings;
 
@@ -318,228 +315,118 @@ above to point to the right place.
 
 =head1 METHODS
 
+Arguments in B<bold> are required.
+
 =head2 get_app_icon
+
+B<ARGS> - ()
+
+B<RETURNS> - (Wx::Icon)
+
+ $some_frame->SetIcon( wxTheApp->get_app_icon() );
 
 Returns the Wx::Icon being used by the application.  When creating a new 
 frame, it will default to using the OS's default "unassigned" icon.  To 
 replace that with the main icon:
 
- $some_frame->SetIcon( wxTheApp->get_app_icon() );
-
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * none
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * Wx::Icon
-
-=back
-
-=back
-
 =head2 get_new_window_position 
+
+B<ARGS> - (Wx::Window)
+
+B<RETURNS> - (Wx::Point)
+
+ # Relative to the main frame
+ my $point = wxTheApp->get_new_window_position();
 
 Returns a Wx::Point to be used as a new dialog's or frame's starting position, 
 relative to another window.  Maintains visual consistency so the user knows 
 where their new window will pop up.
 
- # Relative to the main frame
- my $point = wxTheApp->get_new_window_position();
-
-or
-
- # Relative to $some_other_frame
- my $point = wxTheApp->get_new_window_position( $some_other_frame );
-
- # Let's get meta!
- my $new_frame = New::Frame::Class->new(
-    starting_position => $point,
- );
-
 By default, the point returned will be 30 pixels to the right and 30 pixels 
 below the starting point of the referenced window.
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * optional Wx::Window - defaults to C<wxTheApp-E<gt>GetTopWindow>
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * Wx::Point
-
-=back
-
-=back
+The point returned is relative to C<wxTheApp-E<gt>GetTopWindow> if the 
+Wx::Window argument is not sent.
 
 =head2 get_sound
 
-Transforms the requested wav file resource into a Wx::Sound and returns that.
+B<ARGS> - (B<path to wav file>)
+
+B<RETURNS> - success: (Wx::Sound) - failure: produces L</poperr> and returns 
+undef.
 
  $sound = wxTheApp->get_sound( 'two_tones_up.wav' );
  $sound->Play();
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * B<required> - filename of wav file.  Must exist in the directory 
-indicated by
-
- $self->dirs->wav
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * SUCCESS - Wx::Sound
-
-=item * FAILURE - Produces L</poperr> and returns undef.
-
-=back
-
-=back
+Transforms the requested wav file resource into a Wx::Sound and returns that.
 
 =head2 popconf
 
+B<ARGS> - (B<"Yes/no question" *>, "Window title")
+
+B<RETURNS> - (wxYES or wxNO)
+
+ my $resp = wxTheApp->popconf( 'Are you sure you want to do that?' );
+
 Displays a yes/no question dialog and returns the user's response.
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * B<required> scalar - yes/no question to ask the user
-
-=item * optional scalar - title of the popup window; defaults to the app name.
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * integer - either wxYES or wxNO
-
-If popconf() is called but no question is passed to it, L</poperr> will be 
-called, letting you know that you really need to ask a question.  In that 
+B<*> - If popconf() is called but no question is passed to it, L</poperr> will 
+be called, letting you know that you really need to ask a question.  In that 
 case, popconf's return value will be false.
 
-=back
 
-=item * USAGE
-
- if( wxYES == wxTheApp->popconf("Are you really sure", "Really really?") ) {
-  # Do Eeet
+ if( wxYES == wxTheApp->popconf( "Are you sure" ) ) {
+  # Do stuff
  }
  else {
-  # User did not say 'yes', so don't really do eeet.
+  # User did not say 'yes', so don't do stuff.
  }
 
-wxYES and wxNO are I<both positive integers>, so don't do this:
+B<CAUTION> - wxYES and wxNO are I<both positive integers>, so don't do this:
 
  if( wxTheApp->popconf("Are you really sure", "Really really?") ) {
-  # Do Eeet
+  # Do stuff
  }
  else {
-  # User said 'no', so don't really do eeet.
-    ### GONNNNNG!  THAT IS WRONG! ###
+  # User said 'no', so don't really do stuff.
+  ### GONNNNNG!  THAT IS WRONG! ###
  }
 
 That code will never hit the else block, even if the user choses 'No', since 
 the 'No' response is true.  This is very likely to be A Bad Thing.
 
-=back
-
 =head2 poperr
 
-Displays an error message popup to the user.
+B<ARGS> - (B<"Error message" *>, "Window title")
+
+B<RETURNS> - (true)
 
  wxTheApp->poperr( "You did something wrong here.", "Whoopsie" );
 
-=over 4
+Displays an error message popup to the user.
 
-=item * ARGS
+* The error message argument is technically optional, and will default to 
+"Unknown error occurred".  However, that's not terribly helpful, so sending a 
+meaningful error message is strongly recommended.
 
-=over 8
-
-=item * optional scalar - error message
-
-This is technically optional, and will default to "Unknown error occurred".  
-However, that's not terribly helpful, so sending a meaningful error message is 
-strongly recommended.
-
-=item * optional scalar - dialog title
-
-Defaults to simply "Error!", which is usually fine.
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * true
-
-=back
-
-=back
+The "Window title" argument defaults to simply "Error!".
 
 =head2 popmsg
+
+B<ARGS> - (B<"Message" *>, "Window title")
+
+B<RETURNS> - (true)
+
+ wxTheApp->popmsg( "This is a message.", "This is a title." );
 
 Similar to L</poperr>.  The only differences between the two are the icon that 
 gets displayed in the popup, and the default dialog title.
 
- wxTheApp->popmsg( "Some dogs are brown.", "This is a Title" );
+* Like with L</poperr>, the message argument is technically optional, and will 
+default to "Everything is fine".  Which is probably better than your program 
+exploding, but isn't otherwise helpful.
 
-=over 4
-
-=item * ARGS
-
-=over 8
-
-=item * optional scalar - Message to display
-
-Like with L</poperr>, calling this without sending a specific message doesn't 
-make much sense.  But if you do, the displayed message will defaulit to "Everything 
-is fine".
-
-=item * optional scalar - Dialog title
-
-Defaults to wxTheApp->GetAppName()
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * true
-
-=back
-
-=back
+The "Window title" argument Defaults to wxTheApp->GetAppName().
 
 =head2 throb_end
 
@@ -551,29 +438,15 @@ Starts throbber.  Handled by L<MyApp::GUI::MainFrame#throb_start>.
 
 =head2 unix2dos, dos2unix
 
-Multiline text controls use Unix-style (C<0x10>) line terminators, regardless 
-of the current OS.
+B<ARGS> - (B<String>)
 
-On Windows, if you're saving a TextCtrl's contents to a file, or pulling a 
-file's contents into a TextCtrl, you'll want to use these to change the line 
-endings as appropriate.
+B<RETURNS> - (String)
 
-=over 4
+These behave as expected, returning the passed string with a CRLF line 
+terminator (unix2dos) or just an LF line terminator (dos2unix).
 
-=item * ARGS
+Multiline text controls in wxwidgets use Unix-style (C<0x10>) line 
+terminators, regardless of the current OS, so when saving the contents of 
+these text controls to a file in Windows, it's recommended to pass those 
+contents through unix2dos before the save.
 
-=over 8
-
-=item * scalar - string to be dos-ified (unix2dos) or unix-ified (dos2unix)
-
-=back
-
-=item * RETURNS
-
-=over 8
-
-=item * scalar - the dos-ified (unix2dos) or unix-ified (dos2unix) string.
-
-=back
-
-=back
