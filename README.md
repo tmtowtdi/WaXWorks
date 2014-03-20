@@ -24,16 +24,13 @@
 
 * Code and documentation that need to be fixed are marked with the string "CHECK".  ack 
   for that and fix the issues.
-
 * TestSound works on Windows, does nothing (good or bad) on Ubuntu
   * at least it worked at some point; I dicked with things since then so I may have messed 
     it up.  Need more testing.  
   * Check on this again after the switch to wxwidgets 3.0 is made.
-
 * MenuItem helpstrings are also not showing up on Ubuntu (but they are on 
   windows).
   * Check on this again after the switch to wxwidgets 3.0 is made.
-
 * wxwidgets 3.0 is out, and I expect wxperl to switch to using it soon.  When that 
   happens: 
   * Fix the doc link in lib/MyApp.pm
