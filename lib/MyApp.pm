@@ -84,6 +84,10 @@ package MyApp {
         is          => 'ro',
         isa         => 'Wx::Timer',
         lazy_build  => 1,
+        documentation => q{
+            I'm almost positive this is not being used.  The StatusBarGauge role 
+            implements a timer which is what's being used by the throbber.
+        }
     );
 
 
@@ -270,7 +274,6 @@ package MyApp {
     }#}}}
     sub OnTimer {#{{{
         my $self = shift;
-        say "OnTimer called";
     }#}}}
 
     no Moose;
